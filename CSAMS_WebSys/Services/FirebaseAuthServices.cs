@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Net.Http;
@@ -21,25 +21,34 @@ namespace YourNamespace
 
         public async Task<FirebaseAuthResponse> LoginAsync(string email, string password)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var requestBody = new
+                using (HttpClient client = new HttpClient())
                 {
-                    email = email,
-                    password = password,
-                    returnSecureToken = true
-                };
+                    var requestBody = new
+                    {
+                        email = email,
+                        password = password,
+                        returnSecureToken = true
+                    };
 
-                var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
+                    var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
+                    HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
 
                 string responseContent = await response.Content.ReadAsStringAsync();
                 var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
 
-                return firebaseAuthResponse;
+                    return firebaseAuthResponse;
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            
         }
     }
 

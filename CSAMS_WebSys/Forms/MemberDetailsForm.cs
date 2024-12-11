@@ -67,29 +67,44 @@ namespace CSAMS_WebSys.Forms
         }
         private async void MemberDetailsLoad(object sender, EventArgs e)
         {
-            
-            nameChange_gunaLabel.Text = member.FirstName + " " + member.LastName;
-            if( member.BiometricsAdded )
+            try
             {
-                c.Text = "Added";
-                bioStatusChange_gunaPanel.BackColor = Color.Aquamarine;
-            }
-            else
-            {
-                c.Text = "Not Added";
-                bioStatusChange_gunaPanel.BackColor = Color.Red;
-            }
-            List<string> attended = new List<string>();
-            yearChange_gunaLabel.Text = member.YearLevel;
-            IDChange_gunaLabel.Text = member.StudentID;
-            statusChange_gunaLabel.Text = member.Status;
-            eventObj = await Event.GetMissedEventsAsync(member.StudentID);
+                guna2WinProgressIndicator1.Show();
+                guna2WinProgressIndicator1.Start();
+                
+                nameChange_gunaLabel.Text = member.FirstName + " " + member.LastName;
+                if (member.BiometricsAdded)
+                {
+                    c.Text = "Added";
+                    bioStatusChange_gunaPanel.BackColor = Color.Aquamarine;
+                }
+                else
+                {
+                    c.Text = "Not Added";
+                    bioStatusChange_gunaPanel.BackColor = Color.Red;
+                }
+                List<string> attended = new List<string>();
+                yearChange_gunaLabel.Text = member.YearLevel;
+                IDChange_gunaLabel.Text = member.StudentID;
+                statusChange_gunaLabel.Text = member.Status;
+                eventObj = await Event.GetMissedEventsAsync(member.StudentID);
 
-            foreach (var eve in eventObj)
-            {
-               Console.WriteLine("Event Name id: " + eve.EventName);
+                foreach (var eve in eventObj)
+                {
+                    Console.WriteLine("Event Name id: " + eve.EventName);
+                }
+                AddMembers(eventObj);
             }
-            AddMembers(eventObj);
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                guna2WinProgressIndicator1.Stop();
+                guna2WinProgressIndicator1.Hide();
+            }
+            
         }
 
         private void AddMembers(List<EventModel> Events)

@@ -100,7 +100,7 @@ namespace CSAMS_WebSys
         {
             if(Password.PasswordChar == '*')
             {
-                button2.BringToFront();
+                UnHide.BringToFront();
                 Password.PasswordChar = '\0';
             }
         }
@@ -109,7 +109,7 @@ namespace CSAMS_WebSys
         {
             if(Password.PasswordChar == '\0')
             {
-                button3.BringToFront();
+                Hide.BringToFront();
                 Password.PasswordChar = '*';
             }
         }

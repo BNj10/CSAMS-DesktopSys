@@ -34,8 +34,8 @@ namespace CSAMS_WebSys
             this.TopPanel_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.TopPanelText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.loginPanel_gunaShadowPanel = new Guna.UI.WinForms.GunaShadowPanel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.Hide = new System.Windows.Forms.Button();
+            this.UnHide = new System.Windows.Forms.Button();
             this.Login = new Guna.UI.WinForms.GunaAdvenceButton();
             this.passwordText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.emailText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
@@ -75,8 +75,8 @@ namespace CSAMS_WebSys
             // loginPanel_gunaShadowPanel
             // 
             this.loginPanel_gunaShadowPanel.BaseColor = System.Drawing.Color.White;
-            this.loginPanel_gunaShadowPanel.Controls.Add(this.button3);
-            this.loginPanel_gunaShadowPanel.Controls.Add(this.button2);
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.Hide);
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.UnHide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Login);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.passwordText_gunaLabel);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.emailText_gunaLabel);
@@ -92,36 +92,36 @@ namespace CSAMS_WebSys
             this.loginPanel_gunaShadowPanel.Size = new System.Drawing.Size(945, 730);
             this.loginPanel_gunaShadowPanel.TabIndex = 5;
             // 
-            // button3
+            // Hide
             // 
-            this.button3.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
-            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.button3.Location = new System.Drawing.Point(821, 517);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(48, 48);
-            this.button3.TabIndex = 24;
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.Hide.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Hide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Hide.BackgroundImage")));
+            this.Hide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Hide.FlatAppearance.BorderSize = 0;
+            this.Hide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Hide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Hide.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Hide.Location = new System.Drawing.Point(821, 517);
+            this.Hide.Name = "Hide";
+            this.Hide.Size = new System.Drawing.Size(48, 48);
+            this.Hide.TabIndex = 24;
+            this.Hide.UseVisualStyleBackColor = false;
+            this.Hide.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // UnHide
             // 
-            this.button2.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.button2.Location = new System.Drawing.Point(821, 517);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(48, 48);
-            this.button2.TabIndex = 23;
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.UnHide.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.UnHide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("UnHide.BackgroundImage")));
+            this.UnHide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.UnHide.FlatAppearance.BorderSize = 0;
+            this.UnHide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.UnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UnHide.Location = new System.Drawing.Point(821, 517);
+            this.UnHide.Name = "UnHide";
+            this.UnHide.Size = new System.Drawing.Size(48, 48);
+            this.UnHide.TabIndex = 23;
+            this.UnHide.UseVisualStyleBackColor = false;
+            this.UnHide.Click += new System.EventHandler(this.button2_Click);
             // 
             // Login
             // 
@@ -190,11 +190,10 @@ namespace CSAMS_WebSys
             this.Password.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Password.Location = new System.Drawing.Point(60, 506);
             this.Password.Name = "Password";
-            this.Password.PasswordChar = '\0';
+            this.Password.PasswordChar = '*';
             this.Password.Radius = 13;
             this.Password.Size = new System.Drawing.Size(833, 68);
             this.Password.TabIndex = 8;
-            this.Password.PasswordChar = '*';
             // 
             // Email
             // 
@@ -306,8 +305,8 @@ namespace CSAMS_WebSys
         private Guna.UI.WinForms.GunaTextBox Email;
         private Guna.UI.WinForms.GunaLabel passwordText_gunaLabel;
         private Guna.UI.WinForms.GunaAdvenceButton Login;
-        private System.Windows.Forms.Button button2;
-        private Button button3;
+        private System.Windows.Forms.Button UnHide;
+        private Button Hide;
     }
 }
 

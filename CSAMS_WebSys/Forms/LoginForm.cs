@@ -16,6 +16,7 @@ namespace CSAMS_WebSys
         {
             InitializeComponent();
             con = new ConnectivityService();
+            guna2WinProgressIndicator1.Hide();
         }
         //CHANGE LOGIN CLICK TO ASYNC
         private async void login_gunaAdvenceButton_Click(object sender, EventArgs e)
@@ -23,71 +24,80 @@ namespace CSAMS_WebSys
   /*          MainForm mainform = new MainForm();
             mainform.Show();
             Visible = false;*/
-            bool isConnected = await con.CheckNetworkAvailability();
-
-            if (isConnected)
+            try
             {
-                string email = Email.Text;
-                string password = Password.Text;
-                string ErrorMessage = "";
-
-                if (string.IsNullOrEmpty(email))
+                bool isConnected = await con.CheckNetworkAvailability();
+                if (isConnected)
                 {
-                    ErrorMessage += "Email is required.";
-                    if (string.IsNullOrEmpty(password))
+                    guna2WinProgressIndicator1.Show();
+                    guna2WinProgressIndicator1.Start();
+                    string email = Email.Text;
+                    string password = Password.Text;
+                    string ErrorMessage = "";
+
+                    if (string.IsNullOrEmpty(email))
                     {
-                        ErrorMessage = "Please enter both email and password.";
+                        ErrorMessage += "Email is required.";
+                        if (string.IsNullOrEmpty(password))
+                        {
+                            ErrorMessage = "Please enter both email and password.";
+                            MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
                         MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-                    MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
 
-                if (!IsValidEmail(email))
-                {
-                    MessageBox.Show("Invalid email format.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    Email.Focus();
-                    return;
-                }
+                    if (!IsValidEmail(email))
+                    {
+                        MessageBox.Show("Invalid email format.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Email.Focus();
+                        return;
+                    }
 
-                if (password.Length < 8)
-                {
-                    MessageBox.Show("Password must be at least 8 characters long.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    Password.Focus();
-                    return;
-                }
+                    if (password.Length < 8)
+                    {
+                        MessageBox.Show("Password must be at least 8 characters long.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Password.Focus();
+                        return;
+                    }
 
-                string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-                if (File.Exists(envPath))
-                {
-                    DotNetEnv.Env.Load(envPath);
-                }
-                else
-                {
-                    throw new FileNotFoundException("Environment file (.env) not found.");
-                }
-                string credentialsPath = Environment.GetEnvironmentVariable("FIREBASE_API_KEY");
+                    string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+                    if (File.Exists(envPath))
+                    {
+                        DotNetEnv.Env.Load(envPath);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException("Environment file (.env) not found.");
+                    }
+                    string credentialsPath = Environment.GetEnvironmentVariable("FIREBASE_API_KEY");
 
-                var firebaseAuthService = new FirebaseAuthService(credentialsPath);
-                try
-                {
+                    var firebaseAuthService = new FirebaseAuthService(credentialsPath);
+
                     var authResponse = await firebaseAuthService.LoginAsync(email, password);
+
                     MainForm mainform = new MainForm(authResponse);
                     mainform.Show();
                     Visible = false;
+
                 }
-                catch
+                else
                 {
-                    MessageBox.Show($"Wrong email or password. Please try again!", "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    MessageBox.Show("Unable to login. No internet connection detected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            else
+            catch
             {
-                MessageBox.Show("Unable to login. No internet connection detected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Wrong email or password. Please try again!", "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+            finally
+            {
+                guna2WinProgressIndicator1.Stop();
+                guna2WinProgressIndicator1.Hide();
+            }
+            
         }
 
         private bool IsValidEmail(string email)

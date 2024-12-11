@@ -41,6 +41,9 @@ namespace CSAMS_WebSys.Forms
             }
         }
 
-        
+        private void AddSchoolYear_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

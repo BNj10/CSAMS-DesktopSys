@@ -46,6 +46,7 @@ namespace CSAMS_WebSys
             this.welcomeText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.loginTextPanel_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.textTitle_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.guna2WinProgressIndicator1 = new Guna.UI2.WinForms.Guna2WinProgressIndicator();
             this.TopPanel_gunaPanel.SuspendLayout();
             this.loginPanel_gunaShadowPanel.SuspendLayout();
             this.loginTextPanel_gunaPanel.SuspendLayout();
@@ -75,6 +76,7 @@ namespace CSAMS_WebSys
             // loginPanel_gunaShadowPanel
             // 
             this.loginPanel_gunaShadowPanel.BaseColor = System.Drawing.Color.White;
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.guna2WinProgressIndicator1);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Hide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.UnHide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Login);
@@ -267,6 +269,16 @@ namespace CSAMS_WebSys
             this.textTitle_gunaLabel.TabIndex = 0;
             this.textTitle_gunaLabel.Text = "Welcome to CSAMS";
             // 
+            // guna2WinProgressIndicator1
+            // 
+            this.guna2WinProgressIndicator1.BackColor = System.Drawing.Color.Transparent;
+            this.guna2WinProgressIndicator1.CircleSize = 4F;
+            this.guna2WinProgressIndicator1.Location = new System.Drawing.Point(403, 231);
+            this.guna2WinProgressIndicator1.Name = "guna2WinProgressIndicator1";
+            this.guna2WinProgressIndicator1.Size = new System.Drawing.Size(130, 135);
+            this.guna2WinProgressIndicator1.TabIndex = 25;
+            this.guna2WinProgressIndicator1.UseTransparentBackground = true;
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -307,6 +319,7 @@ namespace CSAMS_WebSys
         private Guna.UI.WinForms.GunaAdvenceButton Login;
         private System.Windows.Forms.Button UnHide;
         private Button Hide;
+        private Guna.UI2.WinForms.Guna2WinProgressIndicator guna2WinProgressIndicator1;
     }
 }
 

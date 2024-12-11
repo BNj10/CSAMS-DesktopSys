@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using CSAMS_WebSys.Forms;
 using CSAMS_WebSys.Models;
 using CSAMS_WebSys.Services.Dashboard;
+using Guna.UI2.WinForms;
 
 namespace CSAMS_WebSys.UserControls
 {
@@ -22,12 +23,13 @@ namespace CSAMS_WebSys.UserControls
         {
             InitializeComponent();
             updatesService = new UpdatesService();
-            updatesService.TotalMembersUpdated += UpdateMemberNumber;
             InitializeElements();
         }
 
         public void InitializeElements()
         {
+            guna2WinProgressIndicator1.Show();
+            guna2WinProgressIndicator1.Start();
             UpdateTotalNumberOfStudents();
             UpdateTotalNumberOfStudentsWithNoBiometrics();
             FirstUpdateTotalNumber();
@@ -36,6 +38,9 @@ namespace CSAMS_WebSys.UserControls
             FourthFirstUpdateTotalNumber();
             FifthAboveFirstUpdateTotalNumber();
             MostRecentEvent();
+            guna2WinProgressIndicator1.Stop();
+            guna2WinProgressIndicator1.Hide();
+            
         }
 
         private async void UpdateTotalNumberOfStudents()
@@ -50,12 +55,7 @@ namespace CSAMS_WebSys.UserControls
                 MessageBox.Show("Error retrieving total number of students" + ex);
             }
         }
-
-        private void UpdateMemberNumber(int TotalNumber)
-        {
-
-        }
-
+        
         private async void UpdateTotalNumberOfStudentsWithNoBiometrics()
         {
             try
@@ -145,7 +145,7 @@ namespace CSAMS_WebSys.UserControls
                 if (eventModel != null)
                 {
                     EventName_gunaLabel.Text = $" {eventModel.EventName.ToString() ?? "No event name specified"} : {eventModel.Status.ToString()}";
-                    EventDescription_gunaLabel.Text = $"{eventModel.EventDescription?.ToString()} \n{eventModel.DateEnd?.ToString() ?? "No end date specified."} ";
+                    EventDescription_gunaLabel.Text = $"{eventModel.EventDescription?.ToString() ?? "No event description specified."} \nUntil: {eventModel.DateEnd?.ToString() ?? "No end date specified."} ";
                 }
                 else
                 {

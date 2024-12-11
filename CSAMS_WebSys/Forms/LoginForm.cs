@@ -95,6 +95,24 @@ namespace CSAMS_WebSys
             var emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
             return Regex.IsMatch(email, emailPattern);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if(Password.PasswordChar == '*')
+            {
+                button2.BringToFront();
+                Password.PasswordChar = '\0';
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(Password.PasswordChar == '\0')
+            {
+                button3.BringToFront();
+                Password.PasswordChar = '*';
+            }
+        }
     }
     
 }

@@ -25,6 +25,7 @@ namespace CSAMS_WebSys.UserControls
     {
         private EventService EventService;
         private AttendanceModel AttendanceModel;
+
         private int pageNumber = 20;
         private static string lastDocumentId = null;
         private static DocumentSnapshot lastdoc;    
@@ -143,42 +144,6 @@ namespace CSAMS_WebSys.UserControls
                 }
             }
         }
-
-/*        private void FilterEvents(object sender, EventArgs e)
-        {
-            string yearLevelFilter = FilterMembers_gunaComboBox.Text;
-            try
-            {
-                view = table.DefaultView;
-
-                switch (yearLevelFilter)
-                {
-                    case " ":
-                        view.RowFilter = string.Empty;
-                        break;
-                    case "1":
-                    case "2":
-                    case "3":
-                    case "4":
-                        view.RowFilter = $"year = '{yearLevelFilter}'";
-                        break;
-                    case "5th above":
-                        view.RowFilter = view.RowFilter = "year LIKE '5%' OR year LIKE '6%' OR year LIKE '7%' OR year LIKE '8%' OR year LIKE '9%'";
-                        break;
-                    default:
-                        view.RowFilter = string.Empty;
-                        break;
-                }
-
-                EventsData_gunaDataGridView.DataSource.DataSource = view;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error filtering data: {ex.Message}", "Filter Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }*/
-
         private void button1_Click(object sender, EventArgs e)
         {
 
@@ -276,6 +241,7 @@ namespace CSAMS_WebSys.UserControls
 
                             };
                             EditEventsForm editevent = new EditEventsForm(Event);
+                            editevent.EventChanged += EventChanged;
                             editevent.Show();
                         }
                     }
@@ -292,6 +258,27 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
+        private void EventChanged(EventModel Event)
+        {
+            int rowIndex = -1;
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                if (table.Rows[i]["Name"].ToString() == Event.EventName)
+                {
+                    rowIndex = i;
+                    break;
+                }
+            }
+
+            if (rowIndex >= 0)
+            {
+                DataRow rowToUpdate = table.Rows[rowIndex];
+                rowToUpdate["Progress"] = Event.Status.ToString();
+                EventsData_gunaDataGridView.Refresh();
+            }
+            EventsData_gunaDataGridView.Enabled = true;
+        }
+
         private void SearchEvents_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
 
@@ -302,7 +289,7 @@ namespace CSAMS_WebSys.UserControls
             try
             {
                 List<EventModel> events = new List<EventModel>();
-                (events, firstdoc) = await EventService.GetActiveEvents(pageNumber, lastdoc);
+                (events, firstdoc) = await EventService.GetAllEvents(pageNumber, lastdoc);
                 Console.WriteLine(pageNumber);
                 if (events.Count > 0)
                 {
@@ -392,6 +379,42 @@ namespace CSAMS_WebSys.UserControls
         private void onClickDashboard(object sender, EventArgs e)
         {
           
+        }
+
+        private void FilterEvents_gunaComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string yearLevelFilter = FilterEvents_gunaComboBox.Text;
+            try
+            {
+                switch (yearLevelFilter)
+                {
+                    case " ":
+                        view.RowFilter = string.Empty;
+                        break;
+                    case "Ongoing":
+                        view.RowFilter = "Progress = 'Ongoing'";
+                        break;
+                    case "Pending":
+                        view.RowFilter = "Progress = 'Pending'";
+                        break;
+                    case "Done":
+                        view.RowFilter = "Progress = 'Done'";
+                        break;
+                    case "Archived":
+                        view.RowFilter = "Progress = 'Archived'";
+                        break;
+                    default:
+                        view.RowFilter = string.Empty;
+                        break;
+                }
+
+                EventsData_gunaDataGridView.DataSource = view;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error filtering data: {ex.Message}", "Filter Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

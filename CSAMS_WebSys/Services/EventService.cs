@@ -44,6 +44,9 @@ namespace CSAMS_WebSys.Services
 
                     var AttendanceData = new Dictionary<string, object>
                     {
+                        { "EventName", attendance.EventName },
+                        { "SchoolYearID", attendance.SchoolYearID },
+                        { "DateStart", attendance.DateStart },
                         { "TotalAttendees", attendance.TotalAttendees },
                         { "TimeInStart", attendance.TimeInStart },
                         { "TimeInEnd", attendance.TimeInEnd },
@@ -51,7 +54,7 @@ namespace CSAMS_WebSys.Services
                         { "TimeOutStart", attendance.TimeOutStart }
                     };
 
-                    DocumentReference attendanceDocRef = db.Collection("Attendance").Document(eventId);
+                    DocumentReference attendanceDocRef = db.Collection("Attendance").Document();
 
                 await attendanceDocRef.SetAsync(AttendanceData);
 
@@ -104,7 +107,7 @@ namespace CSAMS_WebSys.Services
 
                 var attendanceModel = new AttendanceModel
                 {
-                    EventID = attendanceDoc.Id,
+                    AttendanceID = attendanceDoc.Id,
                 };
                 var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
 
@@ -117,12 +120,12 @@ namespace CSAMS_WebSys.Services
 
                     if (studentSnapshot.Documents.Count > 0)
                     {
-                        attendedEventIds.Add(attendanceModel.EventID);
+                        attendedEventIds.Add(attendanceModel.AttendanceID);
                     }
                 }
                 catch (ArgumentException ex)
                 {
-                    Console.WriteLine($"Error accessing sub-collection for EventID: {attendanceModel.EventID}. Error: {ex.Message}");
+                    Console.WriteLine($"Error accessing sub-collection for EventID: {attendanceModel.AttendanceID}. Error: {ex.Message}");
                 }
             }
 
@@ -166,15 +169,14 @@ namespace CSAMS_WebSys.Services
             Query query = db.Collection("Attendance").WhereEqualTo("EventID", Event.EventID);
         }*/
 
-        public async Task<(List<EventModel>, DocumentSnapshot)> GetActiveEvents(int pageSize, DocumentSnapshot lastVisible)
+        public async Task<(List<EventModel>, DocumentSnapshot)> GetAllEvents(int pageSize, DocumentSnapshot lastVisible)
         {
             int page = pageSize;
             try
             {
                 Console.WriteLine($"{page} - {lastVisible}");
 
-                Query query = db.Collection("Event").WhereEqualTo("isArchived", false)
-                                                    .Select("EventName", "DateStart", "DateEnd", "DateAdded")
+                Query query = db.Collection("Event").Select("EventName", "DateStart", "DateEnd", "DateAdded", "isArchived")
                                                     .Limit(page);
 
                 if (lastVisible != null)
@@ -201,7 +203,8 @@ namespace CSAMS_WebSys.Services
                             EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
                             DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
                             DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
-                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                         };
                         eventModel.Status = GetCurrentStatus(eventModel);
                         Events.Add(eventModel);
@@ -270,7 +273,7 @@ namespace CSAMS_WebSys.Services
             DateTime CurrentDate = DateTime.Now;
             DateTime EventDateStart = eventData.DateStart.Value.ToLocalTime();
             DateTime EventDateEnd = eventData.DateEnd.Value.ToLocalTime();
-             
+
             if(eventData.IsArchived)
             {
                 return EventStatus.Archived;
@@ -309,11 +312,11 @@ namespace CSAMS_WebSys.Services
                         });
                      }
                 }
-                Console.WriteLine("Event archived successfully.");
+                MessageBox.Show("Event archived successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error archiving event: {ex.Message}");
+                MessageBox.Show($"Error archiving event: {ex.Message}");
             }
         }
 
@@ -374,169 +377,3 @@ namespace CSAMS_WebSys.Services
         }
     }
 }
-
-
-
-
-
-
-
-
-/*        public class PaginationParameters
-        {
-            public string LastDocumentId { get; set; } = null;
-            public int PageSize { get; set; } = 10;
-        }*/
-
-/*        private async Task GetAttendanceRecord(EventModel Event)
-        {
-
-        }*/
-
-        /*public class PaginatedEventModel
-        {
-            public List<EventModel> Events { get; set; }
-            public bool HasMore { get; set; }
-            public string LastDocumentId { get; set; }
-            public Dictionary<EventStatus, int> StatusCounts { get; set; }
-        }
-
-        public async Task<PaginatedEventModel> GetEventsWithInfiniteScroll(PaginationParameters pagination, string last)
-        {
-            TimeZoneInfo philippineTime = GetPhilippineTimeZone();
-            var currentDateTime = TimeZoneInfo.ConvertTime(DateTime.UtcNow, philippineTime);
-
-            try
-            {
-                var eventRef = db.Collection("Event");
-                Query query = eventRef.OrderBy("DateStart").Limit(pagination.PageSize);
-
-                if (!string.IsNullOrEmpty(pagination.LastDocumentId))
-                {
-                    var lastDoc = await eventRef.Document(pagination.LastDocumentId).GetSnapshotAsync();
-                    query = query.StartAfter(lastDoc);
-                }
-
-                var snapshot = await query.GetSnapshotAsync();
-                var events = new List<EventModel>();
-
-                foreach (var document in snapshot.Documents)
-                {
-                    var data = document.ToDictionary();
-                    var eventData = new EventModel
-                    {
-                        EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
-                        EventDescription = document.ContainsField("EventDescription") ? document.GetValue<string>("EventDescription") : null,
-                        DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
-                        DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null
-                    };
-
-                    eventData.DateStart = TimeZoneInfo.ConvertTimeFromUtc((DateTime)eventData.DateStart, philippineTime);
-                    eventData.DateEnd = TimeZoneInfo.ConvertTimeFromUtc((DateTime)eventData.DateEnd, philippineTime);
-
-                    if (currentDateTime >= eventData.DateStart && currentDateTime <= eventData.DateEnd)
-                    {
-                        eventData.Status = EventStatus.Ongoing;
-                    }
-                    else if (currentDateTime < eventData.DateStart)
-                    {
-                        eventData.Status = EventStatus.Pending;
-                    }
-                    else
-                    {
-                        eventData.Status = EventStatus.Done;
-                    }
-
-                    events.Add(eventData);
-                }
-
-                var sortedEvents = events
-                    .OrderBy(e => GetStatusOrder(e.Status))
-                    .ThenBy(e => GetSecondarySort(e, currentDateTime))
-                    .ToList();
-
-                var statusCounts = new Dictionary<EventStatus, int>
-                {
-                    { EventStatus.Ongoing, events.Count(e => e.Status == EventStatus.Ongoing) },
-                    { EventStatus.Pending, events.Count(e => e.Status == EventStatus.Pending) },
-                    { EventStatus.Done, events.Count(e => e.Status == EventStatus.Done) }
-                };
-
-                return new PaginatedEventModel
-                {
-                    Events = sortedEvents,
-                    HasMore = sortedEvents.Count == pagination.PageSize,
-                    LastDocumentId = last,
-                    StatusCounts = statusCounts
-                };
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error retrieving events: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new PaginatedEventModel
-                {
-                    Events = new List<EventModel>(),
-                    HasMore = false,
-                    LastDocumentId = null,
-                    StatusCounts = new Dictionary<EventStatus, int>()
-                };
-            }
-        }
-
-        private TimeZoneInfo GetPhilippineTimeZone()
-        {
-            try
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById("China Standard Time");
-            }
-            catch
-            {
-                try
-                {
-                    return TimeZoneInfo.FindSystemTimeZoneById("Asia/Manila");
-                }
-                catch
-                {
-                    return TimeZoneInfo.CreateCustomTimeZone(
-                        "Philippine Time",
-                        new TimeSpan(8, 0, 0),
-                        "Philippine Time",
-                        "Philippine Standard Time");
-                }
-            }
-        }
-
-        private int GetStatusOrder(EventStatus status)
-        {
-            switch (status)
-            {
-                case EventStatus.Ongoing:
-                    return 0;
-                case EventStatus.Pending:
-                    return 1;
-                case EventStatus.Done:
-                    return 2;
-                default:
-                    return 3;
-            }
-        }
-
-        private DateTime GetSecondarySort(EventModel evt, DateTime currentDateTime)
-        {
-            switch (evt.Status)
-            {
-                case EventStatus.Pending:
-                    return (DateTime)evt.DateStart;
-                case EventStatus.Ongoing:
-                    return (DateTime)evt.DateEnd;
-                case EventStatus.Done:
-                    return (DateTime)(evt.DateEnd);
-                default:
-                    return DateTime.MaxValue;
-            }
-        }
-    }
-}
-
-*/

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSAMS_WebSys.Services;
 using CSAMS_WebSys.Models;
+using System.Security.Policy;
 
 namespace CSAMS_WebSys.Forms
 {
@@ -16,6 +17,7 @@ namespace CSAMS_WebSys.Forms
     {
         EventModel Event;
         EventService eventservice;
+        public event Action<EventModel> EventChanged;
         public EditEventsForm(EventModel Event)
         {
             this.Event = Event;
@@ -31,7 +33,17 @@ namespace CSAMS_WebSys.Forms
 
         private async void archiveEvent_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
-            await eventservice.ArchiveEvents(Event);
+            try
+            {
+                await eventservice.ArchiveEvents(Event);
+                Event.Status = Models.enums.EventStatus.Archived;
+                this.EventChanged?.Invoke(Event);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            
             this.Close();
         }
     }

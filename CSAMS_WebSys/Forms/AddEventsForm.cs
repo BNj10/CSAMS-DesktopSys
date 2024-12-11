@@ -20,11 +20,14 @@ namespace CSAMS_WebSys.Forms
         private static Mutex _mutex = new Mutex(false, "MyUniqueMutexName");
         private string AMorPM;
         private MemberService memberService;
-
+        private SchoolYearServices SchoolYearService;
+        private SchoolYearModel SY;
         public AddEventsForm()
         {
             InitializeComponent();
-
+            SchoolYearService = new SchoolYearServices();
+            SY = new SchoolYearModel();
+            GetLatestSchoolYear();
             if (!_mutex.WaitOne(0, false))
             {
                 this.Show();
@@ -68,6 +71,11 @@ namespace CSAMS_WebSys.Forms
                 TimeTo_gunaTextBox.Text = "hh/mm";
                 TimeTo_gunaTextBox.ForeColor = Color.Silver;
             }
+        }
+
+        private async void GetLatestSchoolYear()
+        {
+            this.SY = await SchoolYearService.GetActiveSchoolYearAsync();
         }
 
         private async void AddMember_gunaAdvenceButton_Click(object sender, EventArgs e)
@@ -139,6 +147,9 @@ namespace CSAMS_WebSys.Forms
 
                     AttendanceModel attenddance = new AttendanceModel
                     {
+                        EventName = Event.EventName,
+                        SchoolYearID = SY.SchoolYearID,
+                        DateStart = updatedStartTime1.ToUniversalTime(),
                         TotalAttendees = 0,
                         TimeInStart = updatedTimeIn.ToUniversalTime(),
                         TimeInEnd = updatedTimeInEnd.ToUniversalTime(),

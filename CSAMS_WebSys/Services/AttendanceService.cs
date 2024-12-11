@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CSAMS_WebSys.Models;
 using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
+using DocumentFormat.OpenXml.EMMA;
 using Google.Cloud.Firestore;
 using Newtonsoft.Json;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
@@ -18,6 +19,8 @@ namespace CSAMS_WebSys.Services
     {
         FirestoreDb db;
         MemberService memberservice;
+        SchoolYearServices schoolYearServices;
+        SchoolYearModel SYmodel;
         DocumentSnapshot firstDoc;
         public AttendanceService()
         {
@@ -89,39 +92,41 @@ namespace CSAMS_WebSys.Services
 
             return members;
         }
-        public async Task<AttendanceModel> GetAttendanceForAnEvent(string EventName)
+        public async Task<AttendanceModel> GetAttendanceForAnEvent(string eventName)
         {
             try
             {
-                var eventId = await GetEventID(EventName);
-                DocumentReference attendanceDocRef = db.Collection("Attendance").Document(eventId);
+                Query query = db.Collection("Attendance").WhereEqualTo("EventName", eventName);
+/*                                                         .WhereEqualTo("SchoolYearID")
+                                                         .WhereEqualTo("DateStart", );*/
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
 
-                DocumentSnapshot snapshot = await attendanceDocRef.GetSnapshotAsync();
-
-                if (snapshot.Exists)
+                if (querySnapshot.Documents.Count > 0)
                 {
+                    DocumentSnapshot snapshot = querySnapshot.Documents[0]; 
+
                     var attendanceData = snapshot.ToDictionary();
 
                     var totalAttendees = attendanceData.ContainsKey("TotalAttendees") && attendanceData["TotalAttendees"] is long
                         ? Convert.ToInt32(attendanceData["TotalAttendees"])
                         : 0;
                     DateTime? timeInStart = attendanceData.ContainsKey("TimeInStart") && attendanceData["TimeInStart"] is Timestamp
-                       ? ((Timestamp)attendanceData["TimeInStart"]).ToDateTime().ToLocalTime()
-                       : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeInStart"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeInEnd = attendanceData.ContainsKey("TimeInEnd") && attendanceData["TimeInEnd"] is Timestamp
-                      ? ((Timestamp)attendanceData["TimeInEnd"]).ToDateTime().ToLocalTime()
-                      : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeInEnd"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeOutStart = attendanceData.ContainsKey("TimeOutStart") && attendanceData["TimeOutStart"] is Timestamp
-                     ? ((Timestamp)attendanceData["TimeOutStart"]).ToDateTime().ToLocalTime()
-                     : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeOutStart"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeOutEnd = attendanceData.ContainsKey("TimeOutEnd") && attendanceData["TimeOutEnd"] is Timestamp
-                    ? ((Timestamp)attendanceData["TimeOutEnd"]).ToDateTime().ToLocalTime()
-                : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeOutEnd"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
 
-                    Console.WriteLine(timeInStart + " " + timeOutStart);
                     return new AttendanceModel
                     {
-                        EventID = eventId,
+                        AttendanceID = snapshot.Id, 
+                        EventName = eventName,
                         TotalAttendees = totalAttendees,
                         TimeInStart = timeInStart,
                         TimeInEnd = timeInEnd,
@@ -131,16 +136,17 @@ namespace CSAMS_WebSys.Services
                 }
                 else
                 {
-                    Console.WriteLine("Attendance data for the event not found.");
+                    Console.WriteLine("No attendance data found for the specified event.");
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Error retrieving attendance data: {ex.Message}");
                 return null;
             }
         }
+
 
         private async Task<List<string>> GetAttendedEventIdsAsync(string studentId)
         {
@@ -168,7 +174,7 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                DocumentReference docRef = db.Collection("Attendance").Document(attendance.EventID);
+                DocumentReference docRef = db.Collection("Attendance").Document(attendance.AttendanceID);
                 DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
                 if (snapshot.Exists)
@@ -185,7 +191,7 @@ namespace CSAMS_WebSys.Services
                 }
                 else
                 {
-                    Console.WriteLine($"Document with ID {attendance.EventID} does not exist.");
+                    Console.WriteLine($"Document with ID {attendance.AttendanceID} does not exist.");
                 }
             }
             catch (Exception ex)
@@ -199,7 +205,7 @@ namespace CSAMS_WebSys.Services
 
     private async Task StoreAttendanceData(AttendanceModel attendance, string path, MemberModel member, DateTime time, bool isTimeIn)
         {
-            DocumentReference attendanceDoc = db.Collection("Attendance").Document(attendance.EventID);
+            DocumentReference attendanceDoc = db.Collection("Attendance").Document(attendance.AttendanceID);
             await attendanceDoc.UpdateAsync("TotalAttendees", FieldValue.Increment(1));
 
             if (string.IsNullOrWhiteSpace(path))

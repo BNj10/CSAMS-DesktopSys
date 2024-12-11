@@ -213,8 +213,10 @@
             this.Controls.Add(this.SchoolYear);
             this.Controls.Add(this.EventNameText_gunaLabel);
             this.Controls.Add(this.MemYearLevelTitle_gunaPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "AddSchoolYear";
             this.Text = "AddSchoolYear";
+            this.Load += new System.EventHandler(this.AddSchoolYear_Load);
             this.MemYearLevelTitle_gunaPanel.ResumeLayout(false);
             this.MemYearLevelTitle_gunaPanel.PerformLayout();
             this.ResumeLayout(false);

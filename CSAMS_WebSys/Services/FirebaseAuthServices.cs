@@ -21,30 +21,39 @@ namespace YourNamespace
 
         public async Task<FirebaseAuthResponse> LoginAsync(string email, string password)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var requestBody = new
+                using (HttpClient client = new HttpClient())
                 {
-                    email = email,
-                    password = password,
-                    returnSecureToken = true
-                };
+                    var requestBody = new
+                    {
+                        email = email,
+                        password = password,
+                        returnSecureToken = true
+                    };
 
-                var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
+                    var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
+                    HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Firebase login failed: {response.ReasonPhrase}");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception($"Firebase login failed: {response.ReasonPhrase}");
+                    }
+
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
+
+                    return firebaseAuthResponse;
                 }
-
-                string responseContent = await response.Content.ReadAsStringAsync();
-                var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
-
-                return firebaseAuthResponse;
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            
         }
     }
 

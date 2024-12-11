@@ -158,7 +158,6 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        //TEST
         private void dummy()
         {
             MemberModel member = new MemberModel
@@ -509,7 +508,7 @@ namespace CSAMS_WebSys.UserControls
 
         private async void bulkAdd_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
-
+            XLWorkbook workbook = null;
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
@@ -520,60 +519,70 @@ namespace CSAMS_WebSys.UserControls
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    guna2WinProgressIndicator1.Show();
+                    guna2WinProgressIndicator1.Start();
                     string filePath = openFileDialog.FileName;
 
-                    var workbook = new XLWorkbook(filePath);
-                    var worksheet = workbook.Worksheet(1);
-
-                    var headerRow = worksheet.FirstRowUsed();
-
-                    List<MemberModel> members = new List<MemberModel>();
-
-                    if (headerRow.Cell(1).GetValue<string>() != "Student ID" ||
-                        headerRow.Cell(2).GetValue<string>() != "First Name" ||
-                        headerRow.Cell(3).GetValue<string>() != "Last Name" ||
-                        headerRow.Cell(4).GetValue<string>() != "Year Level" ||
-                        headerRow.Cell(5).GetValue<string>() != "Status")
+                    await Task.Run(() =>
                     {
-                        foreach (var row in worksheet.RowsUsed().Skip(1))
-                        {
+                        workbook = new XLWorkbook(filePath);
+ 
+                    });
+                    if (workbook != null)
+                    {
+                        var worksheet = workbook.Worksheet(1);
+                        var headerRow = worksheet.FirstRowUsed();
 
-                            members.Add(new MemberModel
+                        List<MemberModel> members = new List<MemberModel>();
+
+                        if (headerRow.Cell(1).GetValue<string>() != "Student ID" ||
+                            headerRow.Cell(2).GetValue<string>() != "First Name" ||
+                            headerRow.Cell(3).GetValue<string>() != "Last Name" ||
+                            headerRow.Cell(4).GetValue<string>() != "Year Level" ||
+                            headerRow.Cell(5).GetValue<string>() != "Status")
+                        {
+                            foreach (var row in worksheet.RowsUsed().Skip(1))
                             {
-                                StudentID = row.Cell(1).GetValue<string>(),
-                                FirstName = row.Cell(2).GetValue<string>(),
-                                LastName = row.Cell(3).GetValue<string>(),
-                                YearLevel = row.Cell(4).GetValue<string>(),
-                                Status = row.Cell(5).GetValue<string>(),
-                                DateAdded = DateTime.UtcNow
-                            });
+
+                                members.Add(new MemberModel
+                                {
+                                    StudentID = row.Cell(1).GetValue<string>(),
+                                    FirstName = row.Cell(2).GetValue<string>(),
+                                    LastName = row.Cell(3).GetValue<string>(),
+                                    YearLevel = row.Cell(4).GetValue<string>(),
+                                    Status = row.Cell(5).GetValue<string>(),
+                                    DateAdded = DateTime.UtcNow
+                                });
+                            }
+
+                            guna2WinProgressIndicator1.Stop();
+                            guna2WinProgressIndicator1.Hide();
+
+                            DialogResult result = MessageBox.Show(
+                                               "Do you want to proceed adding students?",
+                                               "Confirm Action",
+                                               MessageBoxButtons.OKCancel,
+                                               MessageBoxIcon.Question
+                                             );
+                            switch (result)
+                            {
+                                case DialogResult.OK:
+                                    AddMembers(members);
+
+                                    var filteredMembers = members
+                                                        .Where(member => !string.IsNullOrEmpty(member.StudentID))
+                                                        .GroupBy(member => member.StudentID)
+                                                        .Select(group => group.First())
+                                                        .ToList();
+
+                                    await memberservice.StoreMemberInBulk(filteredMembers);
+                                    MessageBox.Show("Students have been saved!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    break;
+                                case DialogResult.Cancel:
+                                    break;
+                            }
+
                         }
-
-                        DialogResult result = MessageBox.Show(
-                                           "Do you want to proceed adding students?", 
-                                           "Confirm Action",                          
-                                           MessageBoxButtons.OKCancel,              
-                                           MessageBoxIcon.Question                  
-                                         );
-
-                        switch (result)
-                        {
-                            case DialogResult.OK:
-                                AddMembers(members);
-
-                                var filteredMembers = members
-                                                    .Where(member => !string.IsNullOrEmpty(member.StudentID))
-                                                    .GroupBy(member => member.StudentID)
-                                                    .Select(group => group.First())
-                                                    .ToList();
-
-                                await memberservice.StoreMemberInBulk(filteredMembers);
-                                MessageBox.Show("Students have been saved!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                break;
-                            case DialogResult.Cancel:
-                                break;
-                        }
-                        
                     }
                 }
             }

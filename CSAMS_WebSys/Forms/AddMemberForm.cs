@@ -19,6 +19,8 @@ namespace CSAMS_WebSys.Forms
     public partial class AddMemberForm : Form
     {
         private FingerprintEnrollService enroll; 
+        private SchoolYearServices SchoolYearServices;
+        private SchoolYearModel SYmodel;
         private static bool _isOpen = false;
         private bool IsConnected = false;
         private bool previousConnectionState = false;
@@ -28,7 +30,9 @@ namespace CSAMS_WebSys.Forms
         public AddMemberForm()
         {
             InitializeComponent();
-
+            SchoolYearServices = new SchoolYearServices();
+            SYmodel = new SchoolYearModel();
+            GetActiveSY();
             if (_isOpen)
             {
                 this.Show();
@@ -103,6 +107,7 @@ namespace CSAMS_WebSys.Forms
         {
             Close();
         }
+
         private void UpdateConnectedDevice(string message)
         {
             if (Status.InvokeRequired)
@@ -127,9 +132,13 @@ namespace CSAMS_WebSys.Forms
             }
         }
 
+        private async void GetActiveSY()
+        {
+            this.SYmodel = await SchoolYearServices.GetActiveSchoolYearAsync();
+        }
+
         private async void gunaAdvenceButton1_Click(object sender, EventArgs e)
         {
-
             AddMember_gunaAdvenceButton.Enabled = false;
 
             string studentID = StudentID_gunaTextBox.Text;
@@ -147,6 +156,12 @@ namespace CSAMS_WebSys.Forms
 
             try
             {
+                if (SYmodel.SchoolYearID == null)
+                {
+                    MessageBox.Show("No active school year found. Please create a school year to use the features.");
+                    return;
+                }
+
                 if (guna2CheckBox1.Checked)
                 {
                     SaveMemberWithoutFingerprint();
@@ -175,6 +190,7 @@ namespace CSAMS_WebSys.Forms
                         FingerprintData = new List<string> { f1, f2 },
                         DateAdded = DateTime.UtcNow,
                         isArchived = false,
+                        SchoolYearID = SYmodel.SchoolYearID,
                         BiometricsAdded = true
                     };
                     await service.SaveMemberToFirestore(memberData);
@@ -219,6 +235,7 @@ namespace CSAMS_WebSys.Forms
                     FingerprintData = new List<string>(),
                     DateAdded = DateTime.UtcNow,
                     isArchived = false,
+                    SchoolYearID = SYmodel.SchoolYearID,
                     BiometricsAdded = false
                 };
                     await service.SaveMemberToFirestore(memberData);

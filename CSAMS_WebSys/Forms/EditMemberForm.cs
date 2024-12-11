@@ -245,8 +245,17 @@ namespace CSAMS_WebSys.Forms
                 }
                 attempted = true;
             }
-            StartCapture();
-            MessageBox.Show("Scanning Started. Please do not remove the device during enrollment.");
+
+            if(IsConnected)
+            {
+                StartCapture();
+                MessageBox.Show("Scanning Started. Please do not remove the device during enrollment.");
+            }
+            else
+            {
+                MessageBox.Show("Scanning cannot be started. Please connect a fingerprint reader.");
+            }
+                
         }
 
         private void timer2_Tick(object sender, EventArgs e)

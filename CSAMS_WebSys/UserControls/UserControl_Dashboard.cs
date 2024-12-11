@@ -22,6 +22,12 @@ namespace CSAMS_WebSys.UserControls
         {
             InitializeComponent();
             updatesService = new UpdatesService();
+            updatesService.TotalMembersUpdated += UpdateMemberNumber;
+            InitializeElements();
+        }
+
+        public void InitializeElements()
+        {
             UpdateTotalNumberOfStudents();
             UpdateTotalNumberOfStudentsWithNoBiometrics();
             FirstUpdateTotalNumber();
@@ -30,7 +36,6 @@ namespace CSAMS_WebSys.UserControls
             FourthFirstUpdateTotalNumber();
             FifthAboveFirstUpdateTotalNumber();
             MostRecentEvent();
-            updatesService.TotalMembersUpdated += UpdateMemberNumber;
         }
 
         private async void UpdateTotalNumberOfStudents()
@@ -50,6 +55,7 @@ namespace CSAMS_WebSys.UserControls
         {
 
         }
+
         private async void UpdateTotalNumberOfStudentsWithNoBiometrics()
         {
             try

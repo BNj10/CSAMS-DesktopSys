@@ -52,7 +52,7 @@ namespace CSAMS_WebSys.Services
                     { "YearLevel", member.YearLevel },
                     { "Status", member.Status },
                     { "FingerprintData", member.FingerprintData },
-                    //{"SchoolYearID", member.SchoolYearID },
+                    {"SchoolYearID", member.SchoolYearID },
                     { "StudentID", member.StudentID },
                     { "DateAdded", member.DateAdded },
                     { "isArchived", member.isArchived },
@@ -167,8 +167,6 @@ namespace CSAMS_WebSys.Services
             return uniqueMembers;
         }
 
-
-        //RETRIEVE ALL MEMBERS THAT ARE NOT ARCHIVED #TESTED
         public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveActiveMembersAsync(int pageSize, DocumentSnapshot lastVisible)
         {
             try

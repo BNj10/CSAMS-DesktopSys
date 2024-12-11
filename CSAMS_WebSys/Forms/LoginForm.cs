@@ -20,7 +20,7 @@ namespace CSAMS_WebSys
         //CHANGE LOGIN CLICK TO ASYNC
         private async void login_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
-/*            MainForm mainform = new MainForm();
+  /*          MainForm mainform = new MainForm();
             mainform.Show();
             Visible = false;*/
             bool isConnected = await con.CheckNetworkAvailability();
@@ -98,7 +98,7 @@ namespace CSAMS_WebSys
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if(Password.PasswordChar == '*')
+            if (Password.PasswordChar == '*')
             {
                 UnHide.BringToFront();
                 Password.PasswordChar = '\0';
@@ -107,12 +107,11 @@ namespace CSAMS_WebSys
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(Password.PasswordChar == '\0')
+            if (Password.PasswordChar == '\0')
             {
                 Hide.BringToFront();
                 Password.PasswordChar = '*';
             }
         }
     }
-    
 }

@@ -26,6 +26,7 @@ namespace CSAMS_WebSys.Forms
        /* private bool isConnected = false;*/
         private ConnectivityService con;
         private bool hasShownDisconnectedMessage = false;
+        private SchoolYearServices SchoolYearServices;
         //PARAMETER FOR THE MAIN FORM -> FirebaseAuthResponse auth
         public MainForm(FirebaseAuthResponse auth)
         {
@@ -35,8 +36,9 @@ namespace CSAMS_WebSys.Forms
             string username = auth.Email.Split('@')[0];
             UserName.Text = username;
             checkInternet1.Visible = true;
+            SchoolYearServices = new SchoolYearServices();
+            UpdateSchoolYears();
             userControl_Dashboard1.BringToFront();
-
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
@@ -58,6 +60,11 @@ namespace CSAMS_WebSys.Forms
                 Console.WriteLine(ex.Message);
                 return false;
             }
+        }
+
+        private async void UpdateSchoolYears()
+        {
+            await SchoolYearServices.UpdateSchoolYearAsync();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -98,6 +105,7 @@ namespace CSAMS_WebSys.Forms
         {
             Events_gunaAdvenceButton.Enabled = true;
             userControl_Dashboard1.BringToFront();
+            userControl_Dashboard1.InitializeElements();
         }
 
         private void Members_gunaAdvenceButton_Click(object sender, EventArgs e)

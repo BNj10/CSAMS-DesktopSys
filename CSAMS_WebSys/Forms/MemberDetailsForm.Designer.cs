@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.AddEventsTitle_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.AddEvents_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.LastNameText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
@@ -49,6 +49,7 @@
             this.absences_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.EventsData_gunaDataGridView = new Guna.UI.WinForms.GunaDataGridView();
             this.tabelLabels_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.guna2WinProgressIndicator1 = new Guna.UI2.WinForms.Guna2WinProgressIndicator();
             this.AddEventsTitle_gunaPanel.SuspendLayout();
             this.bioStatusChange_gunaPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EventsData_gunaDataGridView)).BeginInit();
@@ -219,31 +220,31 @@
             // 
             // EventsData_gunaDataGridView
             // 
-            dataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
-            this.EventsData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
+            this.EventsData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.EventsData_gunaDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.EventsData_gunaDataGridView.BackgroundColor = System.Drawing.Color.Gainsboro;
             this.EventsData_gunaDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.EventsData_gunaDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.EventsData_gunaDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle20.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
-            dataGridViewCellStyle20.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle20.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.EventsData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.EventsData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.EventsData_gunaDataGridView.ColumnHeadersHeight = 4;
             this.EventsData_gunaDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle21.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
-            dataGridViewCellStyle21.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle21.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle21.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            dataGridViewCellStyle21.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.EventsData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.EventsData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
             this.EventsData_gunaDataGridView.EnableHeadersVisualStyles = false;
             this.EventsData_gunaDataGridView.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(201)))), ((int)(((byte)(231)))));
             this.EventsData_gunaDataGridView.Location = new System.Drawing.Point(33, 387);
@@ -291,11 +292,22 @@
     "                                                   Date and Time added     Atend" +
     "ees       Progress            Actions";
             // 
+            // guna2WinProgressIndicator1
+            // 
+            this.guna2WinProgressIndicator1.BackColor = System.Drawing.Color.Transparent;
+            this.guna2WinProgressIndicator1.Location = new System.Drawing.Point(573, 336);
+            this.guna2WinProgressIndicator1.Name = "guna2WinProgressIndicator1";
+            this.guna2WinProgressIndicator1.Size = new System.Drawing.Size(90, 90);
+            this.guna2WinProgressIndicator1.TabIndex = 30;
+            this.guna2WinProgressIndicator1.UseTransparentBackground = true;
+            this.guna2WinProgressIndicator1.Visible = false;
+            // 
             // MemberDetailsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1462, 803);
+            this.Controls.Add(this.guna2WinProgressIndicator1);
             this.Controls.Add(this.tabelLabels_gunaLabel);
             this.Controls.Add(this.EventsData_gunaDataGridView);
             this.Controls.Add(this.absences_gunaLabel);
@@ -345,5 +357,6 @@
         private Guna.UI.WinForms.GunaLabel absences_gunaLabel;
         private Guna.UI.WinForms.GunaDataGridView EventsData_gunaDataGridView;
         private Guna.UI.WinForms.GunaLabel tabelLabels_gunaLabel;
+        private Guna.UI2.WinForms.Guna2WinProgressIndicator guna2WinProgressIndicator1;
     }
 }

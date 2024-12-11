@@ -1,4 +1,6 @@
-﻿namespace CSAMS_WebSys
+﻿using System.Windows.Forms;
+
+namespace CSAMS_WebSys
 {
     partial class LoginForm
     {
@@ -28,9 +30,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.TopPanel_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.TopPanelText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.loginPanel_gunaShadowPanel = new Guna.UI.WinForms.GunaShadowPanel();
+            this.Hide = new System.Windows.Forms.Button();
+            this.UnHide = new System.Windows.Forms.Button();
             this.Login = new Guna.UI.WinForms.GunaAdvenceButton();
             this.passwordText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.emailText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
@@ -52,9 +57,8 @@
             this.TopPanel_gunaPanel.Controls.Add(this.TopPanelText_gunaLabel);
             this.TopPanel_gunaPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.TopPanel_gunaPanel.Location = new System.Drawing.Point(0, 0);
-            this.TopPanel_gunaPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.TopPanel_gunaPanel.Name = "TopPanel_gunaPanel";
-            this.TopPanel_gunaPanel.Size = new System.Drawing.Size(1942, 102);
+            this.TopPanel_gunaPanel.Size = new System.Drawing.Size(1726, 82);
             this.TopPanel_gunaPanel.TabIndex = 4;
             // 
             // TopPanelText_gunaLabel
@@ -62,7 +66,7 @@
             this.TopPanelText_gunaLabel.AutoSize = true;
             this.TopPanelText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TopPanelText_gunaLabel.ForeColor = System.Drawing.Color.White;
-            this.TopPanelText_gunaLabel.Location = new System.Drawing.Point(780, 21);
+            this.TopPanelText_gunaLabel.Location = new System.Drawing.Point(693, 17);
             this.TopPanelText_gunaLabel.Name = "TopPanelText_gunaLabel";
             this.TopPanelText_gunaLabel.Size = new System.Drawing.Size(517, 41);
             this.TopPanelText_gunaLabel.TabIndex = 5;
@@ -71,6 +75,8 @@
             // loginPanel_gunaShadowPanel
             // 
             this.loginPanel_gunaShadowPanel.BaseColor = System.Drawing.Color.White;
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.Hide);
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.UnHide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Login);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.passwordText_gunaLabel);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.emailText_gunaLabel);
@@ -79,13 +85,43 @@
             this.loginPanel_gunaShadowPanel.Controls.Add(this.developText_gunaLabel);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.logInText_gunaLabel);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.welcomeText_gunaLabel);
-            this.loginPanel_gunaShadowPanel.Location = new System.Drawing.Point(565, 289);
-            this.loginPanel_gunaShadowPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.loginPanel_gunaShadowPanel.Location = new System.Drawing.Point(502, 231);
             this.loginPanel_gunaShadowPanel.Name = "loginPanel_gunaShadowPanel";
             this.loginPanel_gunaShadowPanel.ShadowColor = System.Drawing.Color.Black;
             this.loginPanel_gunaShadowPanel.ShadowShift = 9;
-            this.loginPanel_gunaShadowPanel.Size = new System.Drawing.Size(1063, 912);
+            this.loginPanel_gunaShadowPanel.Size = new System.Drawing.Size(945, 730);
             this.loginPanel_gunaShadowPanel.TabIndex = 5;
+            // 
+            // Hide
+            // 
+            this.Hide.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Hide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Hide.BackgroundImage")));
+            this.Hide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Hide.FlatAppearance.BorderSize = 0;
+            this.Hide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Hide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Hide.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Hide.Location = new System.Drawing.Point(821, 517);
+            this.Hide.Name = "Hide";
+            this.Hide.Size = new System.Drawing.Size(48, 48);
+            this.Hide.TabIndex = 24;
+            this.Hide.UseVisualStyleBackColor = false;
+            this.Hide.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // UnHide
+            // 
+            this.UnHide.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.UnHide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("UnHide.BackgroundImage")));
+            this.UnHide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.UnHide.FlatAppearance.BorderSize = 0;
+            this.UnHide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.UnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UnHide.Location = new System.Drawing.Point(821, 517);
+            this.UnHide.Name = "UnHide";
+            this.UnHide.Size = new System.Drawing.Size(48, 48);
+            this.UnHide.TabIndex = 23;
+            this.UnHide.UseVisualStyleBackColor = false;
+            this.UnHide.Click += new System.EventHandler(this.button2_Click);
             // 
             // Login
             // 
@@ -103,8 +139,7 @@
             this.Login.Image = null;
             this.Login.ImageSize = new System.Drawing.Size(20, 20);
             this.Login.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
-            this.Login.Location = new System.Drawing.Point(248, 788);
-            this.Login.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Login.Location = new System.Drawing.Point(220, 630);
             this.Login.Name = "Login";
             this.Login.OnHoverBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(43)))));
             this.Login.OnHoverBorderColor = System.Drawing.Color.Black;
@@ -113,7 +148,7 @@
             this.Login.OnHoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
             this.Login.OnPressedColor = System.Drawing.Color.Black;
             this.Login.Radius = 8;
-            this.Login.Size = new System.Drawing.Size(570, 72);
+            this.Login.Size = new System.Drawing.Size(507, 58);
             this.Login.TabIndex = 20;
             this.Login.Text = "Login";
             this.Login.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -125,7 +160,7 @@
             this.passwordText_gunaLabel.BackColor = System.Drawing.Color.Transparent;
             this.passwordText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passwordText_gunaLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.passwordText_gunaLabel.Location = new System.Drawing.Point(73, 581);
+            this.passwordText_gunaLabel.Location = new System.Drawing.Point(65, 465);
             this.passwordText_gunaLabel.Name = "passwordText_gunaLabel";
             this.passwordText_gunaLabel.Size = new System.Drawing.Size(132, 38);
             this.passwordText_gunaLabel.TabIndex = 10;
@@ -137,7 +172,7 @@
             this.emailText_gunaLabel.BackColor = System.Drawing.Color.Transparent;
             this.emailText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.emailText_gunaLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.emailText_gunaLabel.Location = new System.Drawing.Point(73, 431);
+            this.emailText_gunaLabel.Location = new System.Drawing.Point(65, 345);
             this.emailText_gunaLabel.Name = "emailText_gunaLabel";
             this.emailText_gunaLabel.Size = new System.Drawing.Size(83, 38);
             this.emailText_gunaLabel.TabIndex = 9;
@@ -153,12 +188,11 @@
             this.Password.FocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(24)))), ((int)(((byte)(83)))));
             this.Password.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.Password.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Password.Location = new System.Drawing.Point(68, 632);
-            this.Password.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Password.Location = new System.Drawing.Point(60, 506);
             this.Password.Name = "Password";
-            this.Password.PasswordChar = '\0';
+            this.Password.PasswordChar = '*';
             this.Password.Radius = 13;
-            this.Password.Size = new System.Drawing.Size(937, 85);
+            this.Password.Size = new System.Drawing.Size(833, 68);
             this.Password.TabIndex = 8;
             // 
             // Email
@@ -171,12 +205,11 @@
             this.Email.FocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(24)))), ((int)(((byte)(83)))));
             this.Email.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.Email.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Email.Location = new System.Drawing.Point(68, 482);
-            this.Email.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Email.Location = new System.Drawing.Point(60, 386);
             this.Email.Name = "Email";
             this.Email.PasswordChar = '\0';
             this.Email.Radius = 13;
-            this.Email.Size = new System.Drawing.Size(937, 85);
+            this.Email.Size = new System.Drawing.Size(833, 68);
             this.Email.TabIndex = 7;
             // 
             // developText_gunaLabel
@@ -185,7 +218,7 @@
             this.developText_gunaLabel.BackColor = System.Drawing.Color.Transparent;
             this.developText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.developText_gunaLabel.ForeColor = System.Drawing.Color.Gray;
-            this.developText_gunaLabel.Location = new System.Drawing.Point(76, 350);
+            this.developText_gunaLabel.Location = new System.Drawing.Point(68, 280);
             this.developText_gunaLabel.Name = "developText_gunaLabel";
             this.developText_gunaLabel.Size = new System.Drawing.Size(329, 23);
             this.developText_gunaLabel.TabIndex = 2;
@@ -197,7 +230,7 @@
             this.logInText_gunaLabel.BackColor = System.Drawing.Color.Transparent;
             this.logInText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.logInText_gunaLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.logInText_gunaLabel.Location = new System.Drawing.Point(73, 208);
+            this.logInText_gunaLabel.Location = new System.Drawing.Point(65, 166);
             this.logInText_gunaLabel.Name = "logInText_gunaLabel";
             this.logInText_gunaLabel.Size = new System.Drawing.Size(643, 41);
             this.logInText_gunaLabel.TabIndex = 1;
@@ -208,7 +241,7 @@
             this.welcomeText_gunaLabel.AutoSize = true;
             this.welcomeText_gunaLabel.BackColor = System.Drawing.Color.Transparent;
             this.welcomeText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.welcomeText_gunaLabel.Location = new System.Drawing.Point(71, 118);
+            this.welcomeText_gunaLabel.Location = new System.Drawing.Point(63, 94);
             this.welcomeText_gunaLabel.Name = "welcomeText_gunaLabel";
             this.welcomeText_gunaLabel.Size = new System.Drawing.Size(185, 54);
             this.welcomeText_gunaLabel.TabIndex = 0;
@@ -218,10 +251,9 @@
             // 
             this.loginTextPanel_gunaPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(11)))), ((int)(((byte)(36)))));
             this.loginTextPanel_gunaPanel.Controls.Add(this.textTitle_gunaLabel);
-            this.loginTextPanel_gunaPanel.Location = new System.Drawing.Point(606, 221);
-            this.loginTextPanel_gunaPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.loginTextPanel_gunaPanel.Location = new System.Drawing.Point(539, 177);
             this.loginTextPanel_gunaPanel.Name = "loginTextPanel_gunaPanel";
-            this.loginTextPanel_gunaPanel.Size = new System.Drawing.Size(963, 142);
+            this.loginTextPanel_gunaPanel.Size = new System.Drawing.Size(856, 114);
             this.loginTextPanel_gunaPanel.TabIndex = 6;
             // 
             // textTitle_gunaLabel
@@ -229,7 +261,7 @@
             this.textTitle_gunaLabel.AutoSize = true;
             this.textTitle_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textTitle_gunaLabel.ForeColor = System.Drawing.Color.White;
-            this.textTitle_gunaLabel.Location = new System.Drawing.Point(294, 35);
+            this.textTitle_gunaLabel.Location = new System.Drawing.Point(261, 28);
             this.textTitle_gunaLabel.Name = "textTitle_gunaLabel";
             this.textTitle_gunaLabel.Size = new System.Drawing.Size(367, 50);
             this.textTitle_gunaLabel.TabIndex = 0;
@@ -237,15 +269,14 @@
             // 
             // LoginForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1942, 1102);
+            this.ClientSize = new System.Drawing.Size(1726, 882);
             this.Controls.Add(this.loginTextPanel_gunaPanel);
             this.Controls.Add(this.loginPanel_gunaShadowPanel);
             this.Controls.Add(this.TopPanel_gunaPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "LoginForm";
             this.Text = "LoginForm";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -274,6 +305,8 @@
         private Guna.UI.WinForms.GunaTextBox Email;
         private Guna.UI.WinForms.GunaLabel passwordText_gunaLabel;
         private Guna.UI.WinForms.GunaAdvenceButton Login;
+        private System.Windows.Forms.Button UnHide;
+        private Button Hide;
     }
 }
 

@@ -112,6 +112,7 @@ namespace CSAMS_WebSys.Forms
         {
             Events_gunaAdvenceButton.Enabled = true;
             userControl_Members1.BringToFront();
+
         }
 
         private void Events_gunaAdvenceButton_Click(object sender, EventArgs e)

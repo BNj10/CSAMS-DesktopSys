@@ -169,15 +169,14 @@ namespace CSAMS_WebSys.Services
             Query query = db.Collection("Attendance").WhereEqualTo("EventID", Event.EventID);
         }*/
 
-        public async Task<(List<EventModel>, DocumentSnapshot)> GetActiveEvents(int pageSize, DocumentSnapshot lastVisible)
+        public async Task<(List<EventModel>, DocumentSnapshot)> GetAllEvents(int pageSize, DocumentSnapshot lastVisible)
         {
             int page = pageSize;
             try
             {
                 Console.WriteLine($"{page} - {lastVisible}");
 
-                Query query = db.Collection("Event").WhereEqualTo("isArchived", false)
-                                                    .Select("EventName", "DateStart", "DateEnd", "DateAdded")
+                Query query = db.Collection("Event").Select("EventName", "DateStart", "DateEnd", "DateAdded", "isArchived")
                                                     .Limit(page);
 
                 if (lastVisible != null)
@@ -204,7 +203,8 @@ namespace CSAMS_WebSys.Services
                             EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
                             DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
                             DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
-                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                         };
                         eventModel.Status = GetCurrentStatus(eventModel);
                         Events.Add(eventModel);
@@ -273,7 +273,7 @@ namespace CSAMS_WebSys.Services
             DateTime CurrentDate = DateTime.Now;
             DateTime EventDateStart = eventData.DateStart.Value.ToLocalTime();
             DateTime EventDateEnd = eventData.DateEnd.Value.ToLocalTime();
-             
+
             if(eventData.IsArchived)
             {
                 return EventStatus.Archived;
@@ -312,11 +312,11 @@ namespace CSAMS_WebSys.Services
                         });
                      }
                 }
-                Console.WriteLine("Event archived successfully.");
+                MessageBox.Show("Event archived successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error archiving event: {ex.Message}");
+                MessageBox.Show($"Error archiving event: {ex.Message}");
             }
         }
 

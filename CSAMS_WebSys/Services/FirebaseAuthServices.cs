@@ -35,11 +35,6 @@ namespace YourNamespace
 
                 HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Firebase login failed: {response.ReasonPhrase}");
-                }
-
                 string responseContent = await response.Content.ReadAsStringAsync();
                 var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
 

@@ -79,12 +79,13 @@ namespace CSAMS_WebSys.Services
                 var eventModel = new EventModel
                 {
                     EventID = document.Id,
-                    EventName = document.GetValue<string>("EventName"),
-                    DateAdded = document.GetValue<DateTime?>("DateAdded").Value.ToLocalTime(),
-                    DateStart = document.GetValue<DateTime?>("DateStart").Value.ToLocalTime(),
-                    DateEnd = document.GetValue<DateTime?>("DateEnd").Value.ToLocalTime(),
-                    IsArchived = document.GetValue<bool>("isArchived")
+                    EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
+                    DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
+                    DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
+                    DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                    IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                 };
+                eventModel.Status = GetCurrentStatus(eventModel);
                 eventModels.Add(eventModel);
             }
             return eventModels;
@@ -164,11 +165,6 @@ namespace CSAMS_WebSys.Services
                             .ToList();
             return missedEvents;
         }
-/*        public async Task<int> GetNumberOfAttendees(EventModel Event)
-        {
-            Query query = db.Collection("Attendance").WhereEqualTo("EventID", Event.EventID);
-        }*/
-
         public async Task<(List<EventModel>, DocumentSnapshot)> GetAllEvents(int pageSize, DocumentSnapshot lastVisible)
         {
             int page = pageSize;

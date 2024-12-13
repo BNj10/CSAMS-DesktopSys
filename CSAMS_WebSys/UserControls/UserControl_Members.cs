@@ -29,7 +29,7 @@ namespace CSAMS_WebSys.UserControls
         private static DocumentSnapshot _firstDocumentSnapshot;
         private bool disposing = false;
         private string BiometricsAdded;
-        private int pageSize = 21;
+        private int pageSize = 10;
         private bool buttonClicked = false;
         private MemberService memberservice;
         private HashSet<string> DisplayedMember = new HashSet<string>();
@@ -84,6 +84,8 @@ namespace CSAMS_WebSys.UserControls
                 UseColumnTextForButtonValue = true,
                 FlatStyle = FlatStyle.Popup
             };
+
+            MembersData_gunaDataGridView.RowTemplate.Height = 50;
 
             MembersData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_edit);
             MembersData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_delete);

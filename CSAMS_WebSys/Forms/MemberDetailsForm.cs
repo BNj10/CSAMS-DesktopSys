@@ -15,7 +15,7 @@ namespace CSAMS_WebSys.Forms
     public partial class MemberDetailsForm : Form
     {
         private MemberModel member;
-        private EventService Event;
+        private EventService eventservice;
         private List<EventModel> eventObj;
         private HashSet<string> DisplayedMember;
         private DataTable table;
@@ -23,14 +23,14 @@ namespace CSAMS_WebSys.Forms
         {
             InitializeComponent();
             this.member = member;
-            Event = new EventService();
+            eventservice = new EventService();
             eventObj = new List<EventModel>();
             table = new DataTable();
             DisplayedMember = new HashSet<string>();
-            dummyData();
+            InitializeTables();
         }
 
-        private void dummyData()
+        private void InitializeTables()
         {
 
             table.Columns.Add("Name", typeof(string));
@@ -51,6 +51,8 @@ namespace CSAMS_WebSys.Forms
             dataGridViewButtonColumn_detials.UseColumnTextForButtonValue = true;
 
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
+
+            EventsData_gunaDataGridView.RowTemplate.Height = 50;
 
             EventsData_gunaDataGridView.Columns[0].Width = 500;
             EventsData_gunaDataGridView.Columns[1].Width = 150;
@@ -87,13 +89,14 @@ namespace CSAMS_WebSys.Forms
                 yearChange_gunaLabel.Text = member.YearLevel;
                 IDChange_gunaLabel.Text = member.StudentID;
                 statusChange_gunaLabel.Text = member.Status;
-                eventObj = await Event.GetMissedEventsAsync(member.StudentID);
+                eventObj = await eventservice.GetMissedEventsAsync(member.StudentID);
 
                 foreach (var eve in eventObj)
                 {
                     Console.WriteLine("Event Name id: " + eve.EventName);
                 }
-                AddMembers(eventObj);
+
+                AddEvents(eventObj);
             }
             catch(Exception ex)
             {
@@ -107,13 +110,13 @@ namespace CSAMS_WebSys.Forms
             
         }
 
-        private void AddMembers(List<EventModel> Events)
+        private void AddEvents(List<EventModel> Events)
         {
             foreach (var Event in Events)
             {
                 if (member != null && DisplayedMember.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"));
+                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
                 }
             }
         }

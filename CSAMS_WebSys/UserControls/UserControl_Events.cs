@@ -25,8 +25,7 @@ namespace CSAMS_WebSys.UserControls
     {
         private EventService EventService;
         private AttendanceModel AttendanceModel;
-
-        private int pageNumber = 20;
+        private int pageNumber = 10;
         private static string lastDocumentId = null;
         private static DocumentSnapshot lastdoc;    
         private static DocumentSnapshot firstdoc;
@@ -85,6 +84,8 @@ namespace CSAMS_WebSys.UserControls
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_edit);
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_delete);
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
+
+            EventsData_gunaDataGridView.RowTemplate.Height = 50;
 
             EventsData_gunaDataGridView.Columns[0].Width = 500;
             EventsData_gunaDataGridView.Columns[1].Width = 150;

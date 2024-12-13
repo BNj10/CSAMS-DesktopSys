@@ -174,7 +174,7 @@ namespace CSAMS_WebSys.Services
                 Query query = db.Collection("Member")
                                 .WhereEqualTo("isArchived", false)
                                 .Limit(pageSize)
-                                .Select("StudentID", "FirstName", "LastName", "Status", "YearLevel", "BiometricsAdded", "DateAdded");
+                                .Select("StudentID", "FirstName", "LastName", "Status", "SchoolYearID", "YearLevel", "BiometricsAdded", "DateAdded");
 
 
                 if (lastVisible != null)
@@ -202,6 +202,7 @@ namespace CSAMS_WebSys.Services
                             StudentID = document.ContainsField("StudentID") ? document.GetValue<string>("StudentID") : null,
                             FirstName = document.ContainsField("FirstName") ? document.GetValue<string>("FirstName") : null,
                             LastName = document.ContainsField("LastName") ? document.GetValue<string>("LastName") : null,
+                            SchoolYearID = document.ContainsField("SchoolYearID") ? document.GetValue<string>("SchoolYearID") : null,
                             YearLevel = document.ContainsField("YearLevel") ? document.GetValue<string>("YearLevel") : null,
                             Status = document.ContainsField("Status") ? document.GetValue<string>("Status") : null,
                             BiometricsAdded = document.ContainsField("BiometricsAdded") ? document.GetValue<bool>("BiometricsAdded") : false,
@@ -331,111 +332,6 @@ namespace CSAMS_WebSys.Services
             }
         }
 
-        /*       public void ListenForMemberChanges(Action<MemberModel, string> onMemberChanged)
-               {
-                   CollectionReference membersRef = db.Collection("Member");
-                   FirestoreChangeListener listener = membersRef.Listen(snapshot =>
-                   {
-                       foreach (DocumentChange change in snapshot.Changes)
-                       {
-                           MemberModel memberModel = null;
-
-                           if (change.Document.Exists)
-                           {
-                               memberModel = new MemberModel
-                               {
-                                   StudentID = change.Document.ContainsField("StudentID") ? change.Document.GetValue<string>("StudentID") : null,
-                                   FirstName = change.Document.ContainsField("FirstName") ? change.Document.GetValue<string>("FirstName") : null,
-                                   LastName = change.Document.ContainsField("LastName") ? change.Document.GetValue<string>("LastName") : null,
-                                   YearLevel = change.Document.ContainsField("YearLevel") ? change.Document.GetValue<string>("YearLevel") : null,
-                                   Status = change.Document.ContainsField("Status") ? change.Document.GetValue<string>("Status") : null,
-                                   DateAdded = change.Document.ContainsField("DateAdded") ? change.Document.GetValue<DateTime?>("DateAdded") : null
-                               };
-                           }
-
-                           switch (change.ChangeType)
-                           {
-                               case DocumentChange.Type.Added:
-                                   Console.WriteLine($"New member added: {memberModel.StudentID}");
-                                   onMemberChanged?.Invoke(memberModel, "Added");
-                                   break;
-                               case DocumentChange.Type.Modified:
-                                   Console.WriteLine($"Member modified: {memberModel.StudentID}");
-                                   onMemberChanged?.Invoke(memberModel, "Modified");
-                                   break;
-                               case DocumentChange.Type.Removed:
-                                   Console.WriteLine($"Member removed: {memberModel.StudentID}");
-                                   onMemberChanged?.Invoke(memberModel, "Removed");
-                                   break;
-                           }
-                       }
-                   });
-               }*/
-        //RETRIEVE SPECIFIC DATA SPECIFIED BY THE USER
-
-       /* public async Task<List<MemberModel>> SearchMembersByAnyAttribute(string searchTerm)
-            {
-                var result = new List<MemberModel>();
-
-                try
-                {
-                    var queries = new List<Query>
-                {
-                    db.Collection("Member")
-                        .WhereEqualTo("isArchived", false)
-                        .WhereGreaterThanOrEqualTo("FirstName", searchTerm)
-                        .WhereLessThan("FirstName", searchTerm + "\uf8ff")
-                        .OrderBy("FirstName")
-                        .Select("StudentID", "FirstName", "LastName", "YearLevel", "Status", "DateAdded"),
-
-
-                    db.Collection("Member")
-                        .WhereEqualTo("isArchived", false)
-                        .WhereGreaterThanOrEqualTo("LastName", searchTerm)
-                        .WhereLessThan("LastName", searchTerm + "\uf8ff")
-                        .OrderBy("LastName")
-                        .Select("StudentID", "FirstName", "LastName", "YearLevel", "Status", "DateAdded"),
-
-                    db.Collection("Member")
-                        .WhereEqualTo("isArchived", false)
-                        .WhereGreaterThanOrEqualTo("StudentID", searchTerm)
-                        .WhereLessThan("StudentID", searchTerm + "\uf8ff")
-                        .OrderBy("StudentID")
-                        .Select("StudentID", "FirstName", "LastName", "YearLevel", "Status", "DateAdded")         
-                };
-
-                    var searchTasks = queries.Select(q => q.GetSnapshotAsync());
-                    var snapshots = await Task.WhenAll(searchTasks);
-                        
-                    var processedIds = new HashSet<string>();
-                    
-                    foreach (var snapshot in snapshots)
-                    {
-                        foreach (var document in snapshot.Documents)
-                        {
-                            if (processedIds.Add(document.Id))
-                            {
-                                var memberData = new MemberModel
-                                {
-                                    StudentID = document.GetValue<string>("StudentID"),
-                                    FirstName = document.GetValue<string>("FirstName"),
-                                    LastName = document.GetValue<string>("LastName"),
-                                    YearLevel = document.GetValue<string>("YearLevel"),
-                                };
-                            result.Add(memberData);
-                        }
-                        }
-                    }
-
-                    return result.OrderBy(m => m.FirstName).ToList();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error occurred while searching for members: " + ex);
-                    return result;
-                }
-            }*/
-
         //RETRIEVE DATA BASED ON THE FILTERED DATA (Year Level)
         public async Task<(List<MemberModel>, DocumentSnapshot)> SearchStudentDataByYearLevelAsync(int pageSize, DocumentSnapshot lastVisible, string yearLevel)
         {
@@ -487,7 +383,7 @@ namespace CSAMS_WebSys.Services
                 throw new Exception("An error occurred while searching for student data by YearLevel.", ex);
             }
         }
-        //RETRIEVE ALL MEMBERS THAT ARE ARCHIVED BY THE SYSTEM
+
         public async Task<List<MemberModel>> RetrieveArchivedMembersBySchoolYearAsync(MemberModel member)
         {
             try

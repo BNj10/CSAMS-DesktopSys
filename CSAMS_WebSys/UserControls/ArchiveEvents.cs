@@ -36,7 +36,7 @@ namespace CSAMS_WebSys.UserControls
         {
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("DateTime", typeof(string));
-            /*table.Columns.Add("Attendees", typeof(int));*/
+            table.Columns.Add("Attendees", typeof(int));
             table.Columns.Add("Progress", typeof(string));
 
             ArchivedEventsData_gunaDataGridView.DataSource = table;
@@ -51,11 +51,13 @@ namespace CSAMS_WebSys.UserControls
 
             ArchivedEventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
 
+            ArchivedEventsData_gunaDataGridView.RowTemplate.Height = 50;
+
             ArchivedEventsData_gunaDataGridView.Columns[0].Width = 500;
             ArchivedEventsData_gunaDataGridView.Columns[1].Width = 150;
             ArchivedEventsData_gunaDataGridView.Columns[2].Width = 80;
             ArchivedEventsData_gunaDataGridView.Columns[3].Width = 80;
-            /*ArchivedEventsData_gunaDataGridView.Columns[4].Width = 80;*/
+            ArchivedEventsData_gunaDataGridView.Columns[4].Width = 80;
 
             ArchivedEventsData_gunaDataGridView.AllowUserToResizeRows = false;
             ArchivedEventsData_gunaDataGridView.AllowUserToResizeColumns = false;
@@ -108,6 +110,5 @@ namespace CSAMS_WebSys.UserControls
         {
 
         }
-        
     }
 }

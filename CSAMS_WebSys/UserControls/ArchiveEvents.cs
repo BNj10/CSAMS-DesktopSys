@@ -23,8 +23,8 @@ namespace CSAMS_WebSys.UserControls
         private int pageSize = 10;
         private HashSet<string> DisplayedEvents = new HashSet<string>();
         private DataTable table = new DataTable();
-        DataGridViewButtonColumn dataGridViewButtonColumn_detials = new DataGridViewButtonColumn();
-
+        private DataGridViewButtonColumn dataGridViewButtonColumn_detials = new DataGridViewButtonColumn();
+        private DataView view;
         public ArchiveEvents()
         {
             InitializeComponent();
@@ -64,6 +64,7 @@ namespace CSAMS_WebSys.UserControls
             ArchivedEventsData_gunaDataGridView.AllowUserToAddRows = false;
 
             ArchivedEventsData_gunaDataGridView.ReadOnly = true;
+            
         }
 
         public async void AppendCurrentData()
@@ -101,7 +102,7 @@ namespace CSAMS_WebSys.UserControls
             {
                 if (Event != null && DisplayedEvents.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), Event.Status.ToString());
+                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
                 }
             }
         }

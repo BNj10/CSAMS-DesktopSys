@@ -255,10 +255,10 @@ namespace CSAMS_WebSys.Services
                 DocumentSnapshot lastDoc = querySnapshot.Documents.Count > 0 ? querySnapshot.Documents[querySnapshot.Documents.Count - 1] : null;
                 return (Events, lastDoc);
             }   
-                catch (Exception ex)
-                {
-                    throw new Exception("An error occurred while retrieving active members with pagination.", ex);
-                }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving active members with pagination.", ex);
+            }
         }
         public EventStatus GetCurrentStatus(EventModel eventData)
         {

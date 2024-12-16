@@ -59,7 +59,7 @@ namespace CSAMS_WebSys.Services.Dashboard
         {
             try
             {
-                CollectionReference colref = db.Collection("School Year");
+                CollectionReference colref = db.Collection("SchoolYear");
                 var snapshot = await colref.OrderBy("SchoolYearID").GetSnapshotAsync();
 
                 List<SchoolYearModel> schoolYearsList = snapshot.Documents.Select(doc => new SchoolYearModel

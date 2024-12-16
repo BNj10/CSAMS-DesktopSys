@@ -641,6 +641,11 @@ namespace CSAMS_WebSys.UserControls
 
         }
 
+        private void guna2PictureBox1_Click(object sender, EventArgs e)
+        {
+            AddSchoolYear addSchoolYear = new AddSchoolYear();
+            addSchoolYear.Show();
+        }
         private void ResetPagination()
         {
             try

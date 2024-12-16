@@ -26,7 +26,7 @@ namespace CSAMS_WebSys.Services
 
             try
             {
-                var schoolYearsSnapshot = await db.Collection("School Year").GetSnapshotAsync();
+                var schoolYearsSnapshot = await db.Collection("SchoolYear").GetSnapshotAsync();
 
                 if(schoolYearsSnapshot.Count == 0)
                 {
@@ -62,7 +62,7 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                Query query = db.Collection("School Year")
+                Query query = db.Collection("SchoolYear")
                             .Select("SchoolYearID", "StartDate", "EndDate", "isActive");
 
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
@@ -96,7 +96,7 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                var query = await db.Collection("School Year")
+                var query = await db.Collection("SchoolYear")
                                      .WhereEqualTo("isActive", true)
                                      .Limit(1)  
                                      .GetSnapshotAsync();
@@ -119,6 +119,40 @@ namespace CSAMS_WebSys.Services
             {
                 MessageBox.Show("Error fetching the active school year: " + ex.Message);
                 return null;
+            }
+        }
+
+        public async Task<bool> AddSchoolYearAsync(SchoolYearModel schoolYear)
+        {
+            try
+            {
+                var existingSchoolYearQuery = await db.Collection("SchoolYear")
+                                                      .WhereEqualTo("SchoolYearID", schoolYear.SchoolYearID)
+                                                      .GetSnapshotAsync();
+
+                if (existingSchoolYearQuery.Documents.Count > 0)
+                {
+                    MessageBox.Show("A school year with the same ID already exists.");
+                    return false;
+                }
+
+                var schoolYearData = new Dictionary<string, object>
+                {
+                    { "SchoolYearID", schoolYear.SchoolYearID},
+                    { "StartDate", schoolYear.StartDate},
+                    { "EndDate", schoolYear.EndDate},
+                    { "isActive", schoolYear.isActive}
+                };
+
+                var docRef = db.Collection("SchoolYear").Document();
+                await docRef.SetAsync(schoolYearData);
+                MessageBox.Show("School Year added successfully.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error occurred while adding School Year: " + ex.Message);
+                return false;
             }
         }
     }

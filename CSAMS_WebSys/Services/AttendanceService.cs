@@ -17,11 +17,11 @@ namespace CSAMS_WebSys.Services
 {
     public class AttendanceService
     {
-        FirestoreDb db;
-        MemberService memberservice;
-        SchoolYearServices schoolYearServices;
-        SchoolYearModel SYmodel;
-        DocumentSnapshot firstDoc;
+        private FirestoreDb db;
+        private MemberService memberservice;
+        private SchoolYearServices schoolYearServices;
+        private SchoolYearModel SYmodel;
+        private DocumentSnapshot firstDoc;
         public AttendanceService()
         {
             db = FirebaseConnectionService.GetConnection();

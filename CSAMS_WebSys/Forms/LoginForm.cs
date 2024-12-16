@@ -31,87 +31,76 @@ namespace CSAMS_WebSys
             {
                 bool isConnected = await con.CheckNetworkAvailability();
 
-                if (isConnected)
+                guna2WinProgressIndicator1.Show();
+                guna2WinProgressIndicator1.Start();
+                string email = Email.Text;
+                string password = Password.Text;
+                string ErrorMessage = "";
+
+                if (string.IsNullOrEmpty(email))
                 {
-                    guna2WinProgressIndicator1.Show();
-                    guna2WinProgressIndicator1.Start();
-                    string email = Email.Text;
-                    string password = Password.Text;
-                    string ErrorMessage = "";
-
-                    if (string.IsNullOrEmpty(email))
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
+                    ErrorMessage += "Email is required.";
+                    Email.Focus();
+                    guna2HtmlLabel1.Show();
+                    if (string.IsNullOrEmpty(password))
                     {
-                        guna2WinProgressIndicator1.Stop();
-                        guna2WinProgressIndicator1.Hide();
-                        ErrorMessage += "Email is required.";
-                        Email.Focus();
-                        guna2HtmlLabel1.Show();
-                        if (string.IsNullOrEmpty(password))
-                        {
-                            guna2HtmlLabel2.Show();
-                            ErrorMessage = "Please enter both email and password.";
-                            MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                            return;
-                        }
+                        guna2HtmlLabel2.Show();
+                        ErrorMessage = "Please enter both email and password.";
                         MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                         return;
                     }
+                    MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-                    if (!IsValidEmail(email))
-                    {
-                        guna2WinProgressIndicator1.Stop();
-                        guna2WinProgressIndicator1.Hide();
-                        MessageBox.Show("Invalid email format.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        Email.Focus();
-                        return;
-                    }
+                if (!IsValidEmail(email))
+                {
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
+                    MessageBox.Show("Invalid email format.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Email.Focus();
+                    return;
+                }
 
-                    if (password.Length < 8)
-                    {
-                        guna2WinProgressIndicator1.Stop();
-                        guna2WinProgressIndicator1.Hide();
-                        MessageBox.Show("Password must be at least 8 characters long.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        Password.Focus();
-                        return;
-                    }
+                if (password.Length < 8)
+                {
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
+                    MessageBox.Show("Password must be at least 8 characters long.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Password.Focus();
+                    return;
+                }
 
-                    string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-                    if (File.Exists(envPath))
-                    {
-                        DotNetEnv.Env.Load(envPath);
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException("Environment file (.env) not found.");
-                    }
-                    string credentialsPath = Environment.GetEnvironmentVariable("FIREBASE_API_KEY");
-
-                    var firebaseAuthService = new FirebaseAuthService(credentialsPath);
-
-                    var authResponse = await firebaseAuthService.LoginAsync(email, password);
-
-                    if(authResponse.IdToken == null)
-                    {
-                        guna2WinProgressIndicator1.Stop();
-                        guna2WinProgressIndicator1.Hide();
-                        throw new Exception();
-                    }
-
-                    MainForm mainform = new MainForm(authResponse);
-                    mainform.Show();
-                    Visible = false;
-
+                string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+                if (File.Exists(envPath))
+                {
+                    DotNetEnv.Env.Load(envPath);
                 }
                 else
                 {
-                    MessageBox.Show("Unable to login. No internet connection detected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw new FileNotFoundException("Environment file (.env) not found.");
                 }
+                string credentialsPath = Environment.GetEnvironmentVariable("FIREBASE_API_KEY");
+
+                var firebaseAuthService = new FirebaseAuthService(credentialsPath);
+
+                var authResponse = await firebaseAuthService.LoginAsync(email, password);
+
+                MainForm mainform = new MainForm(authResponse);
+                mainform.Show();
+                Visible = false;
             }
-            catch
+            catch(LoginException ex)
             {
-                MessageBox.Show($"Wrong email or password. Please try again.", "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Network Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {

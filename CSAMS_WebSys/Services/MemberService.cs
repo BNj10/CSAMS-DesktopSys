@@ -40,7 +40,6 @@ namespace CSAMS_WebSys.Services
             }
         }
 
-        //ADD STUDENT DATA WITHOUT FINGERPRINT #TESTED 
         public async Task SaveMemberToFirestore(MemberModel member)
         {
             try
@@ -167,20 +166,25 @@ namespace CSAMS_WebSys.Services
             return uniqueMembers;
         }
 
-        public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveActiveMembersAsync(int pageSize, DocumentSnapshot lastVisible)
+        public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveMembersSYAsync(int pageSize, DocumentSnapshot lastVisible, string SchoolYearID)
         {
             try
             {
                 Query query = db.Collection("Member")
                                 .WhereEqualTo("isArchived", false)
                                 .Limit(pageSize)
-                                .Select("StudentID", "FirstName", "LastName", "Status", "SchoolYearID", "YearLevel", "BiometricsAdded", "DateAdded");
+                                .Select("StudentID", "FirstName", "LastName", "Status", "YearLevel", "BiometricsAdded", "DateAdded");
 
 
                 if (lastVisible != null)
                 {
                     Console.WriteLine($"Last Visible Document ID: {lastVisible.Id}");
                     query = query.StartAfter(lastVisible);
+                }
+
+                if(!string.IsNullOrEmpty(SchoolYearID))
+                {
+                    query = query.WhereEqualTo("SchoolYearID", SchoolYearID);
                 }
 
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
@@ -202,7 +206,6 @@ namespace CSAMS_WebSys.Services
                             StudentID = document.ContainsField("StudentID") ? document.GetValue<string>("StudentID") : null,
                             FirstName = document.ContainsField("FirstName") ? document.GetValue<string>("FirstName") : null,
                             LastName = document.ContainsField("LastName") ? document.GetValue<string>("LastName") : null,
-                            SchoolYearID = document.ContainsField("SchoolYearID") ? document.GetValue<string>("SchoolYearID") : null,
                             YearLevel = document.ContainsField("YearLevel") ? document.GetValue<string>("YearLevel") : null,
                             Status = document.ContainsField("Status") ? document.GetValue<string>("Status") : null,
                             BiometricsAdded = document.ContainsField("BiometricsAdded") ? document.GetValue<bool>("BiometricsAdded") : false,
@@ -220,7 +223,60 @@ namespace CSAMS_WebSys.Services
             }
         }
 
-            public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveAllActiveMembersWithFingerprint(int pageSize, DocumentSnapshot lastVisible)
+        public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveActiveMembersAsync(int pageSize, DocumentSnapshot lastVisible)
+        {
+            try
+            {
+                Query query = db.Collection("Member")
+                                .WhereEqualTo("isArchived", false)
+                                .Limit(pageSize)
+                                .Select("StudentID", "FirstName", "LastName", "Status", "YearLevel", "BiometricsAdded", "DateAdded");
+
+
+                if (lastVisible != null)
+                {
+                    Console.WriteLine($"Last Visible Document ID: {lastVisible.Id}");
+                    query = query.StartAfter(lastVisible);
+                }
+
+
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+                if (querySnapshot.Documents.Count == 0)
+                {
+                    Console.WriteLine("No more data to fetch");
+                    return (new List<MemberModel>(), null);
+                }
+
+                List<MemberModel> members = new List<MemberModel>();
+
+                foreach (DocumentSnapshot document in querySnapshot.Documents)
+                {
+                    if (document.Exists)
+                    {
+                        var memberModel = new MemberModel
+                        {
+                            StudentID = document.ContainsField("StudentID") ? document.GetValue<string>("StudentID") : null,
+                            FirstName = document.ContainsField("FirstName") ? document.GetValue<string>("FirstName") : null,
+                            LastName = document.ContainsField("LastName") ? document.GetValue<string>("LastName") : null,
+                            YearLevel = document.ContainsField("YearLevel") ? document.GetValue<string>("YearLevel") : null,
+                            Status = document.ContainsField("Status") ? document.GetValue<string>("Status") : null,
+                            BiometricsAdded = document.ContainsField("BiometricsAdded") ? document.GetValue<bool>("BiometricsAdded") : false,
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                        };
+                        members.Add(memberModel);
+                    }
+                }
+                DocumentSnapshot lastDoc = querySnapshot.Documents.Count > 0 ? querySnapshot.Documents[querySnapshot.Documents.Count - 1] : null;
+                return (members, lastDoc);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving active members with pagination.", ex);
+            }
+        }
+
+        public async Task<(List<MemberModel>, DocumentSnapshot)> RetrieveAllActiveMembersWithFingerprint(int pageSize, DocumentSnapshot lastVisible)
             {
             int size = pageSize;
                 try
@@ -332,7 +388,6 @@ namespace CSAMS_WebSys.Services
             }
         }
 
-        //RETRIEVE DATA BASED ON THE FILTERED DATA (Year Level)
         public async Task<(List<MemberModel>, DocumentSnapshot)> SearchStudentDataByYearLevelAsync(int pageSize, DocumentSnapshot lastVisible, string yearLevel)
         {
             try

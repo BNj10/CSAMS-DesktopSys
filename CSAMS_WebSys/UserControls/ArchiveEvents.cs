@@ -31,6 +31,7 @@ namespace CSAMS_WebSys.UserControls
             InitializeTable();
             eventservice = new EventService();
             AppendCurrentData();
+            view = new DataView();
         }
         private void InitializeTable()
         {
@@ -64,6 +65,7 @@ namespace CSAMS_WebSys.UserControls
             ArchivedEventsData_gunaDataGridView.AllowUserToAddRows = false;
 
             ArchivedEventsData_gunaDataGridView.ReadOnly = true;
+            view = table.DefaultView;
             
         }
 
@@ -91,9 +93,51 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        private void AddAttendees(EventModel Event)
+        private void DispAttendees(EventModel Event)
         {
 
+        }
+
+        private void SearchedValues(object sender, EventArgs e)
+        {
+            string text = FormatTextToTitleCase(SearchArchivedEvents_gunaTextBox.Text);
+            try
+            {
+                view = table.DefaultView;
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    view.RowFilter = string.Empty;
+                    return;
+                }
+
+                view.RowFilter = $"[Name] LIKE '%{text}%' OR [DateTime] LIKE '%{text}%' OR [Progress] LIKE '%{text}%'";
+
+                ArchivedEventsData_gunaDataGridView.DataSource = view;
+
+                if (view.Count == 0)
+                {
+                    ArchivedEventsData_gunaDataGridView.DataSource = table;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error searching for data: {ex.Message}", "Searching Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private string FormatTextToTitleCase(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            var words = input.Split(' ');
+
+            var formattedWords = words.Select(word =>
+                char.ToUpper(word[0]) + word.Substring(1).ToLower());
+
+            return string.Join(" ", formattedWords);
         }
 
         private void AddEvents(List<EventModel> events)
@@ -107,9 +151,35 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        private void DynamicSearch()
+        private void onType(object sender, EventArgs e)
         {
+            timer1.Stop();
+            timer1.Start();
+        }
 
+        private void onTextEnter(object sender, EventArgs e)
+        {
+            timer1.Interval = 300;
+            timer1.Tick += SearchedValues;
+        }
+
+        private void onLeave(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Tick -= SearchedValues;
+            DisposeTimer(true);
+        }
+
+        protected void DisposeTimer(bool disposing)
+        {
+            if (disposing)
+            {
+                if (timer1 != null)
+                {
+                    timer1.Dispose();
+                }
+            }
+            disposing = false;
         }
     }
 }

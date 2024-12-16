@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSAMS_WebSys.Services;
+using Guna.UI2.WinForms;
+using Newtonsoft.Json.Linq;
 
 namespace YourNamespace
 {
@@ -37,19 +39,39 @@ namespace YourNamespace
 
                     HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
 
-                string responseContent = await response.Content.ReadAsStringAsync();
-                var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
 
-                    return firebaseAuthResponse;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        var errorDetails = JsonConvert.DeserializeObject<JObject>(errorContent);
+                        string errorMessage = errorDetails?["error"]?["message"]?.ToString();
+
+                        if (errorMessage == "INVALID_LOGIN_CREDENTIALS")
+                        {
+                            throw new Exception("The email or password you entered is incorrect. Please try again.");
+                        }
+                        else
+                        {
+                            throw new LoginException("A network error occurred while attempting to log in. Please check your connection.");
+                        }
+                    }
                 }
             }
-            catch (Exception ex)
+            catch (HttpRequestException)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                throw new LoginException("A network error occurred while attempting to log in. Please check your connection.");
             }
-            
         }
+    }
+
+    public class LoginException : Exception
+    {
+        public LoginException(string message, Exception innerException = null) : base(message, innerException) { }
     }
 
     public class FirebaseAuthErrorResponse

@@ -31,17 +31,22 @@ namespace CSAMS_WebSys.UserControls
         private string BiometricsAdded;
         private int pageSize = 10;
         private bool buttonClicked = false;
+        private string selectedSchoolYearID = "";
         private MemberService memberservice;
         private HashSet<string> DisplayedMember = new HashSet<string>();
         private List<MemberModel> originalList = new List<MemberModel>();
+        private SchoolYearModel SY;
+        private string activeSY;
         private List<MemberModel> searchedmembers;
         private DataTable table = new DataTable();
         DataView view;
+        private bool ChangedActive = false;
         public UserControl_Members()
         {
             InitializeComponent();
             searchedmembers = new List<MemberModel>();
             memberservice = new MemberService();
+            SY = new SchoolYearModel();
             SearchMembers_gunaTextBox.Enter += EnterText;
             SearchMembers_gunaTextBox.Leave += LeaveText;
             InitializeTable();
@@ -102,6 +107,7 @@ namespace CSAMS_WebSys.UserControls
 
             MembersData_gunaDataGridView.ReadOnly = true;
             view = table.DefaultView;
+            InitComboSY();
         }
 
         private void AddMember_gunaAdvenceButton_Click(object sender, EventArgs e)
@@ -137,7 +143,6 @@ namespace CSAMS_WebSys.UserControls
             {
                 BiometricsAdded = "Not Added";
             }
-            Console.WriteLine(member.BiometricsAdded);
         }
 
         private void CheckUpdates(MemberModel member)
@@ -148,7 +153,7 @@ namespace CSAMS_WebSys.UserControls
                 table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, BiometricsAdded, member.Status, member.DateAdded?.ToString("MMMM dd, yyyy"));
             }
         }
-        private void AddMembers(List<MemberModel> members)
+        private void AddMembers(List<MemberModel> members, DataTable table)
         {
             foreach(var member in members)
             {
@@ -178,16 +183,26 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        public async void AppendCurrentData()
+        public async void AppendCurrentData(DataTable table)
         {
             try
             {
+                if (selectedSchoolYearID == "")
+                    Console.WriteLine("ID is null");
+                else
+                    Console.WriteLine("ID is not null");
+
+                Console.WriteLine(selectedSchoolYearID);
+
                 List<MemberModel> members = new List<MemberModel>();
-                (members, _firstDocumentSnapshot) = await memberservice.RetrieveActiveMembersAsync(pageSize, _lastDocumentSnapshot);
+                (members, _firstDocumentSnapshot) = await memberservice.RetrieveMembersSYAsync(pageSize, _lastDocumentSnapshot, selectedSchoolYearID);
+
+                Console.WriteLine($"Fetched {members.Count} members");
+
 
                 if (members.Count > 0)
                 {
-                    AddMembers(members);
+                    AddMembers(members, table);
                     _lastDocumentSnapshot = _firstDocumentSnapshot;
                 }
                 else
@@ -398,11 +413,7 @@ namespace CSAMS_WebSys.UserControls
                 if (verticalScrollBar.Value + verticalScrollBar.LargeChange >= verticalScrollBar.Maximum)
                 {
                     Console.WriteLine("Scrolled to the bottom. Loading more data...");
-                    AppendCurrentData();
-                }
-                else
-                {
-                    Console.WriteLine("Scrolling");
+                    AppendCurrentData(table);
                 }
             }
             catch (Exception ex)
@@ -446,7 +457,7 @@ namespace CSAMS_WebSys.UserControls
         private void PageLoadMembers(object sender, EventArgs e)
         {
             MembersData_gunaDataGridView.Scroll -= HandlePagination;
-            AppendCurrentData(); 
+            AppendCurrentData(table); 
             MembersData_gunaDataGridView.Scroll += HandlePagination;
         }
 
@@ -462,7 +473,7 @@ namespace CSAMS_WebSys.UserControls
 
                 if(view.Count == 0)
                 {
-                    AppendCurrentData();
+                    AppendCurrentData(table);
                     return;
                 }
             }
@@ -530,6 +541,7 @@ namespace CSAMS_WebSys.UserControls
                         workbook = new XLWorkbook(filePath);
  
                     });
+
                     if (workbook != null)
                     {
                         var worksheet = workbook.Worksheet(1);
@@ -569,7 +581,7 @@ namespace CSAMS_WebSys.UserControls
                             switch (result)
                             {
                                 case DialogResult.OK:
-                                    AddMembers(members);
+                                    AddMembers(members, table);
 
                                     var filteredMembers = members
                                                         .Where(member => !string.IsNullOrEmpty(member.StudentID))
@@ -594,22 +606,29 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        private async void PopulateSchoolYearsComboBox()
+        private async void InitComboSY()
+        {
+           await PopulateSchoolYearsComboBox();
+        }
+
+        private async Task PopulateSchoolYearsComboBox()
         {
             UpdatesService updatesService = new UpdatesService();
             List<SchoolYearModel> SchoolYears = await updatesService.GetAllSchoolYearID();
 
+            if (SchoolYears == null)
+                return;
+
+
             try
             {
-                guna2ComboBox1.DataSource = SchoolYears;
-
-                guna2ComboBox1.DisplayMember = "SchoolYearID";
-                guna2ComboBox1.ValueMember = "SchoolYearID";
+                List<string> schoolYearIDs = SchoolYears.Select(sy => sy.SchoolYearID).ToList();
+                gunaComboBox1.DataSource = schoolYearIDs;
                 var activeYear = SchoolYears.FirstOrDefault(x => x.isActive);
-
+                activeSY = activeYear.SchoolYearID;
                 if (activeYear != null)
                 {
-                    guna2ComboBox1.SelectedItem = activeYear;
+                    gunaComboBox1.SelectedItem = activeYear.SchoolYearID;
                 }
             }
             catch (Exception ex)
@@ -622,5 +641,43 @@ namespace CSAMS_WebSys.UserControls
 
         }
 
+        private void ResetPagination()
+        {
+            try
+            {
+                _lastDocumentSnapshot = null;
+                table.Rows.Clear();
+                DisplayedMember.Clear(); 
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error resetting pagination: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void gunaComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedSchoolYearID = gunaComboBox1.Text;
+            if(selectedSchoolYearID != activeSY)
+            {
+                ResetPagination();
+                AppendCurrentData(table);
+                MembersData_gunaDataGridView.DataSource = table;
+                ChangedActive = true;
+            }
+            else if(ChangedActive)
+            {
+                ResetPagination();
+                AppendCurrentData(table);
+                MembersData_gunaDataGridView.DataSource = table;
+                ChangedActive = false;
+            }
+        }
+
+        private void guna2PictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

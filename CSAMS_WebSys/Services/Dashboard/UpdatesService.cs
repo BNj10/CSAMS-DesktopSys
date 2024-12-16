@@ -155,11 +155,9 @@ namespace CSAMS_WebSys.Services.Dashboard
 
                 if (ongoingSnapshot.Count > 0)
                 {
-                    Console.WriteLine("Found ongoing event");
                     return CreateEventModel(ongoingSnapshot.Documents[0], philippineTime);
                 }
 
-                Console.WriteLine("No ongoing event found, searching for recently ended event");
                 Query recentlyEndedQuery = eventRef
                     .WhereEqualTo("isArchived", false)
                     .WhereLessThan("DateEnd", utcNow)
@@ -174,7 +172,6 @@ namespace CSAMS_WebSys.Services.Dashboard
                     return null;
                 }
 
-                Console.WriteLine("Found recently ended event");
                 return CreateEventModel(recentlyEndedSnapshot.Documents[0], philippineTime);
             }
             catch (Exception ex)

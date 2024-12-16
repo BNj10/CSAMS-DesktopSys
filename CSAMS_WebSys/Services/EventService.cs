@@ -110,8 +110,8 @@ namespace CSAMS_WebSys.Services
                 {
                     AttendanceID = attendanceDoc.Id,
                 };
-                var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
 
+                var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
                 try
                 {
                     var presentSubCollection = db.Collection(presentSubCollectionPath);
@@ -246,7 +246,8 @@ namespace CSAMS_WebSys.Services
                             EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
                             DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
                             DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
-                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                         };
                         eventModel.Status = GetCurrentStatus(eventModel);
                         Events.Add(eventModel);

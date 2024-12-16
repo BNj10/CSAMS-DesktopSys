@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ArchiveEvents));
             this.ArchivedEvents_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.SearchArchivedEvents_gunaTextBox = new Guna.UI.WinForms.GunaTextBox();
@@ -39,6 +40,7 @@
             this.FilterArchivedEvents_gunaComboBox = new Guna.UI.WinForms.GunaComboBox();
             this.ArchivedEventsData_gunaDataGridView = new Guna.UI.WinForms.GunaDataGridView();
             this.tabelLabels_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ArchivedEventsData_gunaDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,6 +69,9 @@
             this.SearchArchivedEvents_gunaTextBox.Radius = 8;
             this.SearchArchivedEvents_gunaTextBox.Size = new System.Drawing.Size(320, 40);
             this.SearchArchivedEvents_gunaTextBox.TabIndex = 4;
+            this.SearchArchivedEvents_gunaTextBox.TextChanged += new System.EventHandler(this.onType);
+            this.SearchArchivedEvents_gunaTextBox.Enter += new System.EventHandler(this.onTextEnter);
+            this.SearchArchivedEvents_gunaTextBox.Leave += new System.EventHandler(this.onLeave);
             // 
             // SearchArchivedEvents_gunaAdvenceButton
             // 
@@ -126,31 +131,31 @@
             // 
             // ArchivedEventsData_gunaDataGridView
             // 
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
-            this.ArchivedEventsData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
+            this.ArchivedEventsData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle16;
             this.ArchivedEventsData_gunaDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.ArchivedEventsData_gunaDataGridView.BackgroundColor = System.Drawing.Color.Gainsboro;
             this.ArchivedEventsData_gunaDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ArchivedEventsData_gunaDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.ArchivedEventsData_gunaDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ArchivedEventsData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle17.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ArchivedEventsData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
             this.ArchivedEventsData_gunaDataGridView.ColumnHeadersHeight = 4;
             this.ArchivedEventsData_gunaDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ArchivedEventsData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle18.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ArchivedEventsData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle18;
             this.ArchivedEventsData_gunaDataGridView.EnableHeadersVisualStyles = false;
             this.ArchivedEventsData_gunaDataGridView.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(201)))), ((int)(((byte)(231)))));
             this.ArchivedEventsData_gunaDataGridView.Location = new System.Drawing.Point(52, 229);
@@ -225,5 +230,6 @@
         private Guna.UI.WinForms.GunaComboBox FilterArchivedEvents_gunaComboBox;
         private Guna.UI.WinForms.GunaDataGridView ArchivedEventsData_gunaDataGridView;
         private Guna.UI.WinForms.GunaLabel tabelLabels_gunaLabel;
+        private System.Windows.Forms.Timer timer1;
     }
 }

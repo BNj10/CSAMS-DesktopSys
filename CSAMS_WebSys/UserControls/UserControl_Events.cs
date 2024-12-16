@@ -45,7 +45,7 @@ namespace CSAMS_WebSys.UserControls
         {
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("DateTime", typeof(string));
-/*            table.Columns.Add("Attendees", typeof(int));*/
+            table.Columns.Add("Attendees", typeof(int));
             table.Columns.Add("Progress", typeof(string));
 
             EventsData_gunaDataGridView.DataSource = table;
@@ -130,7 +130,7 @@ namespace CSAMS_WebSys.UserControls
             Event.Status = EventService.GetCurrentStatus(Event);
             if (Event != null && displayedEvents.Add(Event.EventName))
             {
-                table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), Event.Status.ToString());
+                table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1,  Event.Status.ToString());
             }
         }
 
@@ -141,7 +141,7 @@ namespace CSAMS_WebSys.UserControls
                 Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
                 if (Event != null && displayedEvents.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), Event.Status.ToString());
+                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
                 }
             }
         }
@@ -303,7 +303,6 @@ namespace CSAMS_WebSys.UserControls
                 Console.WriteLine($"Error in AppendCurrentData(): {ex.Message}");
             }
         }
-
 
         private string FormatTextToTitleCase(string input)
         {

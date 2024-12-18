@@ -47,11 +47,11 @@
             // 
             this.absencesAtendeesText_gunaLabel.AutoSize = true;
             this.absencesAtendeesText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.absencesAtendeesText_gunaLabel.Location = new System.Drawing.Point(284, 47);
+            this.absencesAtendeesText_gunaLabel.Location = new System.Drawing.Point(207, 47);
             this.absencesAtendeesText_gunaLabel.Name = "absencesAtendeesText_gunaLabel";
-            this.absencesAtendeesText_gunaLabel.Size = new System.Drawing.Size(386, 54);
+            this.absencesAtendeesText_gunaLabel.Size = new System.Drawing.Size(402, 54);
             this.absencesAtendeesText_gunaLabel.TabIndex = 10;
-            this.absencesAtendeesText_gunaLabel.Text = "Absences Atendees";
+            this.absencesAtendeesText_gunaLabel.Text = "Absences Attendees";
             // 
             // SearchMembers_gunaAdvenceButton
             // 

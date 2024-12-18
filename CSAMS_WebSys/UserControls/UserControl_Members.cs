@@ -37,6 +37,7 @@ namespace CSAMS_WebSys.UserControls
         private HashSet<string> clickedItems = new HashSet<string>();
         private List<MemberModel> originalList = new List<MemberModel>();
         private SchoolYearModel SY;
+        private BindingList<string> schoolYearDates;
         private string activeSY;
         private List<MemberModel> searchedmembers;
         private DataTable table = new DataTable();
@@ -615,9 +616,9 @@ namespace CSAMS_WebSys.UserControls
 
             try
             {
-                List<string> schoolYearDates = SchoolYears
+                schoolYearDates = new BindingList <string> (SchoolYears
                     .Select(sy => sy.SchoolYearID) 
-                    .ToList();
+                    .ToList());
 
                 gunaComboBox1.DataSource = schoolYearDates;
             }
@@ -634,9 +635,14 @@ namespace CSAMS_WebSys.UserControls
         private void guna2PictureBox1_Click(object sender, EventArgs e)
         {
             AddSchoolYear addSchoolYear = new AddSchoolYear();
+            addSchoolYear.AddedSY += AddSchoolYear;
             addSchoolYear.Show();
         }
 
+        private void AddSchoolYear(string SchoolYear)
+        {
+            schoolYearDates.Add(SchoolYear);
+        }
         private void ResetPagination()
         {
             try

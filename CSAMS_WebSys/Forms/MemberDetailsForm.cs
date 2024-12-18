@@ -1,4 +1,5 @@
 ﻿using CSAMS_WebSys.Models;
+using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,10 @@ namespace CSAMS_WebSys.Forms
     {
         private MemberModel member;
         private EventService eventservice;
+        private AttendanceService attendanceService;
         private List<EventModel> eventObj;
+        private AttendanceModel attendance;
+        private int numAttendees = 0;
         private HashSet<string> DisplayedMember;
         private DataTable table;
         public MemberDetailsForm(MemberModel member)
@@ -25,6 +29,7 @@ namespace CSAMS_WebSys.Forms
             this.member = member;
             eventservice = new EventService();
             eventObj = new List<EventModel>();
+            attendanceService = new AttendanceService();
             table = new DataTable();
             DisplayedMember = new HashSet<string>();
             InitializeTables();
@@ -95,7 +100,6 @@ namespace CSAMS_WebSys.Forms
                 {
                     Console.WriteLine("Event Name id: " + eve.EventName);
                 }
-
                 AddEvents(eventObj);
             }
             catch(Exception ex)
@@ -110,15 +114,23 @@ namespace CSAMS_WebSys.Forms
             
         }
 
-        private void AddEvents(List<EventModel> Events)
+        private async void AddEvents(List<EventModel> Events)
         {
             foreach (var Event in Events)
             {
                 if (member != null && DisplayedMember.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
+                    numAttendees = await GetAttendees(Event);
+                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), numAttendees, Event.Status.ToString());
                 }
             }
+        }
+
+        private async Task<int> GetAttendees(EventModel Event)
+        {
+            attendance = await attendanceService.GetAttendanceForAnEvent(Event);
+            Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+            return attendance.TotalAttendees;
         }
     }
 }

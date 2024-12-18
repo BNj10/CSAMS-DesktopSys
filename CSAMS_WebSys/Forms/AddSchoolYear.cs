@@ -15,6 +15,7 @@ namespace CSAMS_WebSys.Forms
     public partial class AddSchoolYear : Form
     {
         private string schoolYearID;
+        public event Action<string> AddedSY;
 
         public AddSchoolYear()
         {
@@ -77,6 +78,8 @@ namespace CSAMS_WebSys.Forms
 
                 SchoolYearServices schoolYearService = new SchoolYearServices();
                 var result = schoolYearService.AddSchoolYearAsync(schoolYear);
+                AddedSY?.Invoke(schoolYear.SchoolYearID);
+                this.Close();
             }
             catch
             {

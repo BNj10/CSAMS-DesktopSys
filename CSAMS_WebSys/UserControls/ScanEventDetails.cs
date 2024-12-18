@@ -179,17 +179,11 @@ namespace CSAMS_WebSys.UserControls
                 DateTime time = GetCurrentTime();
             try
             {
-                if(DisplayedMember.Contains(member.StudentID))
-                {
-                    MessageBox.Show("Member already scanned", "Notify", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
                 if (member != null && DisplayedMember.Add(member.StudentID))
                 {
                     if (attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue &&
                         IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value))
                     {
-
                         await attendanceservice.StoreMemberPresentTimeIn(member, attendance, time);
                         table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, time.ToLocalTime().ToString("MMMM dd yyyy"));
                         Count++;
@@ -298,32 +292,44 @@ namespace CSAMS_WebSys.UserControls
         private void scanBiometrics_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
             DateTime time = DateTime.Now;
-
-            if ( this.Event.Status.ToString() == "Pending")
+            try
             {
-                MessageBox.Show("Event is still pending. Please wait for the event to start.", "Event is still pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                if (this.Event.Status.ToString() == "Pending")
+                {
+                    MessageBox.Show("Event is still pending. Please wait for the event to start.", "Event is still pending", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (this.Event.Status.ToString() == "Archived")
+                {
+                    MessageBox.Show("This event is archived", "Event archived", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (this.Event.Status.ToString() == "Done")
+                {
+                    MessageBox.Show("Event has already ended. Click for the event that is ongoing", "Event done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (!IsWithinTimeRange(time, attendance.TimeOutStart.Value, attendance.TimeOutEnd.Value) && attendance.TimeOutEnd.Value < time)
+                {
+                    MessageBox.Show($"Attendance Checking is unavailable right now. Time out has ended.", "Time out ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (!IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value) && time < attendance.TimeOutStart.Value)
+                {
+                    MessageBox.Show($"Attendance Checking is unavailable right now. Time out will be available exactly at {attendance.TimeOutStart.Value.ToString("hh:mm tt")} ", "Time in ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (!IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value) && attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue && time < attendance.TimeInStart.Value)
+                {
+                    MessageBox.Show($"Attendance Checking is unavailable right now. Time in will be available exactly at {attendance.TimeInStart.Value.ToString("hh:mm tt")} ", "Time in not yet started", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
             }
-            else if(this.Event.Status.ToString() == "Archived")
+            catch (Exception ex)
             {
-                MessageBox.Show("This event is archived", "Event archived", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                Console.WriteLine(ex.Message);
             }
-            else if (this.Event.Status.ToString() == "Done")
-            {
-                MessageBox.Show("Event has already ended. Click for the event that is ongoing", "Event done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            else if(!IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value) && !IsWithinTimeRange(time, attendance.TimeOutStart.Value, attendance.TimeOutEnd.Value))
-            {
-                MessageBox.Show($"Attendance Checking is unavailable right now. Time out will be available exactly at {attendance.TimeOutStart.Value.ToString("hh:mm tt")} ", "Time in ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            else if (!IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value) && attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue)
-            {
-                MessageBox.Show($"Attendance Checking is unavailable right now. Time in will be available exactly at {attendance.TimeInStart.Value.ToString("hh:mm tt")} ", "Time in not yet started", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            
 
             scanBiometrics_gunaAdvenceButton.Enabled = false;
             verifier.StartCapture();

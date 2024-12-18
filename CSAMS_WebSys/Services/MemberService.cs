@@ -71,9 +71,6 @@ namespace CSAMS_WebSys.Services
             }
         }
 
-        //ADD FINGERPRINT DATA ONLY 
-
-        //ADD BOTH STUDENT AND FINGERPRINT DATA SILMUTANEOUSLY
         public async Task AddStudentWithFingerprint(MemberModel member)
         {
             try

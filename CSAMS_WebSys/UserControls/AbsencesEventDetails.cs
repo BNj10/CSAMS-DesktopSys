@@ -19,7 +19,7 @@ namespace CSAMS_WebSys.UserControls
     {
         private DataTable table;
         private DataView view;
-        private int pageSize = 30;
+        private int pageSize = 50;
         private int Count;
         private AttendanceService attendanceservice;
         private AttendanceModel attendance;
@@ -91,25 +91,10 @@ namespace CSAMS_WebSys.UserControls
             this.attendance = objAttendance;
             UpdateEventAbsences();
         }
-/*        private void UpdateAttendees()
-        {
-            if (noOfAbsences_gunaLabel.InvokeRequired)
-            {
-                noOfAbsences_gunaLabel.Invoke(new Action(() =>
-                {
-                    noOfAbsences_gunaLabel.Text = Count.ToString();
-                }));
-            }
-            else
-            {
-                noOfAbsences_gunaLabel.Text = Count.ToString();
-            }
-        }*/
 
         private async void GetNumberOfAttendees()
         {
             Count = await attendanceservice.GetTotalAttendees(attendance);
-    /*        UpdateAttendees();*/
         }
 
         private void AddMembers(List<MemberModel> members)

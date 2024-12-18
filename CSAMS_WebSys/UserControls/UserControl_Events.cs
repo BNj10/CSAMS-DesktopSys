@@ -4,6 +4,7 @@ using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.Admin.V1;
+using Google.Protobuf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -53,18 +55,13 @@ namespace CSAMS_WebSys.UserControls
             DataGridViewButtonColumn dataGridViewButtonColumn_edit = new DataGridViewButtonColumn();
             DataGridViewButtonColumn dataGridViewButtonColumn_detials = new DataGridViewButtonColumn();
             DataGridViewButtonColumn dataGridViewButtonColumn_delete = new DataGridViewButtonColumn();
-            DataGridViewButtonColumn x = new DataGridViewButtonColumn();
-            x.Name = "x";
-            x.HeaderText = "";
+            
             dataGridViewButtonColumn_detials.Name = "Detail_button";
             dataGridViewButtonColumn_detials.HeaderText = "";
             dataGridViewButtonColumn_delete.Name = "Delete_button";
             dataGridViewButtonColumn_delete.HeaderText = "";
             dataGridViewButtonColumn_edit.Name = "Edit_button";
-            dataGridViewButtonColumn_edit.HeaderText = "Action";
-
-            x.FlatStyle = FlatStyle.Popup;
-            x.Text = " Scan";
+            dataGridViewButtonColumn_edit.HeaderText = "Action";;
 
             dataGridViewButtonColumn_detials.FlatStyle = FlatStyle.Popup;
             dataGridViewButtonColumn_edit.FlatStyle = FlatStyle.Popup;
@@ -76,10 +73,6 @@ namespace CSAMS_WebSys.UserControls
             dataGridViewButtonColumn_detials.UseColumnTextForButtonValue = true;
             dataGridViewButtonColumn_edit.UseColumnTextForButtonValue = true;
             dataGridViewButtonColumn_delete.UseColumnTextForButtonValue = true;
-
-            x.UseColumnTextForButtonValue = true;
-
-            EventsData_gunaDataGridView.Columns.Add(x);
 
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_edit);
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_delete);
@@ -130,7 +123,7 @@ namespace CSAMS_WebSys.UserControls
             Event.Status = EventService.GetCurrentStatus(Event);
             if (Event != null && displayedEvents.Add(Event.EventName))
             {
-                table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1,  Event.Status.ToString());
+                table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), 1,  Event.Status.ToString());
             }
         }
 
@@ -141,7 +134,7 @@ namespace CSAMS_WebSys.UserControls
                 Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
                 if (Event != null && displayedEvents.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
+                    table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
                 }
             }
         }
@@ -162,37 +155,27 @@ namespace CSAMS_WebSys.UserControls
                         DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex1];
 
                         string eventName = selectedRow.Cells["Name"].Value.ToString();
-                        Console.WriteLine($"Selected EventName: {eventName}");
+                        string eventStart = selectedRow.Cells["DateTime"].Value.ToString();
+                        
+                        string progressValue = selectedRow.Cells["Progress"].Value.ToString();
+                        EventStatus eventStatus = (EventStatus)Enum.Parse(typeof(EventStatus), progressValue);
 
-                        var Event = new EventModel
+                        string format = "MMMM dd, yyyy";
+                        CultureInfo provider = CultureInfo.InvariantCulture;
+                        DateTime.TryParseExact(eventStart, format, provider, DateTimeStyles.None, out DateTime date);
+
+                        EventModel Event = new EventModel
                         {
-                            EventName = eventName
+                            EventName = eventName,
+                            DateStart = date.ToUniversalTime(),
+                            Status = eventStatus
                         };
+
                         EventDetailsForm eventDetails = new EventDetailsForm(Event);
                         eventDetails.Show();
                         eventDetails.BringToFront();
-
                     }
-                }
-                else if (e.ColumnIndex == EventsData_gunaDataGridView.Columns["x"].Index)
-                {
-                    int rowIndex1 = e.RowIndex;
-                    if (rowIndex1 >= 0)
-                    {
-                        DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex1];
-
-                        string eventName = selectedRow.Cells["Name"].Value.ToString();
-                        Console.WriteLine($"Selected EventName: {eventName}");
-
-                        var Event = new EventModel
-                        {
-                            EventName = eventName
-                        };
-                        EventDetailsForm eventDetails = new EventDetailsForm(Event);
-                        eventDetails.Show();
-                        eventDetails.BringToFront();
-
-                    }
+                    
                 }
                 else if (e.ColumnIndex == EventsData_gunaDataGridView.Columns["Delete_button"].Index)
                 {
@@ -291,7 +274,6 @@ namespace CSAMS_WebSys.UserControls
             {
                 List<EventModel> events = new List<EventModel>();
                 (events, firstdoc) = await EventService.GetAllEvents(pageNumber, lastdoc);
-                Console.WriteLine(pageNumber);
                 if (events.Count > 0)
                 {
                     AddEvents(events);

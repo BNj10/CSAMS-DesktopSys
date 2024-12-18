@@ -12,6 +12,7 @@ using Google.Cloud.Firestore;
 using Firebase.Auth;
 using Google.Rpc;
 using System.Security.Cryptography;
+using CSAMS_WebSys.Models.enums;
 
 
 
@@ -311,9 +312,8 @@ namespace CSAMS_WebSys.Services
                     QuerySnapshot withoutFingerprintSnapshot = await QueryNoFp2.GetSnapshotAsync();
 
                     List<MemberModel> members = new List<MemberModel>();
-                Console.WriteLine("Passing data2");
+
                 var allDocuments = withFingerprintSnapshot.Documents.Concat(withoutFingerprintSnapshot.Documents).ToList();
-                Console.WriteLine("Passing data1");
                 foreach (DocumentSnapshot document in allDocuments)
                     {
                         Console.WriteLine("Passing data");
@@ -353,7 +353,7 @@ namespace CSAMS_WebSys.Services
                  .OrderBy("FingerprintData")
                  .OrderBy("DateAdded")
                  .OrderBy(FieldPath.DocumentId)
-                 .Select("StudentID", "FirstName", "LastName", "YearLevel", "DateAdded", "FingerprintData")
+                 .Select("StudentID", "FirstName", "LastName", "YearLevel", "Status", "DateAdded", "FingerprintData")
                  .Limit(pageSize);
 
                 if (lastVisible != null)
@@ -375,7 +375,8 @@ namespace CSAMS_WebSys.Services
                             LastName = document.ContainsField("LastName") ? document.GetValue<string>("LastName") : null,
                             YearLevel = document.ContainsField("YearLevel") ? document.GetValue<string>("YearLevel") : null,
                             FingerprintData = document.ContainsField("FingerprintData") ? document.GetValue<List<string>>("FingerprintData") : null,
-                            //DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            Status = document.ContainsField("Status") ? document.GetValue<string>("Status") : null
                         });
                     }
                 }

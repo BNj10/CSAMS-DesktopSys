@@ -34,6 +34,7 @@ namespace CSAMS_WebSys.UserControls
         private string selectedSchoolYearID = "";
         private MemberService memberservice;
         private HashSet<string> DisplayedMember = new HashSet<string>();
+        private HashSet<string> clickedItems = new HashSet<string>();
         private List<MemberModel> originalList = new List<MemberModel>();
         private SchoolYearModel SY;
         private string activeSY;
@@ -187,12 +188,6 @@ namespace CSAMS_WebSys.UserControls
         {
             try
             {
-                if (selectedSchoolYearID == "")
-                    Console.WriteLine("ID is null");
-                else
-                    Console.WriteLine("ID is not null");
-
-                Console.WriteLine(selectedSchoolYearID);
 
                 List<MemberModel> members = new List<MemberModel>();
                 (members, _firstDocumentSnapshot) = await memberservice.RetrieveMembersSYAsync(pageSize, _lastDocumentSnapshot, selectedSchoolYearID);
@@ -457,7 +452,6 @@ namespace CSAMS_WebSys.UserControls
         private void PageLoadMembers(object sender, EventArgs e)
         {
             MembersData_gunaDataGridView.Scroll -= HandlePagination;
-            AppendCurrentData(table); 
             MembersData_gunaDataGridView.Scroll += HandlePagination;
         }
 
@@ -616,20 +610,16 @@ namespace CSAMS_WebSys.UserControls
             UpdatesService updatesService = new UpdatesService();
             List<SchoolYearModel> SchoolYears = await updatesService.GetAllSchoolYearID();
 
-            if (SchoolYears == null)
+            if (SchoolYears == null || SchoolYears.Count == 0)
                 return;
-
 
             try
             {
-                List<string> schoolYearIDs = SchoolYears.Select(sy => sy.SchoolYearID).ToList();
-                gunaComboBox1.DataSource = schoolYearIDs;
-                var activeYear = SchoolYears.FirstOrDefault(x => x.isActive);
-                activeSY = activeYear.SchoolYearID;
-                if (activeYear != null)
-                {
-                    gunaComboBox1.SelectedItem = activeYear.SchoolYearID;
-                }
+                List<string> schoolYearDates = SchoolYears
+                    .Select(sy => sy.SchoolYearID) 
+                    .ToList();
+
+                gunaComboBox1.DataSource = schoolYearDates;
             }
             catch (Exception ex)
             {
@@ -646,6 +636,7 @@ namespace CSAMS_WebSys.UserControls
             AddSchoolYear addSchoolYear = new AddSchoolYear();
             addSchoolYear.Show();
         }
+
         private void ResetPagination()
         {
             try
@@ -664,25 +655,16 @@ namespace CSAMS_WebSys.UserControls
         private void gunaComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedSchoolYearID = gunaComboBox1.Text;
-            if(selectedSchoolYearID != activeSY)
-            {
-                ResetPagination();
-                AppendCurrentData(table);
-                MembersData_gunaDataGridView.DataSource = table;
-                ChangedActive = true;
-            }
-            else if(ChangedActive)
-            {
-                ResetPagination();
-                AppendCurrentData(table);
-                MembersData_gunaDataGridView.DataSource = table;
-                ChangedActive = false;
-            }
-        }
+            Console.WriteLine("Selected School Year: " + selectedSchoolYearID);
+            if (clickedItems.Contains(selectedSchoolYearID))
+                return;
 
-        private void guna2PictureBox1_Click(object sender, EventArgs e)
-        {
+            clickedItems.Clear();
+            clickedItems.Add(selectedSchoolYearID);
 
+            ResetPagination();
+            AppendCurrentData(table);
+            MembersData_gunaDataGridView.DataSource = table;
         }
     }
 }

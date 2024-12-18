@@ -168,8 +168,8 @@
             this.ClientSize = new System.Drawing.Size(1462, 803);
             this.Controls.Add(this.eventNameText_gunaLabel);
             this.Controls.Add(this.eventName_gunaLabel);
-            // this.Controls.Add(this.absencesEventDetails1);
-            //this.Controls.Add(this.scanEventDetails1);
+            this.Controls.Add(this.absencesEventDetails1);
+            this.Controls.Add(this.scanEventDetails1);
             this.Controls.Add(this.absences_gunaAdvenceButton);
             this.Controls.Add(this.scan_gunaAdvenceButton);
             this.Controls.Add(this.EventDetailsTitle_gunaPanel);

@@ -27,14 +27,6 @@ namespace CSAMS_WebSys.Services
             db = FirebaseConnectionService.GetConnection();
         }
 
-/*        public async Task<List<MemberModel>> GetAbsentStudents(AttendanceModel attendance)
-        {
-            Query query = db.Collection("Member").WhereEqualTo("")
-            memberservice = new MemberService();
-            List<MemberModel> members = await
-        }*/
-
-
         public async Task<string> GetEventID(string eventName)
         {
 
@@ -92,13 +84,12 @@ namespace CSAMS_WebSys.Services
 
             return members;
         }
-        public async Task<AttendanceModel> GetAttendanceForAnEvent(string eventName)
+        public async Task<AttendanceModel> GetAttendanceForAnEvent(EventModel Event)
         {
             try
             {
-                Query query = db.Collection("Attendance").WhereEqualTo("EventName", eventName);
-/*                                                         .WhereEqualTo("SchoolYearID")
-                                                         .WhereEqualTo("DateStart", );*/
+                Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
+
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
 
                 if (querySnapshot.Documents.Count > 0)
@@ -126,7 +117,7 @@ namespace CSAMS_WebSys.Services
                     return new AttendanceModel
                     {
                         AttendanceID = snapshot.Id, 
-                        EventName = eventName,
+                        EventName = Event.EventName,
                         TotalAttendees = totalAttendees,
                         TimeInStart = timeInStart,
                         TimeInEnd = timeInEnd,
@@ -225,6 +216,7 @@ namespace CSAMS_WebSys.Services
                         FirstName = member.FirstName,
                         LastName = member.LastName,
                         YearLevel = member.YearLevel,
+                        Status = member.Status,
                         TimeIn = time.ToUniversalTime(),
                     });
                 }
@@ -236,6 +228,7 @@ namespace CSAMS_WebSys.Services
                         FirstName = member.FirstName,
                         LastName = member.LastName,
                         YearLevel = member.YearLevel,
+                        Status = member.Status,
                         TimeOut = time.ToUniversalTime(),
                     });
                 }

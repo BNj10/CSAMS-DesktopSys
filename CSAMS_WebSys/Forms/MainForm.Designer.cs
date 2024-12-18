@@ -52,7 +52,7 @@ namespace CSAMS_WebSys.Forms
             // NavSideBar_gunaPanel
             // 
             this.NavSideBar_gunaPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(11)))), ((int)(((byte)(36)))));
-            this.NavSideBar_gunaPanel.Controls.Add(this.gunaAdvenceButton1);
+            //this.NavSideBar_gunaPanel.Controls.Add(this.gunaAdvenceButton1);
             this.NavSideBar_gunaPanel.Controls.Add(this.Logout_gunaAdvenceButton);
             this.NavSideBar_gunaPanel.Controls.Add(this.Events_gunaAdvenceButton);
             this.NavSideBar_gunaPanel.Controls.Add(this.Members_gunaAdvenceButton);
@@ -65,35 +65,7 @@ namespace CSAMS_WebSys.Forms
             // 
             // gunaAdvenceButton1
             // 
-            this.gunaAdvenceButton1.AnimationHoverSpeed = 0.07F;
-            this.gunaAdvenceButton1.AnimationSpeed = 0.03F;
-            this.gunaAdvenceButton1.BaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(11)))), ((int)(((byte)(36)))));
-            this.gunaAdvenceButton1.BorderColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.BorderSize = 1;
-            this.gunaAdvenceButton1.ButtonType = Guna.UI.WinForms.AdvenceButtonType.RadioButton;
-            this.gunaAdvenceButton1.CheckedBaseColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.CheckedBorderColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.CheckedForeColor = System.Drawing.Color.Black;
-            this.gunaAdvenceButton1.CheckedImage = global::CSAMS_WebSys.Properties.Resources.archive;
-            this.gunaAdvenceButton1.CheckedLineColor = System.Drawing.Color.DimGray;
-            this.gunaAdvenceButton1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gunaAdvenceButton1.ForeColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.Image = global::CSAMS_WebSys.Properties.Resources.archive;
-            this.gunaAdvenceButton1.ImageSize = new System.Drawing.Size(20, 20);
-            this.gunaAdvenceButton1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
-            this.gunaAdvenceButton1.Location = new System.Drawing.Point(33, 468);
-            this.gunaAdvenceButton1.Name = "gunaAdvenceButton1";
-            this.gunaAdvenceButton1.OnHoverBaseColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.OnHoverBorderColor = System.Drawing.Color.White;
-            this.gunaAdvenceButton1.OnHoverForeColor = System.Drawing.Color.Black;
-            this.gunaAdvenceButton1.OnHoverImage = null;
-            this.gunaAdvenceButton1.OnHoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
-            this.gunaAdvenceButton1.OnPressedColor = System.Drawing.Color.Black;
-            this.gunaAdvenceButton1.Radius = 17;
-            this.gunaAdvenceButton1.Size = new System.Drawing.Size(282, 42);
-            this.gunaAdvenceButton1.TabIndex = 5;
-            this.gunaAdvenceButton1.Text = "Archived Events";
-            this.gunaAdvenceButton1.Click += new System.EventHandler(this.gunaAdvenceButton1_Click);
+            
             // 
             // Logout_gunaAdvenceButton
             // 
@@ -318,7 +290,7 @@ namespace CSAMS_WebSys.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1920, 1080);
-            this.Controls.Add(this.archiveEvents1);
+        //    this.Controls.Add(this.archiveEvents1);
             this.Controls.Add(this.userControl_Members1);
             this.Controls.Add(this.userControl_Events1);
             this.Controls.Add(this.userControl_Dashboard1);

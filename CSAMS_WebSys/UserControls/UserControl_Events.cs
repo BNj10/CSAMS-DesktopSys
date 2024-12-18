@@ -26,8 +26,10 @@ namespace CSAMS_WebSys.UserControls
     public partial class UserControl_Events : UserControl
     {
         private EventService EventService;
-        private AttendanceModel AttendanceModel;
+        private AttendanceModel attendance;
+        private AttendanceService attendanceService;
         private int pageNumber = 10;
+        private int numAttendees = 0;
         private static string lastDocumentId = null;
         private static DocumentSnapshot lastdoc;    
         private static DocumentSnapshot firstdoc;
@@ -39,6 +41,8 @@ namespace CSAMS_WebSys.UserControls
         {
             InitializeComponent();
             EventService = new EventService();
+            attendanceService = new AttendanceService();
+            attendance = new AttendanceModel();
             InitializeTable();
             FetchData();
         }
@@ -117,27 +121,37 @@ namespace CSAMS_WebSys.UserControls
         }
 
 
-        private void AddEvent(EventModel Event)
+        private async void AddEvent(EventModel Event)
         {
             Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
             Event.Status = EventService.GetCurrentStatus(Event);
             if (Event != null && displayedEvents.Add(Event.EventName))
             {
-                table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), 1,  Event.Status.ToString());
+                numAttendees = await GetAttendees(Event);
+                table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), numAttendees,  Event.Status.ToString());
             }
         }
 
-        private void AddEvents(List<EventModel> Events)
+        private async void AddEvents(List<EventModel> Events)
         {
             foreach (var Event in Events)
             {
                 Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
                 if (Event != null && displayedEvents.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), 1, Event.Status.ToString());
+                    numAttendees = await GetAttendees(Event);
+                    table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), numAttendees, Event.Status.ToString());
                 }
             }
         }
+
+        private async Task<int> GetAttendees(EventModel Event)
+        {
+            attendance = await attendanceService.GetAttendanceForAnEvent(Event);
+            Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+            return attendance.TotalAttendees;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
 

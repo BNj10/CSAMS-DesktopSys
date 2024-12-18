@@ -91,6 +91,10 @@ namespace CSAMS_WebSys.Services
                 Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
 
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+                if(querySnapshot.Documents.Count == 0)
+                {
+                    Console.WriteLine("No attendance data found for the specified event." + Event.EventName);
+                }
 
                 if (querySnapshot.Documents.Count > 0)
                 {

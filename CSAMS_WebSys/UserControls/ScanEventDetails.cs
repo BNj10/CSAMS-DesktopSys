@@ -179,17 +179,12 @@ namespace CSAMS_WebSys.UserControls
                 DateTime time = GetCurrentTime();
             try
             {
-                if(DisplayedMember.Contains(member.StudentID))
-                {
-                    MessageBox.Show("Member already scanned", "Notify", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
+
                 if (member != null && DisplayedMember.Add(member.StudentID))
                 {
                     if (attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue &&
                         IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value))
                     {
-
                         await attendanceservice.StoreMemberPresentTimeIn(member, attendance, time);
                         table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, time.ToLocalTime().ToString("MMMM dd yyyy"));
                         Count++;

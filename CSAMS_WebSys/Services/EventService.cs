@@ -95,33 +95,35 @@ namespace CSAMS_WebSys.Services
         {
             var attendanceCollection = db.Collection("Attendance");
             var attendanceSnapshot = await attendanceCollection.GetSnapshotAsync();
-            var attendedEventIds = new List<string>();
+            var attendedEventNames = new List<string>();
 
             foreach (var attendanceDoc in attendanceSnapshot.Documents)
             {
 
                 if (string.IsNullOrEmpty(attendanceDoc.Id))
                 {
-                    Console.WriteLine("Invalid EventID found, skipping...");
+                    Console.WriteLine("Invalid AttendanceID found, skipping...");
                     continue;
                 }
 
                 var attendanceModel = new AttendanceModel
                 {
                     AttendanceID = attendanceDoc.Id,
+                    EventName = attendanceDoc.ContainsField("EventName") ? attendanceDoc.GetValue<string>("EventName") : null,
                 };
 
                 var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
+ 
                 try
                 {
                     var presentSubCollection = db.Collection(presentSubCollectionPath);
 
-                    var query = presentSubCollection.WhereEqualTo("StudentID", studentId);
+                    Query query = presentSubCollection.WhereEqualTo("StudentID", studentId);
                     var studentSnapshot = await query.GetSnapshotAsync();
 
                     if (studentSnapshot.Documents.Count > 0)
                     {
-                        attendedEventIds.Add(attendanceModel.AttendanceID);
+                        attendedEventNames.Add(attendanceModel.EventName);
                     }
                 }
                 catch (ArgumentException ex)
@@ -130,24 +132,19 @@ namespace CSAMS_WebSys.Services
                 }
             }
 
-            foreach (var id in attendedEventIds)
+            foreach (var name in attendedEventNames)
             {
-                Console.WriteLine($"Attended Event ID: {id}");
+                Console.WriteLine($"Attended Event ID: {name}");
             }
 
-            return attendedEventIds;
+            return attendedEventNames;
         }
 
 
         public async Task<List<EventModel>> GetMissedEventsAsync(string studentId)
         {
             var allEvents = await GetAllEventsAsync();
-            var attendedEventIds = await GetAttendedEventIdsAsync(studentId);
-
-            foreach (var id in attendedEventIds)
-            {
-                Console.WriteLine(id);
-            }
+            var attendedEventNames = await GetAttendedEventIdsAsync(studentId);
 
             if (allEvents == null || !allEvents.Any())
             {
@@ -155,14 +152,15 @@ namespace CSAMS_WebSys.Services
                 return new List<EventModel>();
             }
 
-            if (attendedEventIds == null || !attendedEventIds.Any())
+            if (attendedEventNames == null || !attendedEventNames.Any())
             {
                 return allEvents; 
             }
 
             var missedEvents = allEvents
-                            .Where(e => !attendedEventIds.Any(id => id.Equals(e.EventID, StringComparison.OrdinalIgnoreCase)))
-                            .ToList();
+                          .Where(e => !attendedEventNames.Contains(e.EventName, StringComparer.OrdinalIgnoreCase))
+                          .ToList();
+
             return missedEvents;
         }
         public async Task<(List<EventModel>, DocumentSnapshot)> GetAllEvents(int pageSize, DocumentSnapshot lastVisible)

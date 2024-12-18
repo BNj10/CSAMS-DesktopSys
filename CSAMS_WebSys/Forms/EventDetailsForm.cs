@@ -29,23 +29,26 @@ namespace CSAMS_WebSys.Forms
             attendance = new AttendanceService();
             LoadData();
             SetLabels();
-            ShowAndClickButton();
         }
         private void SetLabels()
         {
-            eventName_gunaLabel.Text = Event.EventName;
+            eventName_gunaLabel.Text = this.Event.EventName;
         }
+
         public async void LoadData()
         {
             try
             {
+                EventModel Event = this.Event;
                 if (Event == null)
                 {
                     Console.WriteLine("Event is null");
                 }
                 if (objAttendance == null && Event != null)
                 {
-                    this.objAttendance = await attendance.GetAttendanceForAnEvent(this.Event.EventName);
+                    this.objAttendance = await attendance.GetAttendanceForAnEvent(Event);
+                    Console.WriteLine("ObjAttendance was retrieved");
+                    InitScanDetails();
                 }
                 else
                 {
@@ -60,9 +63,20 @@ namespace CSAMS_WebSys.Forms
             }
 
         }
+
+        private void InitScanDetails()
+        {
+            scanEventDetails1.GetEventAndAttendanceDetailsFromForm(Event, objAttendance);
+            scanEventDetails1.UpdateTimeLabels();
+        }
         private void scan_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
             scanEventDetails1.BringToFront();
+            if(objAttendance == null)
+            {
+                Console.WriteLine("objAttendance was null");
+                return;
+            }
             scanEventDetails1.GetEventAndAttendanceDetailsFromForm(Event, objAttendance);
             scanEventDetails1.UpdateTimeLabels();
         }
@@ -72,15 +86,6 @@ namespace CSAMS_WebSys.Forms
             absencesEventDetails1.BringToFront();
             absencesEventDetails1.GetEventAndAbsencesDetailsFromForm(Event, objAttendance);
         }
-
-        private void ShowAndClickButton()
-        {
-            this.BeginInvoke(new Action(() =>
-            {
-                scan_gunaAdvenceButton.PerformClick();
-            }));
-        }
-
         private void onload(object sender, EventArgs e)
         {
 

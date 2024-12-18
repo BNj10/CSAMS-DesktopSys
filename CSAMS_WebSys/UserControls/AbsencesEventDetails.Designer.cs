@@ -38,13 +38,8 @@
             this.FilterText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.FilterMembers_gunaComboBox = new Guna.UI.WinForms.GunaComboBox();
             this.AbsentAtendeesData_gunaDataGridView = new Guna.UI.WinForms.GunaDataGridView();
-            this.timeText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
-            this.time_gunaLabel = new Guna.UI.WinForms.GunaLabel();
-            this.tt_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabelLabels_gunaLabel = new Guna.UI.WinForms.GunaLabel();
-            this.noOfAbsencesText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
-            this.noOfAbsences_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             ((System.ComponentModel.ISupportInitialize)(this.AbsentAtendeesData_gunaDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -159,7 +154,7 @@
             this.AbsentAtendeesData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.AbsentAtendeesData_gunaDataGridView.EnableHeadersVisualStyles = false;
             this.AbsentAtendeesData_gunaDataGridView.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(201)))), ((int)(((byte)(231)))));
-            this.AbsentAtendeesData_gunaDataGridView.Location = new System.Drawing.Point(293, 181);
+            this.AbsentAtendeesData_gunaDataGridView.Location = new System.Drawing.Point(216, 184);
             this.AbsentAtendeesData_gunaDataGridView.Name = "AbsentAtendeesData_gunaDataGridView";
             this.AbsentAtendeesData_gunaDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.AbsentAtendeesData_gunaDataGridView.RowHeadersVisible = false;
@@ -192,36 +187,6 @@
             this.AbsentAtendeesData_gunaDataGridView.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
             this.AbsentAtendeesData_gunaDataGridView.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.Black;
             // 
-            // timeText_gunaLabel
-            // 
-            this.timeText_gunaLabel.AutoSize = true;
-            this.timeText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeText_gunaLabel.Location = new System.Drawing.Point(51, 146);
-            this.timeText_gunaLabel.Name = "timeText_gunaLabel";
-            this.timeText_gunaLabel.Size = new System.Drawing.Size(47, 23);
-            this.timeText_gunaLabel.TabIndex = 43;
-            this.timeText_gunaLabel.Text = "Time";
-            // 
-            // time_gunaLabel
-            // 
-            this.time_gunaLabel.AutoSize = true;
-            this.time_gunaLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.time_gunaLabel.Location = new System.Drawing.Point(55, 181);
-            this.time_gunaLabel.Name = "time_gunaLabel";
-            this.time_gunaLabel.Size = new System.Drawing.Size(61, 28);
-            this.time_gunaLabel.TabIndex = 44;
-            this.time_gunaLabel.Text = "09:09";
-            // 
-            // tt_gunaLabel
-            // 
-            this.tt_gunaLabel.AutoSize = true;
-            this.tt_gunaLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tt_gunaLabel.Location = new System.Drawing.Point(122, 181);
-            this.tt_gunaLabel.Name = "tt_gunaLabel";
-            this.tt_gunaLabel.Size = new System.Drawing.Size(42, 28);
-            this.tt_gunaLabel.TabIndex = 45;
-            this.tt_gunaLabel.Text = "pm";
-            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
@@ -230,43 +195,18 @@
             // 
             this.tabelLabels_gunaLabel.AutoSize = true;
             this.tabelLabels_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabelLabels_gunaLabel.Location = new System.Drawing.Point(288, 141);
+            this.tabelLabels_gunaLabel.Location = new System.Drawing.Point(211, 141);
             this.tabelLabels_gunaLabel.Name = "tabelLabels_gunaLabel";
-            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(1010, 28);
+            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(990, 28);
             this.tabelLabels_gunaLabel.TabIndex = 46;
             this.tabelLabels_gunaLabel.Text = "Student ID         First Name             Last Name              Year            " +
-    "    Status           Date and Time added             Actions";
-            // 
-            // noOfAbsencesText_gunaLabel
-            // 
-            this.noOfAbsencesText_gunaLabel.AutoSize = true;
-            this.noOfAbsencesText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.noOfAbsencesText_gunaLabel.Location = new System.Drawing.Point(51, 248);
-            this.noOfAbsencesText_gunaLabel.Name = "noOfAbsencesText_gunaLabel";
-            this.noOfAbsencesText_gunaLabel.Size = new System.Drawing.Size(131, 23);
-            this.noOfAbsencesText_gunaLabel.TabIndex = 47;
-            this.noOfAbsencesText_gunaLabel.Text = "No. of absences";
-            // 
-            // noOfAbsences_gunaLabel
-            // 
-            this.noOfAbsences_gunaLabel.AutoSize = true;
-            this.noOfAbsences_gunaLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.noOfAbsences_gunaLabel.Location = new System.Drawing.Point(55, 283);
-            this.noOfAbsences_gunaLabel.Name = "noOfAbsences_gunaLabel";
-            this.noOfAbsences_gunaLabel.Size = new System.Drawing.Size(17, 28);
-            this.noOfAbsences_gunaLabel.TabIndex = 48;
-            this.noOfAbsences_gunaLabel.Text = ".";
+    "    Status           Marked                                 Actions";
             // 
             // AbsencesEventDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.noOfAbsences_gunaLabel);
-            this.Controls.Add(this.noOfAbsencesText_gunaLabel);
             this.Controls.Add(this.tabelLabels_gunaLabel);
-            this.Controls.Add(this.tt_gunaLabel);
-            this.Controls.Add(this.time_gunaLabel);
-            this.Controls.Add(this.timeText_gunaLabel);
             this.Controls.Add(this.AbsentAtendeesData_gunaDataGridView);
             this.Controls.Add(this.FilterMembers_gunaComboBox);
             this.Controls.Add(this.FilterText_gunaLabel);
@@ -289,12 +229,7 @@
         private Guna.UI.WinForms.GunaLabel FilterText_gunaLabel;
         private Guna.UI.WinForms.GunaComboBox FilterMembers_gunaComboBox;
         private Guna.UI.WinForms.GunaDataGridView AbsentAtendeesData_gunaDataGridView;
-        private Guna.UI.WinForms.GunaLabel timeText_gunaLabel;
-        private Guna.UI.WinForms.GunaLabel time_gunaLabel;
-        private Guna.UI.WinForms.GunaLabel tt_gunaLabel;
         private System.Windows.Forms.Timer timer1;
         private Guna.UI.WinForms.GunaLabel tabelLabels_gunaLabel;
-        private Guna.UI.WinForms.GunaLabel noOfAbsencesText_gunaLabel;
-        private Guna.UI.WinForms.GunaLabel noOfAbsences_gunaLabel;
     }
 }

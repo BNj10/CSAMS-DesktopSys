@@ -26,10 +26,10 @@ namespace CSAMS_WebSys.UserControls
         private HashSet<string> DisplayedMember = new HashSet<string>();
         private EventModel Event;
         private static DocumentSnapshot lastdoc;
+
         public AbsencesEventDetails()
         {
             InitializeComponent();
-            Console.WriteLine("AbsencesInitialized");
             attendanceservice = new AttendanceService();
             attendance = new AttendanceModel();
             Event = new EventModel();
@@ -40,9 +40,9 @@ namespace CSAMS_WebSys.UserControls
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            time_gunaLabel.Text = DateTime.Now.ToString("hh:mm");
-            tt_gunaLabel.Text = DateTime.Now.ToString("tt");
+
         }
+
         private void InitializeDT()
         {
             table.Columns.Add("StudentID", typeof(string));
@@ -91,7 +91,7 @@ namespace CSAMS_WebSys.UserControls
             this.attendance = objAttendance;
             UpdateEventAbsences();
         }
-        private void UpdateAttendees()
+/*        private void UpdateAttendees()
         {
             if (noOfAbsences_gunaLabel.InvokeRequired)
             {
@@ -104,12 +104,12 @@ namespace CSAMS_WebSys.UserControls
             {
                 noOfAbsences_gunaLabel.Text = Count.ToString();
             }
-        }
+        }*/
 
         private async void GetNumberOfAttendees()
         {
             Count = await attendanceservice.GetTotalAttendees(attendance);
-            UpdateAttendees();
+    /*        UpdateAttendees();*/
         }
 
         private void AddMembers(List<MemberModel> members)
@@ -118,9 +118,14 @@ namespace CSAMS_WebSys.UserControls
             {
                 if (member != null && DisplayedMember.Add(member.StudentID))
                 {
-                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, member.DateAdded?.ToString("dd mm yy"));
+                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, hasTimedIn(member)? member.TimeIn.ToString(): "Not available");
                 }
             }
+        }
+
+        private bool hasTimedIn(MemberModel member)
+        {
+            return member.TimeIn != null;
         }
 
     }

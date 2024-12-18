@@ -86,7 +86,6 @@ namespace CSAMS_WebSys.Services
                         if (tempList == null || tempList.Count == 0)
                         {
                             checkedAllMembers = true;
-                            Console.WriteLine("Checked all on firebase");
                             return;
                         }
                     }
@@ -95,7 +94,6 @@ namespace CSAMS_WebSys.Services
 
                     foreach (var member in memberModels)
                     {
-                        Console.WriteLine("First Name: " + member.FirstName);
                         try
                         {
                             DPFP.Template template1 = new DPFP.Template();

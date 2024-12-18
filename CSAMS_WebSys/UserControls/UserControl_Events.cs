@@ -120,7 +120,6 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-
         private async void AddEvent(EventModel Event)
         {
             Console.WriteLine(Event.EventName + " " + Event.Status.ToString());

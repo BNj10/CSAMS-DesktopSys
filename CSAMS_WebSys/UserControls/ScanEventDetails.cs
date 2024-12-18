@@ -75,6 +75,8 @@ namespace CSAMS_WebSys.UserControls
 
             ScannedAtendeesData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
 
+            ScannedAtendeesData_gunaDataGridView.RowTemplate.Height = 50;
+
             ScannedAtendeesData_gunaDataGridView.Columns[0].Width = 90;
             ScannedAtendeesData_gunaDataGridView.Columns[3].Width = 80;
             ScannedAtendeesData_gunaDataGridView.Columns[4].Width = 80;

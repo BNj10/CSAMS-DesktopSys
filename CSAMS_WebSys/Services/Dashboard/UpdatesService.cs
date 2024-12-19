@@ -83,8 +83,8 @@ namespace CSAMS_WebSys.Services.Dashboard
             try
             {
                 List<SchoolYearModel> YearModel = await GetAllSchoolYearAsync();
-                List<SchoolYearModel> sortedSY = YearModel.OrderBy(x => x.isActive)
-                                                          .ThenBy(x => x.SchoolYearID)        
+                List<SchoolYearModel> sortedSY = YearModel.OrderByDescending(x => x.isActive)
+                                                          .ThenByDescending(x => x.SchoolYearID)        
                                                           .ToList();      
 
                 return sortedSY;

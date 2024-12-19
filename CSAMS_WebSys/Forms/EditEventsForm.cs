@@ -65,7 +65,7 @@ namespace CSAMS_WebSys.Forms
                 DateTime? newStartDateTime = CombineDateAndTime(updatedStartDate.Value, updatedStartTime.Value);
                 DateTime? newEndDateTime = CombineDateAndTime(updatedStartDate.Value, updatedEndTime.Value);
 
-                if(newStartDateTime == null || newEndDateTime == null)
+                if (newStartDateTime == null || newEndDateTime == null)
                 {
                     MessageBox.Show("Please enter valid start and end times.");
                     return;
@@ -90,7 +90,7 @@ namespace CSAMS_WebSys.Forms
                     DateTime? timeInStartParsed = ParseTime(gunaTextBox5.Text, gunaComboBox5.Text);
                     DateTime? timeInEndParsed = ParseTime(gunaTextBox3.Text, gunaComboBox3.Text);
 
-                    if(timeInStartParsed == null || timeInEndParsed == null)
+                    if (timeInStartParsed == null || timeInEndParsed == null)
                     {
                         MessageBox.Show("Please enter valid time in start and end times.");
                         return;
@@ -114,7 +114,7 @@ namespace CSAMS_WebSys.Forms
                     DateTime? timeOutStartParsed = ParseTime(gunaTextBox4.Text, gunaComboBox6.Text);
                     DateTime? timeOutEndParsed = ParseTime(gunaTextBox6.Text, gunaComboBox4.Text);
 
-                    if(timeOutStartParsed == null || timeOutEndParsed == null)
+                    if (timeOutStartParsed == null || timeOutEndParsed == null)
                     {
                         MessageBox.Show("Please enter valid time out start and end times.");
                         return;

@@ -591,6 +591,9 @@
     <EmbeddedResource Include="UserControls\ScanEventDetails.resx">
       <DependentUpon>ScanEventDetails.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UserControl3.resx">
+      <DependentUpon>UserControl3.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UserControl_AddSchoolYear.resx">
       <DependentUpon>UserControl_AddSchoolYear.cs</DependentUpon>
     </EmbeddedResource>

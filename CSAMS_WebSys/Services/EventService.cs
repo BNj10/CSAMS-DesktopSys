@@ -396,7 +396,6 @@ namespace CSAMS_WebSys.Services
                 {
                     await doc.Reference.DeleteAsync();
                 }
-                MessageBox.Show("Event and its associated attendance deleted successfully!");
             }
             catch (Exception ex)
             {

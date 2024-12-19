@@ -514,9 +514,21 @@ namespace CSAMS_WebSys.Services
                     return;
                 }
 
-                DocumentReference docRef = querySnapshot.Documents[0].Reference;
 
-                await docRef.SetAsync(member, SetOptions.MergeAll);
+                var fieldsToUpdate = new[] { "FirstName", "LastName", "YearLevel", "Status", "FingerprintData", "BiometricsAdded"};
+
+                var updatedFields = new Dictionary<string, object>
+                {
+                    { "FirstName", member.FirstName },
+                    { "LastName", member.LastName },
+                    { "YearLevel", member.YearLevel },
+                    { "Status", member.Status },
+                    { "FingerprintData", member.FingerprintData },
+                    { "BiometricsAdded", member.BiometricsAdded }
+                };
+
+                DocumentReference docRef = querySnapshot.Documents[0].Reference;
+                await docRef.SetAsync(updatedFields, SetOptions.MergeFields(fieldsToUpdate));
 
                 MessageBox.Show("Member data updated successfully.");
             }

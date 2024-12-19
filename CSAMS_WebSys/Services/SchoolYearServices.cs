@@ -28,7 +28,7 @@ namespace CSAMS_WebSys.Services
             {
                 var schoolYearsSnapshot = await db.Collection("SchoolYear").GetSnapshotAsync();
 
-                if(schoolYearsSnapshot.Count == 0)
+                if (schoolYearsSnapshot.Count == 0)
                 {
                     Console.WriteLine("No School Years found.");
                     return;

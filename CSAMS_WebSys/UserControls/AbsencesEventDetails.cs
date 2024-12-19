@@ -66,6 +66,8 @@ namespace CSAMS_WebSys.UserControls
 
             AbsentAtendeesData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
 
+            AbsentAtendeesData_gunaDataGridView.RowTemplate.Height = 50;
+
             AbsentAtendeesData_gunaDataGridView.Columns[0].Width = 90;
             AbsentAtendeesData_gunaDataGridView.Columns[3].Width = 80;
             AbsentAtendeesData_gunaDataGridView.Columns[4].Width = 80;

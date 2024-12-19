@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using CSAMS_WebSys.Services;
 using CSAMS_WebSys.Models;
 using CSAMS_WebSys.Models.enums;
+using System.Web.UI.WebControls;
+using Guna.UI.WinForms;
+using Guna.UI2.WinForms;
 
 namespace CSAMS_WebSys.Forms
 {
@@ -80,101 +83,146 @@ namespace CSAMS_WebSys.Forms
 
         private async void AddMember_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
-
             EventService eventService = new EventService();
             string eventName = EventName_gunaTextBox.Text;
             var dateTime = guna2DateTimePicker1.Value;
-            string timePart1 = TimeFrom_gunaTextBox.Text;
-            string timePart2 = TimeTo_gunaTextBox.Text; 
-            string AM = ttFrom_gunaComboBox.Text; 
-            string PM = ttTo_gunaComboBox.Text;
 
-            string TimeIn = TimeInStart.Text;
-            string TimeOut = TimeOutStart.Text;
-
-            string TimeInend = TimeInEnd.Text;
-            string TimeOutend = TimeOutEnd.Text;
-
-            string TimeInS = TimeIn1.Text;
-            string TimeInE = TimeIn2.Text;
-            
-            string TimeOutS = TimeOut1.Text;
-            string TimeOutE = TimeOut2.Text;
-
-            try
+            if (string.IsNullOrWhiteSpace(eventName))
             {
-                string fullTime1 = $"{timePart1} {AM}";
-                string fullTime2 = $"{timePart2} {PM}";
-                string FullTimeIn = $"{TimeIn} {TimeInS}";
-                string FullTimeOut = $"{TimeOut} {TimeOutS}";
-
-                string FullTimeInEnd = $"{TimeInend} {TimeInE}";
-                string FullTimeOutEnd = $"{TimeOutend} {TimeOutE}";
-
-                DateTime parsedTime3, parsedTime4, parsedTime5, parsedTime6;
-
-                DateTime parsedTime1, parsedTime2;
-
-                bool isTime1Parsed = DateTime.TryParseExact(fullTime1, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime1);
-                bool isTime2Parsed = DateTime.TryParseExact(fullTime2, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime2);
-                bool isTime3Parsed = DateTime.TryParseExact(FullTimeIn, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime3);
-                bool isTime4Parsed = DateTime.TryParseExact(FullTimeOut, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime4);
-                bool isTime5Parsed = DateTime.TryParseExact(FullTimeInEnd, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime5);
-                bool isTime6Parsed = DateTime.TryParseExact(FullTimeOutEnd, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime6);
-
-                if (isTime1Parsed && isTime2Parsed && isTime3Parsed && isTime4Parsed && isTime5Parsed && isTime6Parsed)
-                {
-                    DateTime updatedStartTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime1.Hour, parsedTime1.Minute, parsedTime1.Second);
-                    DateTime updatedEndTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime2.Hour, parsedTime2.Minute, parsedTime2.Second);
-
-                    EventModel Event = new EventModel
-                    {
-                        EventName = EventName_gunaTextBox.Text,
-                        EventDescription = "",
-                        DateAdded = DateTime.UtcNow,
-                        DateStart = updatedStartTime.ToUniversalTime(),
-                        DateEnd = updatedEndTime.ToUniversalTime(),
-                    };
-
-                    DateTime updatedStartTime1 = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime3.Hour, parsedTime3.Minute, parsedTime3.Second);
-                    DateTime updatedEndTime1 = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime4.Hour, parsedTime4.Minute, parsedTime4.Second);
-
-                    DateTime updatedTimeIn = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime3.Hour, parsedTime3.Minute, parsedTime3.Second);
-                    DateTime updatedTimeOut = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime4.Hour, parsedTime4.Minute, parsedTime4.Second);
-
-                    DateTime updatedTimeInEnd = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime5.Hour, parsedTime5.Minute, parsedTime5.Second);
-                    DateTime updatedTimeOutEnd = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, parsedTime6.Hour, parsedTime6.Minute, parsedTime6.Second);
-
-                    AttendanceModel attenddance = new AttendanceModel
-                    {
-                        EventName = Event.EventName,
-                        SchoolYearID = SY.SchoolYearID,
-                        DateStart = updatedStartTime1.ToUniversalTime(),
-                        TotalAttendees = 0,
-                        TimeInStart = updatedTimeIn.ToUniversalTime(),
-                        TimeInEnd = updatedTimeInEnd.ToUniversalTime(),
-                        TimeOutStart = updatedTimeOut.ToUniversalTime(),
-                        TimeOutEnd = updatedTimeOutEnd.ToUniversalTime(),
-
-                    };
-
-                    PresentModel present = new PresentModel();
-                    await eventService.SaveEvent(Event, attenddance, present);
-                    EventAdded?.Invoke(Event);
-                }
-                else
-                {
-                    MessageBox.Show("Please enter a valid time.");
-                    return;
-                }
-            }     
-            catch (Exception ex)
-            {
-                MessageBox.Show("Please fill out all fields." + ex);
+                MessageBox.Show("Please enter an event name.");
                 return;
             }
 
-            this.Close();
+            string placeholder = "hh/mm";
+
+            try
+            {
+                EventModel eventModel = new EventModel
+                {
+                    EventName = eventName,
+                    DateStart = dateTime.ToUniversalTime(),
+                    EventDescription = "",
+                    DateAdded = DateTime.UtcNow
+                };
+
+                AttendanceModel attendanceModel = new AttendanceModel
+                {
+                    EventName = eventName,
+                    DateStart = dateTime.ToUniversalTime(),
+                    SchoolYearID = SY.SchoolYearID,
+                    TotalAttendees = 0
+                };
+
+                bool isTimeInProcessed = false;
+                bool isTimeOutProcessed = false;
+
+                if (guna2CheckBox1.Checked)
+                {
+                    string timeIn = GetValidInput(TimeInStart, placeholder);
+                    string timeInEnd = GetValidInput(TimeInEnd, placeholder);
+                    string timeInS = TimeIn1.Text;
+                    string timeInE = TimeIn2.Text;
+
+                    if (timeIn == null || timeInEnd == null | timeInS == null || timeInE == null)
+                    {
+                        MessageBox.Show("Please enter valid Time In values. Check again");
+                        return;
+                    }
+
+                    DateTime? timeInStartParsed = CombineDateTime(dateTime, $"{timeIn} {timeInS}");
+                    DateTime? timeInEndParsed = CombineDateTime(dateTime, $"{timeInEnd} {timeInE}");
+                    
+                    if (timeInStartParsed.HasValue && timeInEndParsed.HasValue)
+                    {
+                        attendanceModel.TimeInStart = timeInStartParsed.Value.ToUniversalTime();
+                        attendanceModel.TimeInEnd = timeInEndParsed.Value.ToUniversalTime();
+                        isTimeInProcessed = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid Time In values.");
+                        return;
+                    }
+                }
+
+                if (guna2CheckBox2.Checked)
+                {
+                    string timeOut = GetValidInput(TimeOutStart, placeholder);
+                    string timeOutEnd = GetValidInput(TimeOutEnd, placeholder);
+                    string timeOutS = TimeOut1.Text;
+                    string timeOutE = TimeOut2.Text;
+
+                    DateTime? timeOutStartParsed = CombineDateTime(dateTime, $"{timeOut} {timeOutS}");
+                    DateTime? timeOutEndParsed = CombineDateTime(dateTime, $"{timeOutEnd} {timeOutE}");
+
+                    if (timeOutStartParsed.HasValue && timeOutEndParsed.HasValue)
+                    {
+                        attendanceModel.TimeOutStart = timeOutStartParsed.Value.ToUniversalTime();
+                        attendanceModel.TimeOutEnd = timeOutEndParsed.Value.ToUniversalTime();
+                        isTimeOutProcessed = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter valid Time Out values.");
+                        return;
+                    }
+                }
+
+                if (!isTimeInProcessed && !isTimeOutProcessed)
+                {
+                    MessageBox.Show("Please select at least one time range.");
+                    return;
+                }
+
+                string timeFrom = GetValidInput(TimeFrom_gunaTextBox, placeholder);
+                string timeTo = GetValidInput(TimeTo_gunaTextBox, placeholder);
+                string AM = ttFrom_gunaComboBox.Text;
+                string PM = ttTo_gunaComboBox.Text;
+
+                DateTime? startTimeParsed = CombineDateTime(dateTime, $"{timeFrom} {AM}");
+                DateTime? endTimeParsed = CombineDateTime(dateTime, $"{timeTo} {PM}");
+
+                if (startTimeParsed.HasValue && endTimeParsed.HasValue)
+                {
+                    eventModel.DateStart = startTimeParsed.Value.ToUniversalTime();
+                    eventModel.DateEnd = endTimeParsed.Value.ToUniversalTime();
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid event start and end times.");
+                    return;
+                }
+
+                PresentModel present = new PresentModel();
+                await eventService.SaveEvent(eventModel, attendanceModel, present);
+                EventAdded?.Invoke(eventModel);
+
+                MessageBox.Show("Event successfully added.");
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message);
+            }
+        }
+
+        private string GetValidInput(GunaTextBox textBox, string placeholder)
+        {
+            if (string.IsNullOrWhiteSpace(textBox.Text) || textBox.Text == placeholder)
+            {
+                return null; 
+            }
+            return textBox.Text;
+        }
+
+        private DateTime? CombineDateTime(DateTime baseDate, string timeString)
+        {
+            DateTime parsedTime;
+            if (DateTime.TryParseExact(timeString, "h:mm tt", null, System.Globalization.DateTimeStyles.None, out parsedTime))
+            {
+                return new DateTime(baseDate.Year, baseDate.Month, baseDate.Day, parsedTime.Hour, parsedTime.Minute, 0);
+            }
+            return null;
         }
 
         private void onLoad(object sender, EventArgs e)
@@ -301,5 +349,6 @@ namespace CSAMS_WebSys.Forms
                 TimeOutEnd.ForeColor = Color.Black;
             }
         }
+
     }
 }

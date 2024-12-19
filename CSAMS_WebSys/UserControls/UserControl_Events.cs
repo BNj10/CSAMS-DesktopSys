@@ -147,9 +147,18 @@ namespace CSAMS_WebSys.UserControls
 
         private async Task<int> GetAttendees(EventModel Event)
         {
-            attendance = await attendanceService.GetAttendanceForAnEvent(Event);
-            Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
-            return attendance.TotalAttendees;
+            try
+            {
+                attendance = await attendanceService.GetAttendanceForAnEventUsingName(Event);
+                Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+                return attendance.TotalAttendees;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error in GetAttendees: " + ex.Message);
+                return 0;
+            }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

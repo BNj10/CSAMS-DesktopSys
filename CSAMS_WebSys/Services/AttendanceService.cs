@@ -51,7 +51,7 @@ namespace CSAMS_WebSys.Services
         public async Task<List<MemberModel>> CurrentlyPresent(AttendanceModel attendance)
         {
             List<MemberModel> members = new List<MemberModel>();
-            if(attendance == null)
+            if (attendance == null)
             {
                 Console.WriteLine("Attendance was null");
                 return members;
@@ -67,7 +67,7 @@ namespace CSAMS_WebSys.Services
 
                 CollectionReference collection = db.Collection(path);
                 QuerySnapshot querySnapshot = await collection.GetSnapshotAsync();
-                
+
                 foreach (DocumentSnapshot document in querySnapshot.Documents)
                 {
                     if (document.Exists)
@@ -91,14 +91,14 @@ namespace CSAMS_WebSys.Services
                 Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
 
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
-                if(querySnapshot.Documents.Count == 0)
+                if (querySnapshot.Documents.Count == 0)
                 {
                     Console.WriteLine("No attendance data found for the specified event." + Event.EventName);
                 }
 
                 if (querySnapshot.Documents.Count > 0)
                 {
-                    DocumentSnapshot snapshot = querySnapshot.Documents[0]; 
+                    DocumentSnapshot snapshot = querySnapshot.Documents[0];
 
                     var attendanceData = snapshot.ToDictionary();
 
@@ -120,7 +120,7 @@ namespace CSAMS_WebSys.Services
 
                     return new AttendanceModel
                     {
-                        AttendanceID = snapshot.Id, 
+                        AttendanceID = snapshot.Id,
                         EventName = Event.EventName,
                         TotalAttendees = totalAttendees,
                         TimeInStart = timeInStart,
@@ -142,6 +142,40 @@ namespace CSAMS_WebSys.Services
             }
         }
 
+        public async Task EditAttendance(AttendanceModel attendance)
+        {
+            try
+            {
+                DocumentReference docRef = db.Collection("Attendance").Document(attendance.AttendanceID);
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+
+                if (!snapshot.Exists)
+                {
+                    Console.WriteLine("No attendance found");
+                    return;
+                }
+
+                var fieldsToUpdate = new[] { "EventName", "DateStart", "TimeInStart", "TimeInEnd", "TimeOutStart", "TimeOutEnd" };
+
+                var updatedFields = new Dictionary<string, object>
+                {
+                    { "EventName", attendance.EventName },
+                    { "DateStart", attendance.DateStart },
+                    { "TimeInStart", attendance.TimeInStart },
+                    { "TimeInEnd", attendance.TimeInEnd },
+                    { "TimeOutStart", attendance.TimeOutStart },
+                    { "TimeOutEnd", attendance.TimeOutEnd }
+                };
+
+                await docRef.SetAsync(updatedFields, SetOptions.MergeFields(fieldsToUpdate));
+
+                Console.WriteLine("Attendance updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating event: {ex.Message}");
+            }
+        }
 
         private async Task<List<string>> GetAttendedEventIdsAsync(string studentId)
         {
@@ -194,11 +228,11 @@ namespace CSAMS_WebSys.Services
                 Console.WriteLine($"Error fetching TotalAttendees: {ex.Message}");
             }
 
-            return 0; 
+            return 0;
         }
 
 
-    private async Task StoreAttendanceData(AttendanceModel attendance, string path, MemberModel member, DateTime time, bool isTimeIn)
+        private async Task StoreAttendanceData(AttendanceModel attendance, string path, MemberModel member, DateTime time, bool isTimeIn)
         {
             DocumentReference attendanceDoc = db.Collection("Attendance").Document(attendance.AttendanceID);
             await attendanceDoc.UpdateAsync("TotalAttendees", FieldValue.Increment(1));
@@ -255,7 +289,7 @@ namespace CSAMS_WebSys.Services
                 }
                 await StoreAttendanceData(attendance, attendance.PresentSubCollectionPath, member, time, true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error occured when logging attendance" + ex.Message);
             }
@@ -272,7 +306,7 @@ namespace CSAMS_WebSys.Services
                 }
                 await StoreAttendanceData(attendance, attendance.PresentSubCollectionPath, member, time, false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error occured when logging attendance" + ex.Message);
             }
@@ -288,5 +322,43 @@ namespace CSAMS_WebSys.Services
 
             return (absentMembers, firstDoc);
         }
+
+        public async Task<AttendanceModel> GetAttendanceForAnEventUsingName(EventModel Event)
+        {
+            try
+            {
+                if (Event == null)
+                {
+                    Console.WriteLine("Event is null!");
+                    return null;
+                }
+
+                Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+                if (querySnapshot.Documents.Count == 0)
+                {
+                    Console.WriteLine($"No attendance found for the event: {Event.EventName}");
+                    return null;
+                }
+
+                DocumentSnapshot documentSnapshot = querySnapshot.Documents[0];
+
+                AttendanceModel attendance = new AttendanceModel
+                {
+                    EventName = documentSnapshot.GetValue<string>("EventName"),
+                    TotalAttendees = documentSnapshot.GetValue<int>("TotalAttendees"),
+                };
+
+                return attendance;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching attendance data: {ex.Message}");
+                return null;
+            }
+        }
+
+
     }
 }

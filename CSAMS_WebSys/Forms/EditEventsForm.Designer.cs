@@ -52,6 +52,8 @@
             this.gunaComboBox6 = new Guna.UI.WinForms.GunaComboBox();
             this.gunaTextBox5 = new Guna.UI.WinForms.GunaTextBox();
             this.gunaTextBox6 = new Guna.UI.WinForms.GunaTextBox();
+            this.guna2CheckBox1 = new Guna.UI2.WinForms.Guna2CheckBox();
+            this.guna2CheckBox2 = new Guna.UI2.WinForms.Guna2CheckBox();
             this.EditEventsTitle_gunaPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -255,6 +257,8 @@
             this.gunaTextBox1.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox1.TabIndex = 36;
             this.gunaTextBox1.Text = "hh/mm";
+            this.gunaTextBox1.Enter += new System.EventHandler(this.TimeTillEnter);
+            this.gunaTextBox1.Leave += new System.EventHandler(this.TimeTillLeave);
             // 
             // gunaLabel2
             // 
@@ -283,6 +287,8 @@
             this.gunaTextBox2.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox2.TabIndex = 34;
             this.gunaTextBox2.Text = "hh/mm";
+            this.gunaTextBox2.Enter += new System.EventHandler(this.TimeFromEnter);
+            this.gunaTextBox2.Leave += new System.EventHandler(this.TimeFromLeave);
             // 
             // gunaComboBox4
             // 
@@ -297,7 +303,7 @@
             this.gunaComboBox4.Items.AddRange(new object[] {
             "am",
             "pm"});
-            this.gunaComboBox4.Location = new System.Drawing.Point(410, 478);
+            this.gunaComboBox4.Location = new System.Drawing.Point(410, 487);
             this.gunaComboBox4.Name = "gunaComboBox4";
             this.gunaComboBox4.OnHoverItemBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
             this.gunaComboBox4.OnHoverItemForeColor = System.Drawing.Color.White;
@@ -317,7 +323,7 @@
             this.gunaComboBox3.Items.AddRange(new object[] {
             "am",
             "pm"});
-            this.gunaComboBox3.Location = new System.Drawing.Point(150, 478);
+            this.gunaComboBox3.Location = new System.Drawing.Point(150, 487);
             this.gunaComboBox3.Name = "gunaComboBox3";
             this.gunaComboBox3.OnHoverItemBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
             this.gunaComboBox3.OnHoverItemForeColor = System.Drawing.Color.White;
@@ -334,13 +340,15 @@
             this.gunaTextBox4.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.gunaTextBox4.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gunaTextBox4.ForeColor = System.Drawing.Color.Silver;
-            this.gunaTextBox4.Location = new System.Drawing.Point(293, 406);
+            this.gunaTextBox4.Location = new System.Drawing.Point(293, 415);
             this.gunaTextBox4.Name = "gunaTextBox4";
             this.gunaTextBox4.PasswordChar = '\0';
             this.gunaTextBox4.Radius = 8;
             this.gunaTextBox4.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox4.TabIndex = 47;
             this.gunaTextBox4.Text = "hh/mm";
+            this.gunaTextBox4.Enter += new System.EventHandler(this.TimeOutEnter);
+            this.gunaTextBox4.Leave += new System.EventHandler(this.TimeOutLeave);
             // 
             // gunaTextBox3
             // 
@@ -352,19 +360,21 @@
             this.gunaTextBox3.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.gunaTextBox3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gunaTextBox3.ForeColor = System.Drawing.Color.Silver;
-            this.gunaTextBox3.Location = new System.Drawing.Point(33, 469);
+            this.gunaTextBox3.Location = new System.Drawing.Point(33, 478);
             this.gunaTextBox3.Name = "gunaTextBox3";
             this.gunaTextBox3.PasswordChar = '\0';
             this.gunaTextBox3.Radius = 8;
             this.gunaTextBox3.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox3.TabIndex = 46;
             this.gunaTextBox3.Text = "hh/mm";
+            this.gunaTextBox3.Enter += new System.EventHandler(this.TimeInEndEnter);
+            this.gunaTextBox3.Leave += new System.EventHandler(this.TimeInEndLeave);
             // 
             // gunaLabel3
             // 
             this.gunaLabel3.AutoSize = true;
             this.gunaLabel3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gunaLabel3.Location = new System.Drawing.Point(289, 380);
+            this.gunaLabel3.Location = new System.Drawing.Point(289, 389);
             this.gunaLabel3.Name = "gunaLabel3";
             this.gunaLabel3.Size = new System.Drawing.Size(81, 23);
             this.gunaLabel3.TabIndex = 45;
@@ -374,7 +384,7 @@
             // 
             this.gunaLabel4.AutoSize = true;
             this.gunaLabel4.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gunaLabel4.Location = new System.Drawing.Point(29, 380);
+            this.gunaLabel4.Location = new System.Drawing.Point(29, 389);
             this.gunaLabel4.Name = "gunaLabel4";
             this.gunaLabel4.Size = new System.Drawing.Size(67, 23);
             this.gunaLabel4.TabIndex = 44;
@@ -393,7 +403,7 @@
             this.gunaComboBox5.Items.AddRange(new object[] {
             "am",
             "pm"});
-            this.gunaComboBox5.Location = new System.Drawing.Point(150, 415);
+            this.gunaComboBox5.Location = new System.Drawing.Point(150, 424);
             this.gunaComboBox5.Name = "gunaComboBox5";
             this.gunaComboBox5.OnHoverItemBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
             this.gunaComboBox5.OnHoverItemForeColor = System.Drawing.Color.White;
@@ -413,7 +423,7 @@
             this.gunaComboBox6.Items.AddRange(new object[] {
             "am",
             "pm"});
-            this.gunaComboBox6.Location = new System.Drawing.Point(410, 415);
+            this.gunaComboBox6.Location = new System.Drawing.Point(410, 424);
             this.gunaComboBox6.Name = "gunaComboBox6";
             this.gunaComboBox6.OnHoverItemBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(88)))), ((int)(((byte)(255)))));
             this.gunaComboBox6.OnHoverItemForeColor = System.Drawing.Color.White;
@@ -430,13 +440,15 @@
             this.gunaTextBox5.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.gunaTextBox5.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gunaTextBox5.ForeColor = System.Drawing.Color.Silver;
-            this.gunaTextBox5.Location = new System.Drawing.Point(33, 406);
+            this.gunaTextBox5.Location = new System.Drawing.Point(33, 415);
             this.gunaTextBox5.Name = "gunaTextBox5";
             this.gunaTextBox5.PasswordChar = '\0';
             this.gunaTextBox5.Radius = 8;
             this.gunaTextBox5.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox5.TabIndex = 41;
             this.gunaTextBox5.Text = "hh/mm";
+            this.gunaTextBox5.Enter += new System.EventHandler(this.TimeInEnter);
+            this.gunaTextBox5.Leave += new System.EventHandler(this.TimeInLeave);
             // 
             // gunaTextBox6
             // 
@@ -448,19 +460,57 @@
             this.gunaTextBox6.FocusedForeColor = System.Drawing.SystemColors.ControlText;
             this.gunaTextBox6.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gunaTextBox6.ForeColor = System.Drawing.Color.Silver;
-            this.gunaTextBox6.Location = new System.Drawing.Point(293, 469);
+            this.gunaTextBox6.Location = new System.Drawing.Point(293, 478);
             this.gunaTextBox6.Name = "gunaTextBox6";
             this.gunaTextBox6.PasswordChar = '\0';
             this.gunaTextBox6.Radius = 8;
             this.gunaTextBox6.Size = new System.Drawing.Size(99, 40);
             this.gunaTextBox6.TabIndex = 40;
             this.gunaTextBox6.Text = "hh/mm";
+            this.gunaTextBox6.Enter += new System.EventHandler(this.TimeOutEndEnter);
+            this.gunaTextBox6.Leave += new System.EventHandler(this.TimeOutEndLeave);
+            // 
+            // guna2CheckBox1
+            // 
+            this.guna2CheckBox1.AutoSize = true;
+            this.guna2CheckBox1.CheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.guna2CheckBox1.CheckedState.BorderRadius = 0;
+            this.guna2CheckBox1.CheckedState.BorderThickness = 0;
+            this.guna2CheckBox1.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.guna2CheckBox1.Location = new System.Drawing.Point(33, 366);
+            this.guna2CheckBox1.Name = "guna2CheckBox1";
+            this.guna2CheckBox1.Size = new System.Drawing.Size(73, 20);
+            this.guna2CheckBox1.TabIndex = 50;
+            this.guna2CheckBox1.Text = "Time In";
+            this.guna2CheckBox1.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
+            this.guna2CheckBox1.UncheckedState.BorderRadius = 0;
+            this.guna2CheckBox1.UncheckedState.BorderThickness = 0;
+            this.guna2CheckBox1.UncheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
+            // 
+            // guna2CheckBox2
+            // 
+            this.guna2CheckBox2.AutoSize = true;
+            this.guna2CheckBox2.CheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.guna2CheckBox2.CheckedState.BorderRadius = 0;
+            this.guna2CheckBox2.CheckedState.BorderThickness = 0;
+            this.guna2CheckBox2.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.guna2CheckBox2.Location = new System.Drawing.Point(293, 366);
+            this.guna2CheckBox2.Name = "guna2CheckBox2";
+            this.guna2CheckBox2.Size = new System.Drawing.Size(83, 20);
+            this.guna2CheckBox2.TabIndex = 51;
+            this.guna2CheckBox2.Text = "Time Out";
+            this.guna2CheckBox2.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
+            this.guna2CheckBox2.UncheckedState.BorderRadius = 0;
+            this.guna2CheckBox2.UncheckedState.BorderThickness = 0;
+            this.guna2CheckBox2.UncheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
             // 
             // EditEventsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(562, 615);
+            this.Controls.Add(this.guna2CheckBox2);
+            this.Controls.Add(this.guna2CheckBox1);
             this.Controls.Add(this.gunaComboBox4);
             this.Controls.Add(this.gunaComboBox3);
             this.Controls.Add(this.gunaTextBox4);
@@ -519,5 +569,7 @@
         private Guna.UI.WinForms.GunaComboBox gunaComboBox6;
         private Guna.UI.WinForms.GunaTextBox gunaTextBox5;
         private Guna.UI.WinForms.GunaTextBox gunaTextBox6;
+        private Guna.UI2.WinForms.Guna2CheckBox guna2CheckBox1;
+        private Guna.UI2.WinForms.Guna2CheckBox guna2CheckBox2;
     }
 }

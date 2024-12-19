@@ -83,12 +83,19 @@
             this.FilterEvents_gunaComboBox.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.FilterEvents_gunaComboBox.ForeColor = System.Drawing.Color.Black;
             this.FilterEvents_gunaComboBox.FormattingEnabled = true;
+            this.FilterEvents_gunaComboBox.Items.AddRange(new object[] {
+            "",
+            "Ongoing",
+            "Done",
+            "Pending",
+            "Archived"});
             this.FilterEvents_gunaComboBox.Location = new System.Drawing.Point(714, 92);
             this.FilterEvents_gunaComboBox.Name = "FilterEvents_gunaComboBox";
             this.FilterEvents_gunaComboBox.OnHoverItemBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(24)))), ((int)(((byte)(83)))));
             this.FilterEvents_gunaComboBox.OnHoverItemForeColor = System.Drawing.Color.White;
             this.FilterEvents_gunaComboBox.Size = new System.Drawing.Size(280, 31);
             this.FilterEvents_gunaComboBox.TabIndex = 5;
+            this.FilterEvents_gunaComboBox.SelectedIndexChanged += new System.EventHandler(this.FilterEvents_gunaComboBox_SelectedIndexChanged);
             // 
             // FilterText_gunaLabel
             // 

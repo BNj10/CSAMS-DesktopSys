@@ -51,6 +51,7 @@
             this.TotalMem_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.MemYearLevelTitle_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.YearLevelTitle_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.guna2WinProgressIndicator1 = new Guna.UI2.WinForms.Guna2WinProgressIndicator();
             this.RecentEventsPanel_gunaPanel.SuspendLayout();
             this.RecentEventsPanelTitle_gunaPanel.SuspendLayout();
             this.MembersPanel_gunaPanel.SuspendLayout();
@@ -96,7 +97,7 @@
             this.EventDescription_gunaLabel.AutoSize = true;
             this.EventDescription_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EventDescription_gunaLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.EventDescription_gunaLabel.Location = new System.Drawing.Point(21, 76);
+            this.EventDescription_gunaLabel.Location = new System.Drawing.Point(21, 87);
             this.EventDescription_gunaLabel.Name = "EventDescription_gunaLabel";
             this.EventDescription_gunaLabel.Size = new System.Drawing.Size(1058, 41);
             this.EventDescription_gunaLabel.TabIndex = 1;
@@ -305,11 +306,20 @@
             this.YearLevelTitle_gunaLabel.TabIndex = 0;
             this.YearLevelTitle_gunaLabel.Text = "Members Year Level";
             // 
+            // guna2WinProgressIndicator1
+            // 
+            this.guna2WinProgressIndicator1.Location = new System.Drawing.Point(714, 280);
+            this.guna2WinProgressIndicator1.Name = "guna2WinProgressIndicator1";
+            this.guna2WinProgressIndicator1.Size = new System.Drawing.Size(90, 90);
+            this.guna2WinProgressIndicator1.TabIndex = 7;
+            this.guna2WinProgressIndicator1.Visible = false;
+            // 
             // UserControl_Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.guna2WinProgressIndicator1);
             this.Controls.Add(this.MemYearLevelTitle_gunaPanel);
             this.Controls.Add(this.TotalMemTitle_gunaPanel);
             this.Controls.Add(this.MemYearLevel_gunaPanel);
@@ -368,5 +378,6 @@
         private Guna.UI.WinForms.GunaLabel FourthYear_gunaLabel;
         private Guna.UI.WinForms.GunaLabel ThirdYear_gunaLabel;
         private Guna.UI.WinForms.GunaLabel SecondYear_gunaLabel;
+        private Guna.UI2.WinForms.Guna2WinProgressIndicator guna2WinProgressIndicator1;
     }
 }

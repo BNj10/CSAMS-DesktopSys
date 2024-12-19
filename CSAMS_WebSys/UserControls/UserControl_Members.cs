@@ -29,19 +29,26 @@ namespace CSAMS_WebSys.UserControls
         private static DocumentSnapshot _firstDocumentSnapshot;
         private bool disposing = false;
         private string BiometricsAdded;
-        private int pageSize = 21;
+        private int pageSize = 10;
         private bool buttonClicked = false;
+        private string selectedSchoolYearID = "";
         private MemberService memberservice;
         private HashSet<string> DisplayedMember = new HashSet<string>();
+        private HashSet<string> clickedItems = new HashSet<string>();
         private List<MemberModel> originalList = new List<MemberModel>();
+        private SchoolYearModel SY;
+        private BindingList<string> schoolYearDates;
+        private string activeSY;
         private List<MemberModel> searchedmembers;
         private DataTable table = new DataTable();
         DataView view;
+        private bool ChangedActive = false;
         public UserControl_Members()
         {
             InitializeComponent();
             searchedmembers = new List<MemberModel>();
             memberservice = new MemberService();
+            SY = new SchoolYearModel();
             SearchMembers_gunaTextBox.Enter += EnterText;
             SearchMembers_gunaTextBox.Leave += LeaveText;
             InitializeTable();
@@ -85,6 +92,8 @@ namespace CSAMS_WebSys.UserControls
                 FlatStyle = FlatStyle.Popup
             };
 
+            MembersData_gunaDataGridView.RowTemplate.Height = 50;
+
             MembersData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_edit);
             MembersData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_delete);
             MembersData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
@@ -100,6 +109,7 @@ namespace CSAMS_WebSys.UserControls
 
             MembersData_gunaDataGridView.ReadOnly = true;
             view = table.DefaultView;
+            InitComboSY();
         }
 
         private void AddMember_gunaAdvenceButton_Click(object sender, EventArgs e)
@@ -135,7 +145,6 @@ namespace CSAMS_WebSys.UserControls
             {
                 BiometricsAdded = "Not Added";
             }
-            Console.WriteLine(member.BiometricsAdded);
         }
 
         private void CheckUpdates(MemberModel member)
@@ -146,7 +155,7 @@ namespace CSAMS_WebSys.UserControls
                 table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, BiometricsAdded, member.Status, member.DateAdded?.ToString("MMMM dd, yyyy"));
             }
         }
-        private void AddMembers(List<MemberModel> members)
+        private void AddMembers(List<MemberModel> members, DataTable table)
         {
             foreach(var member in members)
             {
@@ -158,7 +167,6 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        //TEST
         private void dummy()
         {
             MemberModel member = new MemberModel
@@ -177,16 +185,20 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        public async void AppendCurrentData()
+        public async void AppendCurrentData(DataTable table)
         {
             try
             {
+
                 List<MemberModel> members = new List<MemberModel>();
-                (members, _firstDocumentSnapshot) = await memberservice.RetrieveActiveMembersAsync(pageSize, _lastDocumentSnapshot);
+                (members, _firstDocumentSnapshot) = await memberservice.RetrieveMembersSYAsync(pageSize, _lastDocumentSnapshot, selectedSchoolYearID);
+
+                Console.WriteLine($"Fetched {members.Count} members");
+
 
                 if (members.Count > 0)
                 {
-                    AddMembers(members);
+                    AddMembers(members, table);
                     _lastDocumentSnapshot = _firstDocumentSnapshot;
                 }
                 else
@@ -397,11 +409,7 @@ namespace CSAMS_WebSys.UserControls
                 if (verticalScrollBar.Value + verticalScrollBar.LargeChange >= verticalScrollBar.Maximum)
                 {
                     Console.WriteLine("Scrolled to the bottom. Loading more data...");
-                    AppendCurrentData();
-                }
-                else
-                {
-                    Console.WriteLine("Scrolling");
+                    AppendCurrentData(table);
                 }
             }
             catch (Exception ex)
@@ -445,7 +453,6 @@ namespace CSAMS_WebSys.UserControls
         private void PageLoadMembers(object sender, EventArgs e)
         {
             MembersData_gunaDataGridView.Scroll -= HandlePagination;
-            AppendCurrentData(); 
             MembersData_gunaDataGridView.Scroll += HandlePagination;
         }
 
@@ -461,7 +468,7 @@ namespace CSAMS_WebSys.UserControls
 
                 if(view.Count == 0)
                 {
-                    AppendCurrentData();
+                    AppendCurrentData(table);
                     return;
                 }
             }
@@ -509,7 +516,7 @@ namespace CSAMS_WebSys.UserControls
 
         private async void bulkAdd_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
-
+            XLWorkbook workbook = null;
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
@@ -520,60 +527,71 @@ namespace CSAMS_WebSys.UserControls
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    guna2WinProgressIndicator1.Show();
+                    guna2WinProgressIndicator1.Start();
                     string filePath = openFileDialog.FileName;
 
-                    var workbook = new XLWorkbook(filePath);
-                    var worksheet = workbook.Worksheet(1);
-
-                    var headerRow = worksheet.FirstRowUsed();
-
-                    List<MemberModel> members = new List<MemberModel>();
-
-                    if (headerRow.Cell(1).GetValue<string>() != "Student ID" ||
-                        headerRow.Cell(2).GetValue<string>() != "First Name" ||
-                        headerRow.Cell(3).GetValue<string>() != "Last Name" ||
-                        headerRow.Cell(4).GetValue<string>() != "Year Level" ||
-                        headerRow.Cell(5).GetValue<string>() != "Status")
+                    await Task.Run(() =>
                     {
-                        foreach (var row in worksheet.RowsUsed().Skip(1))
-                        {
+                        workbook = new XLWorkbook(filePath);
+ 
+                    });
 
-                            members.Add(new MemberModel
+                    if (workbook != null)
+                    {
+                        var worksheet = workbook.Worksheet(1);
+                        var headerRow = worksheet.FirstRowUsed();
+
+                        List<MemberModel> members = new List<MemberModel>();
+
+                        if (headerRow.Cell(1).GetValue<string>() != "Student ID" ||
+                            headerRow.Cell(2).GetValue<string>() != "First Name" ||
+                            headerRow.Cell(3).GetValue<string>() != "Last Name" ||
+                            headerRow.Cell(4).GetValue<string>() != "Year Level" ||
+                            headerRow.Cell(5).GetValue<string>() != "Status")
+                        {
+                            foreach (var row in worksheet.RowsUsed().Skip(1))
                             {
-                                StudentID = row.Cell(1).GetValue<string>(),
-                                FirstName = row.Cell(2).GetValue<string>(),
-                                LastName = row.Cell(3).GetValue<string>(),
-                                YearLevel = row.Cell(4).GetValue<string>(),
-                                Status = row.Cell(5).GetValue<string>(),
-                                DateAdded = DateTime.UtcNow
-                            });
+
+                                members.Add(new MemberModel
+                                {
+                                    StudentID = row.Cell(1).GetValue<string>(),
+                                    FirstName = row.Cell(2).GetValue<string>(),
+                                    LastName = row.Cell(3).GetValue<string>(),
+                                    YearLevel = row.Cell(4).GetValue<string>(),
+                                    Status = row.Cell(5).GetValue<string>(),
+                                    DateAdded = DateTime.UtcNow
+                                });
+                            }
+
+                            guna2WinProgressIndicator1.Stop();
+                            guna2WinProgressIndicator1.Hide();
+
+                            DialogResult result = MessageBox.Show(
+                                               "Do you want to proceed adding students?",
+                                               "Confirm Action",
+                                               MessageBoxButtons.OKCancel,
+                                               MessageBoxIcon.Question
+                                             );
+                            switch (result)
+                            {
+                                case DialogResult.OK:
+                                    AddMembers(members, table);
+
+                                    var filteredMembers = members
+                                                        .Where(member => !string.IsNullOrEmpty(member.StudentID))
+                                                        .GroupBy(member => member.StudentID)
+                                                        .Select(group => group.First())
+                                                        .ToList();
+
+                                    await memberservice.StoreMemberInBulk(filteredMembers);
+                                    MessageBox.Show("Students have been saved!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    break;
+                                case DialogResult.Cancel:
+                                    break;
+                            }
+
                         }
-
-                        DialogResult result = MessageBox.Show(
-                                           "Do you want to proceed adding students?", 
-                                           "Confirm Action",                          
-                                           MessageBoxButtons.OKCancel,              
-                                           MessageBoxIcon.Question                  
-                                         );
-
-                        switch (result)
-                        {
-                            case DialogResult.OK:
-                                AddMembers(members);
-
-                                var filteredMembers = members
-                                                    .Where(member => !string.IsNullOrEmpty(member.StudentID))
-                                                    .GroupBy(member => member.StudentID)
-                                                    .Select(group => group.First())
-                                                    .ToList();
-
-                                await memberservice.StoreMemberInBulk(filteredMembers);
-                                MessageBox.Show("Students have been saved!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                break;
-                            case DialogResult.Cancel:
-                                break;
-                        }
-                        
                     }
                 }
             }
@@ -583,23 +601,26 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
-        private async void PopulateSchoolYearsComboBox()
+        private async void InitComboSY()
+        {
+           await PopulateSchoolYearsComboBox();
+        }
+
+        private async Task PopulateSchoolYearsComboBox()
         {
             UpdatesService updatesService = new UpdatesService();
             List<SchoolYearModel> SchoolYears = await updatesService.GetAllSchoolYearID();
 
+            if (SchoolYears == null || SchoolYears.Count == 0)
+                return;
+
             try
             {
-                guna2ComboBox1.DataSource = SchoolYears;
+                schoolYearDates = new BindingList <string> (SchoolYears
+                    .Select(sy => sy.SchoolYearID) 
+                    .ToList());
 
-                guna2ComboBox1.DisplayMember = "SchoolYearID";
-                guna2ComboBox1.ValueMember = "SchoolYearID";
-                var activeYear = SchoolYears.FirstOrDefault(x => x.isActive);
-
-                if (activeYear != null)
-                {
-                    guna2ComboBox1.SelectedItem = activeYear;
-                }
+                gunaComboBox1.DataSource = schoolYearDates;
             }
             catch (Exception ex)
             {
@@ -611,5 +632,45 @@ namespace CSAMS_WebSys.UserControls
 
         }
 
+        private void guna2PictureBox1_Click(object sender, EventArgs e)
+        {
+            AddSchoolYear addSchoolYear = new AddSchoolYear();
+            addSchoolYear.AddedSY += AddSchoolYear;
+            addSchoolYear.Show();
+        }
+
+        private void AddSchoolYear(string SchoolYear)
+        {
+            schoolYearDates.Add(SchoolYear);
+        }
+        private void ResetPagination()
+        {
+            try
+            {
+                _lastDocumentSnapshot = null;
+                table.Rows.Clear();
+                DisplayedMember.Clear(); 
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error resetting pagination: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void gunaComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedSchoolYearID = gunaComboBox1.Text;
+            Console.WriteLine("Selected School Year: " + selectedSchoolYearID);
+            if (clickedItems.Contains(selectedSchoolYearID))
+                return;
+
+            clickedItems.Clear();
+            clickedItems.Add(selectedSchoolYearID);
+
+            ResetPagination();
+            AppendCurrentData(table);
+            MembersData_gunaDataGridView.DataSource = table;
+        }
     }
 }

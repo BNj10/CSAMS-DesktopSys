@@ -19,17 +19,17 @@ namespace CSAMS_WebSys.UserControls
     {
         private DataTable table;
         private DataView view;
-        private int pageSize = 30;
+        private int pageSize = 50;
         private int Count;
         private AttendanceService attendanceservice;
         private AttendanceModel attendance;
         private HashSet<string> DisplayedMember = new HashSet<string>();
         private EventModel Event;
         private static DocumentSnapshot lastdoc;
+
         public AbsencesEventDetails()
         {
             InitializeComponent();
-            Console.WriteLine("AbsencesInitialized");
             attendanceservice = new AttendanceService();
             attendance = new AttendanceModel();
             Event = new EventModel();
@@ -40,9 +40,9 @@ namespace CSAMS_WebSys.UserControls
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            time_gunaLabel.Text = DateTime.Now.ToString("hh:mm");
-            tt_gunaLabel.Text = DateTime.Now.ToString("tt");
+
         }
+
         private void InitializeDT()
         {
             table.Columns.Add("StudentID", typeof(string));
@@ -65,6 +65,8 @@ namespace CSAMS_WebSys.UserControls
             dataGridViewButtonColumn_detials.UseColumnTextForButtonValue = true;
 
             AbsentAtendeesData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
+
+            AbsentAtendeesData_gunaDataGridView.RowTemplate.Height = 50;
 
             AbsentAtendeesData_gunaDataGridView.Columns[0].Width = 90;
             AbsentAtendeesData_gunaDataGridView.Columns[3].Width = 80;
@@ -91,25 +93,10 @@ namespace CSAMS_WebSys.UserControls
             this.attendance = objAttendance;
             UpdateEventAbsences();
         }
-        private void UpdateAttendees()
-        {
-            if (noOfAbsences_gunaLabel.InvokeRequired)
-            {
-                noOfAbsences_gunaLabel.Invoke(new Action(() =>
-                {
-                    noOfAbsences_gunaLabel.Text = Count.ToString();
-                }));
-            }
-            else
-            {
-                noOfAbsences_gunaLabel.Text = Count.ToString();
-            }
-        }
 
         private async void GetNumberOfAttendees()
         {
             Count = await attendanceservice.GetTotalAttendees(attendance);
-            UpdateAttendees();
         }
 
         private void AddMembers(List<MemberModel> members)
@@ -118,9 +105,14 @@ namespace CSAMS_WebSys.UserControls
             {
                 if (member != null && DisplayedMember.Add(member.StudentID))
                 {
-                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, member.DateAdded?.ToString("dd mm yy"));
+                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, hasTimedIn(member)? member.TimeIn.ToString(): "Not available");
                 }
             }
+        }
+
+        private bool hasTimedIn(MemberModel member)
+        {
+            return member.TimeIn != null;
         }
 
     }

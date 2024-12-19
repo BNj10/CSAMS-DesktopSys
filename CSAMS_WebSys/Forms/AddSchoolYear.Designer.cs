@@ -45,19 +45,19 @@
             // 
             this.MemYearLevelTitle_gunaPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(11)))), ((int)(((byte)(36)))));
             this.MemYearLevelTitle_gunaPanel.Controls.Add(this.YearLevelTitle_gunaLabel);
-            this.MemYearLevelTitle_gunaPanel.Location = new System.Drawing.Point(1, 1);
+            this.MemYearLevelTitle_gunaPanel.Location = new System.Drawing.Point(-2, 1);
             this.MemYearLevelTitle_gunaPanel.Name = "MemYearLevelTitle_gunaPanel";
-            this.MemYearLevelTitle_gunaPanel.Size = new System.Drawing.Size(405, 75);
+            this.MemYearLevelTitle_gunaPanel.Size = new System.Drawing.Size(408, 74);
             this.MemYearLevelTitle_gunaPanel.TabIndex = 8;
             // 
             // YearLevelTitle_gunaLabel
             // 
             this.YearLevelTitle_gunaLabel.AutoSize = true;
-            this.YearLevelTitle_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.YearLevelTitle_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.YearLevelTitle_gunaLabel.ForeColor = System.Drawing.Color.White;
             this.YearLevelTitle_gunaLabel.Location = new System.Drawing.Point(14, 18);
             this.YearLevelTitle_gunaLabel.Name = "YearLevelTitle_gunaLabel";
-            this.YearLevelTitle_gunaLabel.Size = new System.Drawing.Size(258, 32);
+            this.YearLevelTitle_gunaLabel.Size = new System.Drawing.Size(290, 37);
             this.YearLevelTitle_gunaLabel.TabIndex = 0;
             this.YearLevelTitle_gunaLabel.Text = "Add New School Year";
             // 
@@ -104,9 +104,9 @@
             // 
             this.guna2DateTimePicker1.Checked = true;
             this.guna2DateTimePicker1.FillColor = System.Drawing.Color.White;
-            this.guna2DateTimePicker1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.guna2DateTimePicker1.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.guna2DateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Long;
-            this.guna2DateTimePicker1.Location = new System.Drawing.Point(24, 242);
+            this.guna2DateTimePicker1.Location = new System.Drawing.Point(21, 240);
             this.guna2DateTimePicker1.MaxDate = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this.guna2DateTimePicker1.MinDate = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this.guna2DateTimePicker1.Name = "guna2DateTimePicker1";
@@ -118,7 +118,7 @@
             // 
             this.gunaLabel2.AutoSize = true;
             this.gunaLabel2.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.gunaLabel2.Location = new System.Drawing.Point(19, 308);
+            this.gunaLabel2.Location = new System.Drawing.Point(19, 298);
             this.gunaLabel2.Name = "gunaLabel2";
             this.gunaLabel2.Size = new System.Drawing.Size(91, 28);
             this.gunaLabel2.TabIndex = 28;
@@ -140,7 +140,7 @@
             this.gunaAdvenceButton1.Image = null;
             this.gunaAdvenceButton1.ImageSize = new System.Drawing.Size(20, 20);
             this.gunaAdvenceButton1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
-            this.gunaAdvenceButton1.Location = new System.Drawing.Point(21, 425);
+            this.gunaAdvenceButton1.Location = new System.Drawing.Point(19, 410);
             this.gunaAdvenceButton1.Name = "gunaAdvenceButton1";
             this.gunaAdvenceButton1.OnHoverBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(43)))));
             this.gunaAdvenceButton1.OnHoverBorderColor = System.Drawing.Color.Black;
@@ -149,10 +149,11 @@
             this.gunaAdvenceButton1.OnHoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
             this.gunaAdvenceButton1.OnPressedColor = System.Drawing.Color.Black;
             this.gunaAdvenceButton1.Radius = 8;
-            this.gunaAdvenceButton1.Size = new System.Drawing.Size(155, 40);
+            this.gunaAdvenceButton1.Size = new System.Drawing.Size(136, 40);
             this.gunaAdvenceButton1.TabIndex = 34;
             this.gunaAdvenceButton1.Text = "Add";
             this.gunaAdvenceButton1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.gunaAdvenceButton1.Click += new System.EventHandler(this.gunaAdvenceButton1_Click);
             // 
             // gunaAdvenceButton2
             // 
@@ -170,7 +171,7 @@
             this.gunaAdvenceButton2.Image = null;
             this.gunaAdvenceButton2.ImageSize = new System.Drawing.Size(20, 20);
             this.gunaAdvenceButton2.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
-            this.gunaAdvenceButton2.Location = new System.Drawing.Point(240, 425);
+            this.gunaAdvenceButton2.Location = new System.Drawing.Point(211, 410);
             this.gunaAdvenceButton2.Name = "gunaAdvenceButton2";
             this.gunaAdvenceButton2.OnHoverBaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(43)))));
             this.gunaAdvenceButton2.OnHoverBorderColor = System.Drawing.Color.Black;
@@ -179,7 +180,7 @@
             this.gunaAdvenceButton2.OnHoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(58)))), ((int)(((byte)(170)))));
             this.gunaAdvenceButton2.OnPressedColor = System.Drawing.Color.Black;
             this.gunaAdvenceButton2.Radius = 8;
-            this.gunaAdvenceButton2.Size = new System.Drawing.Size(155, 40);
+            this.gunaAdvenceButton2.Size = new System.Drawing.Size(136, 40);
             this.gunaAdvenceButton2.TabIndex = 35;
             this.gunaAdvenceButton2.Text = "Cancel";
             this.gunaAdvenceButton2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -189,9 +190,9 @@
             // 
             this.guna2DateTimePicker3.Checked = true;
             this.guna2DateTimePicker3.FillColor = System.Drawing.Color.White;
-            this.guna2DateTimePicker3.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.guna2DateTimePicker3.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.guna2DateTimePicker3.Format = System.Windows.Forms.DateTimePickerFormat.Long;
-            this.guna2DateTimePicker3.Location = new System.Drawing.Point(21, 348);
+            this.guna2DateTimePicker3.Location = new System.Drawing.Point(21, 339);
             this.guna2DateTimePicker3.MaxDate = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this.guna2DateTimePicker3.MinDate = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this.guna2DateTimePicker3.Name = "guna2DateTimePicker3";
@@ -201,9 +202,8 @@
             // 
             // AddSchoolYear
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(407, 476);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.ClientSize = new System.Drawing.Size(371, 476);
             this.Controls.Add(this.guna2DateTimePicker3);
             this.Controls.Add(this.gunaAdvenceButton2);
             this.Controls.Add(this.gunaAdvenceButton1);
@@ -213,6 +213,7 @@
             this.Controls.Add(this.SchoolYear);
             this.Controls.Add(this.EventNameText_gunaLabel);
             this.Controls.Add(this.MemYearLevelTitle_gunaPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "AddSchoolYear";
             this.Text = "AddSchoolYear";
             this.MemYearLevelTitle_gunaPanel.ResumeLayout(false);

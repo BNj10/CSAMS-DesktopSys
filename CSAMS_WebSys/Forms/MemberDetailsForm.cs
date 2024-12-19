@@ -1,4 +1,5 @@
 ﻿using CSAMS_WebSys.Models;
+using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
 using System;
 using System.Collections.Generic;
@@ -15,22 +16,26 @@ namespace CSAMS_WebSys.Forms
     public partial class MemberDetailsForm : Form
     {
         private MemberModel member;
-        private EventService Event;
+        private EventService eventservice;
+        private AttendanceService attendanceService;
         private List<EventModel> eventObj;
+        private AttendanceModel attendance;
+        private int numAttendees = 0;
         private HashSet<string> DisplayedMember;
         private DataTable table;
         public MemberDetailsForm(MemberModel member)
         {
             InitializeComponent();
             this.member = member;
-            Event = new EventService();
+            eventservice = new EventService();
             eventObj = new List<EventModel>();
+            attendanceService = new AttendanceService();
             table = new DataTable();
             DisplayedMember = new HashSet<string>();
-            dummyData();
+            InitializeTables();
         }
 
-        private void dummyData()
+        private void InitializeTables()
         {
 
             table.Columns.Add("Name", typeof(string));
@@ -52,6 +57,8 @@ namespace CSAMS_WebSys.Forms
 
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
 
+            EventsData_gunaDataGridView.RowTemplate.Height = 50;
+
             EventsData_gunaDataGridView.Columns[0].Width = 500;
             EventsData_gunaDataGridView.Columns[1].Width = 150;
             EventsData_gunaDataGridView.Columns[2].Width = 80;
@@ -67,40 +74,63 @@ namespace CSAMS_WebSys.Forms
         }
         private async void MemberDetailsLoad(object sender, EventArgs e)
         {
-            
-            nameChange_gunaLabel.Text = member.FirstName + " " + member.LastName;
-            if( member.BiometricsAdded )
+            try
             {
-                c.Text = "Added";
-                bioStatusChange_gunaPanel.BackColor = Color.Aquamarine;
-            }
-            else
-            {
-                c.Text = "Not Added";
-                bioStatusChange_gunaPanel.BackColor = Color.Red;
-            }
-            List<string> attended = new List<string>();
-            yearChange_gunaLabel.Text = member.YearLevel;
-            IDChange_gunaLabel.Text = member.StudentID;
-            statusChange_gunaLabel.Text = member.Status;
-            eventObj = await Event.GetMissedEventsAsync(member.StudentID);
+                guna2WinProgressIndicator1.Show();
+                guna2WinProgressIndicator1.Start();
+                
+                nameChange_gunaLabel.Text = member.FirstName + " " + member.LastName;
+                if (member.BiometricsAdded)
+                {
+                    c.Text = "Added";
+                    bioStatusChange_gunaPanel.BackColor = Color.Aquamarine;
+                }
+                else
+                {
+                    c.Text = "Not Added";
+                    bioStatusChange_gunaPanel.BackColor = Color.Red;
+                }
+                List<string> attended = new List<string>();
+                yearChange_gunaLabel.Text = member.YearLevel;
+                IDChange_gunaLabel.Text = member.StudentID;
+                statusChange_gunaLabel.Text = member.Status;
+                eventObj = await eventservice.GetMissedEventsAsync(member.StudentID);
 
-            foreach (var eve in eventObj)
-            {
-               Console.WriteLine("Event Name id: " + eve.EventName);
+                foreach (var eve in eventObj)
+                {
+                    Console.WriteLine("Event Name id: " + eve.EventName);
+                }
+                AddEvents(eventObj);
             }
-            AddMembers(eventObj);
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                guna2WinProgressIndicator1.Stop();
+                guna2WinProgressIndicator1.Hide();
+            }
+            
         }
 
-        private void AddMembers(List<EventModel> Events)
+        private async void AddEvents(List<EventModel> Events)
         {
             foreach (var Event in Events)
             {
                 if (member != null && DisplayedMember.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"));
+                    numAttendees = await GetAttendees(Event);
+                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), numAttendees, Event.Status.ToString());
                 }
             }
+        }
+
+        private async Task<int> GetAttendees(EventModel Event)
+        {
+            attendance = await attendanceService.GetAttendanceForAnEvent(Event);
+            Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+            return attendance.TotalAttendees;
         }
     }
 }

@@ -44,6 +44,9 @@ namespace CSAMS_WebSys.Services
 
                     var AttendanceData = new Dictionary<string, object>
                     {
+                        { "EventName", attendance.EventName },
+                        { "SchoolYearID", attendance.SchoolYearID },
+                        { "DateStart", attendance.DateStart },
                         { "TotalAttendees", attendance.TotalAttendees },
                         { "TimeInStart", attendance.TimeInStart },
                         { "TimeInEnd", attendance.TimeInEnd },
@@ -51,7 +54,7 @@ namespace CSAMS_WebSys.Services
                         { "TimeOutStart", attendance.TimeOutStart }
                     };
 
-                    DocumentReference attendanceDocRef = db.Collection("Attendance").Document(eventId);
+                    DocumentReference attendanceDocRef = db.Collection("Attendance").Document();
 
                 await attendanceDocRef.SetAsync(AttendanceData);
 
@@ -65,6 +68,30 @@ namespace CSAMS_WebSys.Services
             }
         }
 
+        public async Task<EventModel> GetEventByName(EventModel Event)
+        {
+            Query query = db.Collection("Event").WhereEqualTo("EventName", Event.EventName);
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+            if (querySnapshot.Documents.Count == 0)
+            {
+                MessageBox.Show("No event found with the specified name.");
+                return null;
+            }
+
+            DocumentSnapshot document = querySnapshot.Documents[0];
+            EventModel eventModel = new EventModel
+            {
+                EventID = document.Id,
+                EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
+                DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
+                DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
+                DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
+            };
+            return eventModel;
+        }
+
         private async Task<List<EventModel>> GetAllEventsAsync()
         {
             var eventsCollection = db.Collection("Event");
@@ -76,12 +103,13 @@ namespace CSAMS_WebSys.Services
                 var eventModel = new EventModel
                 {
                     EventID = document.Id,
-                    EventName = document.GetValue<string>("EventName"),
-                    DateAdded = document.GetValue<DateTime?>("DateAdded").Value.ToLocalTime(),
-                    DateStart = document.GetValue<DateTime?>("DateStart").Value.ToLocalTime(),
-                    DateEnd = document.GetValue<DateTime?>("DateEnd").Value.ToLocalTime(),
-                    IsArchived = document.GetValue<bool>("isArchived")
+                    EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
+                    DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
+                    DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
+                    DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                    IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                 };
+                eventModel.Status = GetCurrentStatus(eventModel);
                 eventModels.Add(eventModel);
             }
             return eventModels;
@@ -91,59 +119,56 @@ namespace CSAMS_WebSys.Services
         {
             var attendanceCollection = db.Collection("Attendance");
             var attendanceSnapshot = await attendanceCollection.GetSnapshotAsync();
-            var attendedEventIds = new List<string>();
+            var attendedEventNames = new List<string>();
 
             foreach (var attendanceDoc in attendanceSnapshot.Documents)
             {
 
                 if (string.IsNullOrEmpty(attendanceDoc.Id))
                 {
-                    Console.WriteLine("Invalid EventID found, skipping...");
+                    Console.WriteLine("Invalid AttendanceID found, skipping...");
                     continue;
                 }
 
                 var attendanceModel = new AttendanceModel
                 {
-                    EventID = attendanceDoc.Id,
+                    AttendanceID = attendanceDoc.Id,
+                    EventName = attendanceDoc.ContainsField("EventName") ? attendanceDoc.GetValue<string>("EventName") : null,
                 };
-                var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
 
+                var presentSubCollectionPath = attendanceModel.PresentSubCollectionPath;
+ 
                 try
                 {
                     var presentSubCollection = db.Collection(presentSubCollectionPath);
 
-                    var query = presentSubCollection.WhereEqualTo("StudentID", studentId);
+                    Query query = presentSubCollection.WhereEqualTo("StudentID", studentId);
                     var studentSnapshot = await query.GetSnapshotAsync();
 
                     if (studentSnapshot.Documents.Count > 0)
                     {
-                        attendedEventIds.Add(attendanceModel.EventID);
+                        attendedEventNames.Add(attendanceModel.EventName);
                     }
                 }
                 catch (ArgumentException ex)
                 {
-                    Console.WriteLine($"Error accessing sub-collection for EventID: {attendanceModel.EventID}. Error: {ex.Message}");
+                    Console.WriteLine($"Error accessing sub-collection for EventID: {attendanceModel.AttendanceID}. Error: {ex.Message}");
                 }
             }
 
-            foreach (var id in attendedEventIds)
+            foreach (var name in attendedEventNames)
             {
-                Console.WriteLine($"Attended Event ID: {id}");
+                Console.WriteLine($"Attended Event ID: {name}");
             }
 
-            return attendedEventIds;
+            return attendedEventNames;
         }
 
 
         public async Task<List<EventModel>> GetMissedEventsAsync(string studentId)
         {
             var allEvents = await GetAllEventsAsync();
-            var attendedEventIds = await GetAttendedEventIdsAsync(studentId);
-
-            foreach (var id in attendedEventIds)
-            {
-                Console.WriteLine(id);
-            }
+            var attendedEventNames = await GetAttendedEventIdsAsync(studentId);
 
             if (allEvents == null || !allEvents.Any())
             {
@@ -151,30 +176,25 @@ namespace CSAMS_WebSys.Services
                 return new List<EventModel>();
             }
 
-            if (attendedEventIds == null || !attendedEventIds.Any())
+            if (attendedEventNames == null || !attendedEventNames.Any())
             {
                 return allEvents; 
             }
 
             var missedEvents = allEvents
-                            .Where(e => !attendedEventIds.Any(id => id.Equals(e.EventID, StringComparison.OrdinalIgnoreCase)))
-                            .ToList();
+                          .Where(e => !attendedEventNames.Contains(e.EventName, StringComparer.OrdinalIgnoreCase))
+                          .ToList();
+
             return missedEvents;
         }
-/*        public async Task<int> GetNumberOfAttendees(EventModel Event)
-        {
-            Query query = db.Collection("Attendance").WhereEqualTo("EventID", Event.EventID);
-        }*/
-
-        public async Task<(List<EventModel>, DocumentSnapshot)> GetActiveEvents(int pageSize, DocumentSnapshot lastVisible)
+        public async Task<(List<EventModel>, DocumentSnapshot)> GetAllEvents(int pageSize, DocumentSnapshot lastVisible)
         {
             int page = pageSize;
             try
             {
                 Console.WriteLine($"{page} - {lastVisible}");
 
-                Query query = db.Collection("Event").WhereEqualTo("isArchived", false)
-                                                    .Select("EventName", "DateStart", "DateEnd", "DateAdded")
+                Query query = db.Collection("Event").Select("EventName", "DateStart", "DateEnd", "DateAdded", "isArchived")
                                                     .Limit(page);
 
                 if (lastVisible != null)
@@ -201,7 +221,8 @@ namespace CSAMS_WebSys.Services
                             EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
                             DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
                             DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
-                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                         };
                         eventModel.Status = GetCurrentStatus(eventModel);
                         Events.Add(eventModel);
@@ -247,7 +268,8 @@ namespace CSAMS_WebSys.Services
                             EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
                             DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
                             DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
-                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null
+                            DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                            IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
                         };
                         eventModel.Status = GetCurrentStatus(eventModel);
                         Events.Add(eventModel);
@@ -256,10 +278,10 @@ namespace CSAMS_WebSys.Services
                 DocumentSnapshot lastDoc = querySnapshot.Documents.Count > 0 ? querySnapshot.Documents[querySnapshot.Documents.Count - 1] : null;
                 return (Events, lastDoc);
             }   
-                catch (Exception ex)
-                {
-                    throw new Exception("An error occurred while retrieving active members with pagination.", ex);
-                }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving active members with pagination.", ex);
+            }
         }
         public EventStatus GetCurrentStatus(EventModel eventData)
         {
@@ -270,7 +292,7 @@ namespace CSAMS_WebSys.Services
             DateTime CurrentDate = DateTime.Now;
             DateTime EventDateStart = eventData.DateStart.Value.ToLocalTime();
             DateTime EventDateEnd = eventData.DateEnd.Value.ToLocalTime();
-             
+
             if(eventData.IsArchived)
             {
                 return EventStatus.Archived;
@@ -309,11 +331,11 @@ namespace CSAMS_WebSys.Services
                         });
                      }
                 }
-                Console.WriteLine("Event archived successfully.");
+                MessageBox.Show("Event archived successfully.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error archiving event: {ex.Message}");
+                MessageBox.Show($"Error archiving event: {ex.Message}");
             }
         }
 
@@ -321,23 +343,34 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                QuerySnapshot querySnapshot = await db.Collection("Event").WhereEqualTo("EventName", Event.EventName)
-                                                   .WhereEqualTo("isArchived", false).GetSnapshotAsync();
+                DocumentReference docRef = db.Collection("Event").Document(Event.EventID);
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
-                if (querySnapshot == null)
+                if (!snapshot.Exists)
                 {
                     Console.WriteLine("No event found!");
                     return;
                 }
 
-                DocumentReference docRef = querySnapshot.Documents[0].Reference;
-                await docRef.SetAsync(Event, SetOptions.MergeAll);
+                var fieldsToUpdate = new[] { "EventName", "DateStart", "DateEnd"};
+
+                var updatedFields = new Dictionary<string, object>
+                {
+                    { "EventName", Event.EventName },
+                    { "DateStart", Event.DateStart },
+                    { "DateEnd", Event.DateEnd }
+                };
+
+                await docRef.SetAsync(updatedFields, SetOptions.MergeFields(fieldsToUpdate));
+
+                Console.WriteLine("Event updated successfully!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error updating event: {ex.Message}");
             }
         }
+
 
         public async Task DeleteEvent(EventModel Event)
         {
@@ -357,15 +390,12 @@ namespace CSAMS_WebSys.Services
                 DocumentSnapshot document = snapshot.Documents[0];
                 await document.Reference.DeleteAsync();
 
-                string id = document.Id;
-
-                Query query1 = db.Collection("Attendance").WhereEqualTo(FieldPath.DocumentId, id);
+                Query query1 = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
                 QuerySnapshot snapshot1 = await query1.GetSnapshotAsync();
                 foreach (DocumentSnapshot doc in snapshot1.Documents)
                 {
                     await doc.Reference.DeleteAsync();
                 }
-                MessageBox.Show("Event and its associated attendance deleted successfully!");
             }
             catch (Exception ex)
             {
@@ -374,169 +404,3 @@ namespace CSAMS_WebSys.Services
         }
     }
 }
-
-
-
-
-
-
-
-
-/*        public class PaginationParameters
-        {
-            public string LastDocumentId { get; set; } = null;
-            public int PageSize { get; set; } = 10;
-        }*/
-
-/*        private async Task GetAttendanceRecord(EventModel Event)
-        {
-
-        }*/
-
-        /*public class PaginatedEventModel
-        {
-            public List<EventModel> Events { get; set; }
-            public bool HasMore { get; set; }
-            public string LastDocumentId { get; set; }
-            public Dictionary<EventStatus, int> StatusCounts { get; set; }
-        }
-
-        public async Task<PaginatedEventModel> GetEventsWithInfiniteScroll(PaginationParameters pagination, string last)
-        {
-            TimeZoneInfo philippineTime = GetPhilippineTimeZone();
-            var currentDateTime = TimeZoneInfo.ConvertTime(DateTime.UtcNow, philippineTime);
-
-            try
-            {
-                var eventRef = db.Collection("Event");
-                Query query = eventRef.OrderBy("DateStart").Limit(pagination.PageSize);
-
-                if (!string.IsNullOrEmpty(pagination.LastDocumentId))
-                {
-                    var lastDoc = await eventRef.Document(pagination.LastDocumentId).GetSnapshotAsync();
-                    query = query.StartAfter(lastDoc);
-                }
-
-                var snapshot = await query.GetSnapshotAsync();
-                var events = new List<EventModel>();
-
-                foreach (var document in snapshot.Documents)
-                {
-                    var data = document.ToDictionary();
-                    var eventData = new EventModel
-                    {
-                        EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
-                        EventDescription = document.ContainsField("EventDescription") ? document.GetValue<string>("EventDescription") : null,
-                        DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
-                        DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null
-                    };
-
-                    eventData.DateStart = TimeZoneInfo.ConvertTimeFromUtc((DateTime)eventData.DateStart, philippineTime);
-                    eventData.DateEnd = TimeZoneInfo.ConvertTimeFromUtc((DateTime)eventData.DateEnd, philippineTime);
-
-                    if (currentDateTime >= eventData.DateStart && currentDateTime <= eventData.DateEnd)
-                    {
-                        eventData.Status = EventStatus.Ongoing;
-                    }
-                    else if (currentDateTime < eventData.DateStart)
-                    {
-                        eventData.Status = EventStatus.Pending;
-                    }
-                    else
-                    {
-                        eventData.Status = EventStatus.Done;
-                    }
-
-                    events.Add(eventData);
-                }
-
-                var sortedEvents = events
-                    .OrderBy(e => GetStatusOrder(e.Status))
-                    .ThenBy(e => GetSecondarySort(e, currentDateTime))
-                    .ToList();
-
-                var statusCounts = new Dictionary<EventStatus, int>
-                {
-                    { EventStatus.Ongoing, events.Count(e => e.Status == EventStatus.Ongoing) },
-                    { EventStatus.Pending, events.Count(e => e.Status == EventStatus.Pending) },
-                    { EventStatus.Done, events.Count(e => e.Status == EventStatus.Done) }
-                };
-
-                return new PaginatedEventModel
-                {
-                    Events = sortedEvents,
-                    HasMore = sortedEvents.Count == pagination.PageSize,
-                    LastDocumentId = last,
-                    StatusCounts = statusCounts
-                };
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error retrieving events: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new PaginatedEventModel
-                {
-                    Events = new List<EventModel>(),
-                    HasMore = false,
-                    LastDocumentId = null,
-                    StatusCounts = new Dictionary<EventStatus, int>()
-                };
-            }
-        }
-
-        private TimeZoneInfo GetPhilippineTimeZone()
-        {
-            try
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById("China Standard Time");
-            }
-            catch
-            {
-                try
-                {
-                    return TimeZoneInfo.FindSystemTimeZoneById("Asia/Manila");
-                }
-                catch
-                {
-                    return TimeZoneInfo.CreateCustomTimeZone(
-                        "Philippine Time",
-                        new TimeSpan(8, 0, 0),
-                        "Philippine Time",
-                        "Philippine Standard Time");
-                }
-            }
-        }
-
-        private int GetStatusOrder(EventStatus status)
-        {
-            switch (status)
-            {
-                case EventStatus.Ongoing:
-                    return 0;
-                case EventStatus.Pending:
-                    return 1;
-                case EventStatus.Done:
-                    return 2;
-                default:
-                    return 3;
-            }
-        }
-
-        private DateTime GetSecondarySort(EventModel evt, DateTime currentDateTime)
-        {
-            switch (evt.Status)
-            {
-                case EventStatus.Pending:
-                    return (DateTime)evt.DateStart;
-                case EventStatus.Ongoing:
-                    return (DateTime)evt.DateEnd;
-                case EventStatus.Done:
-                    return (DateTime)(evt.DateEnd);
-                default:
-                    return DateTime.MaxValue;
-            }
-        }
-    }
-}
-
-*/

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using CSAMS_WebSys.Models;
 using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
+using DocumentFormat.OpenXml.EMMA;
 using Google.Cloud.Firestore;
 using Newtonsoft.Json;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
@@ -16,21 +17,15 @@ namespace CSAMS_WebSys.Services
 {
     public class AttendanceService
     {
-        FirestoreDb db;
-        MemberService memberservice;
-        DocumentSnapshot firstDoc;
+        private FirestoreDb db;
+        private MemberService memberservice;
+        private SchoolYearServices schoolYearServices;
+        private SchoolYearModel SYmodel;
+        private DocumentSnapshot firstDoc;
         public AttendanceService()
         {
             db = FirebaseConnectionService.GetConnection();
         }
-
-/*        public async Task<List<MemberModel>> GetAbsentStudents(AttendanceModel attendance)
-        {
-            Query query = db.Collection("Member").WhereEqualTo("")
-            memberservice = new MemberService();
-            List<MemberModel> members = await
-        }*/
-
 
         public async Task<string> GetEventID(string eventName)
         {
@@ -56,7 +51,7 @@ namespace CSAMS_WebSys.Services
         public async Task<List<MemberModel>> CurrentlyPresent(AttendanceModel attendance)
         {
             List<MemberModel> members = new List<MemberModel>();
-            if(attendance == null)
+            if (attendance == null)
             {
                 Console.WriteLine("Attendance was null");
                 return members;
@@ -72,7 +67,7 @@ namespace CSAMS_WebSys.Services
 
                 CollectionReference collection = db.Collection(path);
                 QuerySnapshot querySnapshot = await collection.GetSnapshotAsync();
-                
+
                 foreach (DocumentSnapshot document in querySnapshot.Documents)
                 {
                     if (document.Exists)
@@ -89,39 +84,44 @@ namespace CSAMS_WebSys.Services
 
             return members;
         }
-        public async Task<AttendanceModel> GetAttendanceForAnEvent(string EventName)
+        public async Task<AttendanceModel> GetAttendanceForAnEvent(EventModel Event)
         {
             try
             {
-                var eventId = await GetEventID(EventName);
-                DocumentReference attendanceDocRef = db.Collection("Attendance").Document(eventId);
+                Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
 
-                DocumentSnapshot snapshot = await attendanceDocRef.GetSnapshotAsync();
-
-                if (snapshot.Exists)
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+                if (querySnapshot.Documents.Count == 0)
                 {
+                    Console.WriteLine("No attendance data found for the specified event." + Event.EventName);
+                }
+
+                if (querySnapshot.Documents.Count > 0)
+                {
+                    DocumentSnapshot snapshot = querySnapshot.Documents[0];
+
                     var attendanceData = snapshot.ToDictionary();
 
                     var totalAttendees = attendanceData.ContainsKey("TotalAttendees") && attendanceData["TotalAttendees"] is long
                         ? Convert.ToInt32(attendanceData["TotalAttendees"])
                         : 0;
                     DateTime? timeInStart = attendanceData.ContainsKey("TimeInStart") && attendanceData["TimeInStart"] is Timestamp
-                       ? ((Timestamp)attendanceData["TimeInStart"]).ToDateTime().ToLocalTime()
-                       : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeInStart"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeInEnd = attendanceData.ContainsKey("TimeInEnd") && attendanceData["TimeInEnd"] is Timestamp
-                      ? ((Timestamp)attendanceData["TimeInEnd"]).ToDateTime().ToLocalTime()
-                      : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeInEnd"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeOutStart = attendanceData.ContainsKey("TimeOutStart") && attendanceData["TimeOutStart"] is Timestamp
-                     ? ((Timestamp)attendanceData["TimeOutStart"]).ToDateTime().ToLocalTime()
-                     : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeOutStart"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
                     DateTime? timeOutEnd = attendanceData.ContainsKey("TimeOutEnd") && attendanceData["TimeOutEnd"] is Timestamp
-                    ? ((Timestamp)attendanceData["TimeOutEnd"]).ToDateTime().ToLocalTime()
-                : (DateTime?)null;
+                        ? ((Timestamp)attendanceData["TimeOutEnd"]).ToDateTime().ToLocalTime()
+                        : (DateTime?)null;
 
-                    Console.WriteLine(timeInStart + " " + timeOutStart);
                     return new AttendanceModel
                     {
-                        EventID = eventId,
+                        AttendanceID = snapshot.Id,
+                        EventName = Event.EventName,
                         TotalAttendees = totalAttendees,
                         TimeInStart = timeInStart,
                         TimeInEnd = timeInEnd,
@@ -131,14 +131,49 @@ namespace CSAMS_WebSys.Services
                 }
                 else
                 {
-                    Console.WriteLine("Attendance data for the event not found.");
+                    Console.WriteLine("No attendance data found for the specified event.");
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Error retrieving attendance data: {ex.Message}");
                 return null;
+            }
+        }
+
+        public async Task EditAttendance(AttendanceModel attendance)
+        {
+            try
+            {
+                DocumentReference docRef = db.Collection("Attendance").Document(attendance.AttendanceID);
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+
+                if (!snapshot.Exists)
+                {
+                    Console.WriteLine("No attendance found");
+                    return;
+                }
+
+                var fieldsToUpdate = new[] { "EventName", "DateStart", "TimeInStart", "TimeInEnd", "TimeOutStart", "TimeOutEnd" };
+
+                var updatedFields = new Dictionary<string, object>
+                {
+                    { "EventName", attendance.EventName },
+                    { "DateStart", attendance.DateStart },
+                    { "TimeInStart", attendance.TimeInStart },
+                    { "TimeInEnd", attendance.TimeInEnd },
+                    { "TimeOutStart", attendance.TimeOutStart },
+                    { "TimeOutEnd", attendance.TimeOutEnd }
+                };
+
+                await docRef.SetAsync(updatedFields, SetOptions.MergeFields(fieldsToUpdate));
+
+                Console.WriteLine("Attendance updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating event: {ex.Message}");
             }
         }
 
@@ -168,7 +203,7 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                DocumentReference docRef = db.Collection("Attendance").Document(attendance.EventID);
+                DocumentReference docRef = db.Collection("Attendance").Document(attendance.AttendanceID);
                 DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
                 if (snapshot.Exists)
@@ -185,7 +220,7 @@ namespace CSAMS_WebSys.Services
                 }
                 else
                 {
-                    Console.WriteLine($"Document with ID {attendance.EventID} does not exist.");
+                    Console.WriteLine($"Document with ID {attendance.AttendanceID} does not exist.");
                 }
             }
             catch (Exception ex)
@@ -193,13 +228,13 @@ namespace CSAMS_WebSys.Services
                 Console.WriteLine($"Error fetching TotalAttendees: {ex.Message}");
             }
 
-            return 0; 
+            return 0;
         }
 
 
-    private async Task StoreAttendanceData(AttendanceModel attendance, string path, MemberModel member, DateTime time, bool isTimeIn)
+        private async Task StoreAttendanceData(AttendanceModel attendance, string path, MemberModel member, DateTime time, bool isTimeIn)
         {
-            DocumentReference attendanceDoc = db.Collection("Attendance").Document(attendance.EventID);
+            DocumentReference attendanceDoc = db.Collection("Attendance").Document(attendance.AttendanceID);
             await attendanceDoc.UpdateAsync("TotalAttendees", FieldValue.Increment(1));
 
             if (string.IsNullOrWhiteSpace(path))
@@ -219,6 +254,7 @@ namespace CSAMS_WebSys.Services
                         FirstName = member.FirstName,
                         LastName = member.LastName,
                         YearLevel = member.YearLevel,
+                        Status = member.Status,
                         TimeIn = time.ToUniversalTime(),
                     });
                 }
@@ -230,6 +266,7 @@ namespace CSAMS_WebSys.Services
                         FirstName = member.FirstName,
                         LastName = member.LastName,
                         YearLevel = member.YearLevel,
+                        Status = member.Status,
                         TimeOut = time.ToUniversalTime(),
                     });
                 }
@@ -252,7 +289,7 @@ namespace CSAMS_WebSys.Services
                 }
                 await StoreAttendanceData(attendance, attendance.PresentSubCollectionPath, member, time, true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error occured when logging attendance" + ex.Message);
             }
@@ -269,7 +306,7 @@ namespace CSAMS_WebSys.Services
                 }
                 await StoreAttendanceData(attendance, attendance.PresentSubCollectionPath, member, time, false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error occured when logging attendance" + ex.Message);
             }
@@ -285,5 +322,43 @@ namespace CSAMS_WebSys.Services
 
             return (absentMembers, firstDoc);
         }
+
+        public async Task<AttendanceModel> GetAttendanceForAnEventUsingName(EventModel Event)
+        {
+            try
+            {
+                if (Event == null)
+                {
+                    Console.WriteLine("Event is null!");
+                    return null;
+                }
+
+                Query query = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+                if (querySnapshot.Documents.Count == 0)
+                {
+                    Console.WriteLine($"No attendance found for the event: {Event.EventName}");
+                    return null;
+                }
+
+                DocumentSnapshot documentSnapshot = querySnapshot.Documents[0];
+
+                AttendanceModel attendance = new AttendanceModel
+                {
+                    EventName = documentSnapshot.GetValue<string>("EventName"),
+                    TotalAttendees = documentSnapshot.GetValue<int>("TotalAttendees"),
+                };
+
+                return attendance;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching attendance data: {ex.Message}");
+                return null;
+            }
+        }
+
+
     }
 }

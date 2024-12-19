@@ -4,6 +4,7 @@ using CSAMS_WebSys.Models.enums;
 using CSAMS_WebSys.Services;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.Admin.V1;
+using Google.Protobuf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -24,9 +26,12 @@ namespace CSAMS_WebSys.UserControls
     public partial class UserControl_Events : UserControl
     {
         private EventService EventService;
-        private AttendanceModel AttendanceModel;
-        private int pageNumber = 20;
+        private AttendanceModel attendance;
+        private AttendanceService attendanceService;
+        private int pageNumber = 10;
+        private int numAttendees = 0;
         private static string lastDocumentId = null;
+        private int rowIndex2 = -1;
         private static DocumentSnapshot lastdoc;    
         private static DocumentSnapshot firstdoc;
         private HashSet<string> displayedEvents = new HashSet<string>();
@@ -37,6 +42,8 @@ namespace CSAMS_WebSys.UserControls
         {
             InitializeComponent();
             EventService = new EventService();
+            attendanceService = new AttendanceService();
+            attendance = new AttendanceModel();
             InitializeTable();
             FetchData();
         }
@@ -45,7 +52,7 @@ namespace CSAMS_WebSys.UserControls
         {
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("DateTime", typeof(string));
-/*            table.Columns.Add("Attendees", typeof(int));*/
+            table.Columns.Add("Attendees", typeof(int));
             table.Columns.Add("Progress", typeof(string));
 
             EventsData_gunaDataGridView.DataSource = table;
@@ -53,18 +60,13 @@ namespace CSAMS_WebSys.UserControls
             DataGridViewButtonColumn dataGridViewButtonColumn_edit = new DataGridViewButtonColumn();
             DataGridViewButtonColumn dataGridViewButtonColumn_detials = new DataGridViewButtonColumn();
             DataGridViewButtonColumn dataGridViewButtonColumn_delete = new DataGridViewButtonColumn();
-            DataGridViewButtonColumn x = new DataGridViewButtonColumn();
-            x.Name = "x";
-            x.HeaderText = "";
+            
             dataGridViewButtonColumn_detials.Name = "Detail_button";
             dataGridViewButtonColumn_detials.HeaderText = "";
             dataGridViewButtonColumn_delete.Name = "Delete_button";
             dataGridViewButtonColumn_delete.HeaderText = "";
             dataGridViewButtonColumn_edit.Name = "Edit_button";
-            dataGridViewButtonColumn_edit.HeaderText = "Action";
-
-            x.FlatStyle = FlatStyle.Popup;
-            x.Text = " Scan";
+            dataGridViewButtonColumn_edit.HeaderText = "Action";;
 
             dataGridViewButtonColumn_detials.FlatStyle = FlatStyle.Popup;
             dataGridViewButtonColumn_edit.FlatStyle = FlatStyle.Popup;
@@ -77,13 +79,11 @@ namespace CSAMS_WebSys.UserControls
             dataGridViewButtonColumn_edit.UseColumnTextForButtonValue = true;
             dataGridViewButtonColumn_delete.UseColumnTextForButtonValue = true;
 
-            x.UseColumnTextForButtonValue = true;
-
-            EventsData_gunaDataGridView.Columns.Add(x);
-
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_edit);
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_delete);
             EventsData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
+
+            EventsData_gunaDataGridView.RowTemplate.Height = 50;
 
             EventsData_gunaDataGridView.Columns[0].Width = 500;
             EventsData_gunaDataGridView.Columns[1].Width = 150;
@@ -122,62 +122,45 @@ namespace CSAMS_WebSys.UserControls
         }
 
 
-        private void AddEvent(EventModel Event)
+        private async void AddEvent(EventModel Event)
         {
             Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
             Event.Status = EventService.GetCurrentStatus(Event);
             if (Event != null && displayedEvents.Add(Event.EventName))
             {
-                table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), Event.Status.ToString());
+                numAttendees = await GetAttendees(Event);
+                table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), numAttendees,  Event.Status.ToString());
             }
         }
 
-        private void AddEvents(List<EventModel> Events)
+        private async void AddEvents(List<EventModel> Events)
         {
             foreach (var Event in Events)
             {
                 Console.WriteLine(Event.EventName + " " + Event.Status.ToString());
                 if (Event != null && displayedEvents.Add(Event.EventName))
                 {
-                    table.Rows.Add(Event.EventName, Event.DateAdded?.ToString("MMMM dd, yyyy"), Event.Status.ToString());
+                    numAttendees = await GetAttendees(Event);
+                    table.Rows.Add(Event.EventName, Event.DateStart?.ToString("MMMM dd, yyyy"), numAttendees, Event.Status.ToString());
                 }
             }
         }
 
-/*        private void FilterEvents(object sender, EventArgs e)
+        private async Task<int> GetAttendees(EventModel Event)
         {
-            string yearLevelFilter = FilterMembers_gunaComboBox.Text;
             try
             {
-                view = table.DefaultView;
-
-                switch (yearLevelFilter)
-                {
-                    case " ":
-                        view.RowFilter = string.Empty;
-                        break;
-                    case "1":
-                    case "2":
-                    case "3":
-                    case "4":
-                        view.RowFilter = $"year = '{yearLevelFilter}'";
-                        break;
-                    case "5th above":
-                        view.RowFilter = view.RowFilter = "year LIKE '5%' OR year LIKE '6%' OR year LIKE '7%' OR year LIKE '8%' OR year LIKE '9%'";
-                        break;
-                    default:
-                        view.RowFilter = string.Empty;
-                        break;
-                }
-
-                EventsData_gunaDataGridView.DataSource.DataSource = view;
+                attendance = await attendanceService.GetAttendanceForAnEventUsingName(Event);
+                Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+                return attendance.TotalAttendees;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                MessageBox.Show($"Error filtering data: {ex.Message}", "Filter Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine("Error in GetAttendees: " + ex.Message);
+                return 0;
             }
-        }*/
+            
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -196,37 +179,27 @@ namespace CSAMS_WebSys.UserControls
                         DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex1];
 
                         string eventName = selectedRow.Cells["Name"].Value.ToString();
-                        Console.WriteLine($"Selected EventName: {eventName}");
+                        string eventStart = selectedRow.Cells["DateTime"].Value.ToString();
+                        
+                        string progressValue = selectedRow.Cells["Progress"].Value.ToString();
+                        EventStatus eventStatus = (EventStatus)Enum.Parse(typeof(EventStatus), progressValue);
 
-                        var Event = new EventModel
+                        string format = "MMMM dd, yyyy";
+                        CultureInfo provider = CultureInfo.InvariantCulture;
+                        DateTime.TryParseExact(eventStart, format, provider, DateTimeStyles.None, out DateTime date);
+
+                        EventModel Event = new EventModel
                         {
-                            EventName = eventName
+                            EventName = eventName,
+                            DateStart = date.ToUniversalTime(),
+                            Status = eventStatus
                         };
+
                         EventDetailsForm eventDetails = new EventDetailsForm(Event);
                         eventDetails.Show();
                         eventDetails.BringToFront();
-
                     }
-                }
-                else if (e.ColumnIndex == EventsData_gunaDataGridView.Columns["x"].Index)
-                {
-                    int rowIndex1 = e.RowIndex;
-                    if (rowIndex1 >= 0)
-                    {
-                        DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex1];
-
-                        string eventName = selectedRow.Cells["Name"].Value.ToString();
-                        Console.WriteLine($"Selected EventName: {eventName}");
-
-                        var Event = new EventModel
-                        {
-                            EventName = eventName
-                        };
-                        EventDetailsForm eventDetails = new EventDetailsForm(Event);
-                        eventDetails.Show();
-                        eventDetails.BringToFront();
-
-                    }
+                    
                 }
                 else if (e.ColumnIndex == EventsData_gunaDataGridView.Columns["Delete_button"].Index)
                 {
@@ -253,6 +226,7 @@ namespace CSAMS_WebSys.UserControls
                         {
                             await EventService.DeleteEvent(Event);
                             table.Rows.RemoveAt(rowIndex3);
+                            displayedEvents.Remove(EventName);
                             MessageBox.Show("Event deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
@@ -265,7 +239,7 @@ namespace CSAMS_WebSys.UserControls
                 {
                     try
                     {
-                        int rowIndex2 = e.RowIndex;
+                        rowIndex2 = e.RowIndex;
                         if (rowIndex2 >= 0)
                         {
                             DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex2];
@@ -276,6 +250,7 @@ namespace CSAMS_WebSys.UserControls
 
                             };
                             EditEventsForm editevent = new EditEventsForm(Event);
+                            editevent.EventChanged += EventChanged;
                             editevent.Show();
                         }
                     }
@@ -292,6 +267,21 @@ namespace CSAMS_WebSys.UserControls
             }
         }
 
+        private void EventChanged(EventModel Event)
+        {
+            int rowIndex = rowIndex2;
+
+            if (rowIndex >= 0)
+            {
+                DataRow rowToUpdate = table.Rows[rowIndex];
+                rowToUpdate["Name"] = Event.EventName;
+                rowToUpdate["DateTime"] = Event.DateAdded?.ToString("MMMM dd, yyyy");
+                rowToUpdate["Progress"] = Event.Status.ToString();
+                EventsData_gunaDataGridView.Refresh();
+            }
+            EventsData_gunaDataGridView.Enabled = true;
+        }
+
         private void SearchEvents_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
 
@@ -302,8 +292,7 @@ namespace CSAMS_WebSys.UserControls
             try
             {
                 List<EventModel> events = new List<EventModel>();
-                (events, firstdoc) = await EventService.GetActiveEvents(pageNumber, lastdoc);
-                Console.WriteLine(pageNumber);
+                (events, firstdoc) = await EventService.GetAllEvents(pageNumber, lastdoc);
                 if (events.Count > 0)
                 {
                     AddEvents(events);
@@ -315,7 +304,6 @@ namespace CSAMS_WebSys.UserControls
                 Console.WriteLine($"Error in AppendCurrentData(): {ex.Message}");
             }
         }
-
 
         private string FormatTextToTitleCase(string input)
         {
@@ -392,6 +380,42 @@ namespace CSAMS_WebSys.UserControls
         private void onClickDashboard(object sender, EventArgs e)
         {
           
+        }
+
+        private void FilterEvents_gunaComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string yearLevelFilter = FilterEvents_gunaComboBox.Text;
+            try
+            {
+                switch (yearLevelFilter)
+                {
+                    case " ":
+                        view.RowFilter = string.Empty;
+                        break;
+                    case "Ongoing":
+                        view.RowFilter = "Progress = 'Ongoing'";
+                        break;
+                    case "Pending":
+                        view.RowFilter = "Progress = 'Pending'";
+                        break;
+                    case "Done":
+                        view.RowFilter = "Progress = 'Done'";
+                        break;
+                    case "Archived":
+                        view.RowFilter = "Progress = 'Archived'";
+                        break;
+                    default:
+                        view.RowFilter = string.Empty;
+                        break;
+                }
+
+                EventsData_gunaDataGridView.DataSource = view;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error filtering data: {ex.Message}", "Filter Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

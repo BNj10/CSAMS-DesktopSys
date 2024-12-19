@@ -36,7 +36,6 @@ namespace CSAMS_WebSys.UserControls
             this.scanBiometrics_gunaAdvenceButton = new Guna.UI.WinForms.GunaAdvenceButton();
             this.scannedAtendeesText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timeAdded_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.DateAdded_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.timeInText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.ScannedAtendeesData_gunaDataGridView = new Guna.UI.WinForms.GunaDataGridView();
@@ -46,6 +45,10 @@ namespace CSAMS_WebSys.UserControls
             this.tabelLabels_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.SearchMembers_gunaAdvenceButton = new Guna.UI.WinForms.GunaAdvenceButton();
             this.noOfAbsencesText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.guna2HtmlLabel1 = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            this.guna2HtmlLabel2 = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            this.gunaLabel3 = new Guna.UI.WinForms.GunaLabel();
+            this.guna2HtmlLabel3 = new Guna.UI2.WinForms.Guna2HtmlLabel();
             ((System.ComponentModel.ISupportInitialize)(this.ScannedAtendeesData_gunaDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -94,25 +97,15 @@ namespace CSAMS_WebSys.UserControls
             // 
             this.scannedAtendeesText_gunaLabel.AutoSize = true;
             this.scannedAtendeesText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.scannedAtendeesText_gunaLabel.Location = new System.Drawing.Point(284, 47);
+            this.scannedAtendeesText_gunaLabel.Location = new System.Drawing.Point(268, 47);
             this.scannedAtendeesText_gunaLabel.Name = "scannedAtendeesText_gunaLabel";
-            this.scannedAtendeesText_gunaLabel.Size = new System.Drawing.Size(368, 54);
+            this.scannedAtendeesText_gunaLabel.Size = new System.Drawing.Size(384, 54);
             this.scannedAtendeesText_gunaLabel.TabIndex = 9;
-            this.scannedAtendeesText_gunaLabel.Text = "Scanned Atendees";
+            this.scannedAtendeesText_gunaLabel.Text = "Scanned Attendees";
             // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // timeAdded_gunaLabel
-            // 
-            this.timeAdded_gunaLabel.AutoSize = true;
-            this.timeAdded_gunaLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeAdded_gunaLabel.Location = new System.Drawing.Point(49, 181);
-            this.timeAdded_gunaLabel.Name = "timeAdded_gunaLabel";
-            this.timeAdded_gunaLabel.Size = new System.Drawing.Size(17, 28);
-            this.timeAdded_gunaLabel.TabIndex = 33;
-            this.timeAdded_gunaLabel.Text = ".";
             // 
             // DateAdded_gunaLabel
             // 
@@ -127,7 +120,7 @@ namespace CSAMS_WebSys.UserControls
             // 
             this.timeInText_gunaLabel.AutoSize = true;
             this.timeInText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeInText_gunaLabel.Location = new System.Drawing.Point(51, 146);
+            this.timeInText_gunaLabel.Location = new System.Drawing.Point(50, 146);
             this.timeInText_gunaLabel.Name = "timeInText_gunaLabel";
             this.timeInText_gunaLabel.Size = new System.Drawing.Size(68, 23);
             this.timeInText_gunaLabel.TabIndex = 31;
@@ -170,7 +163,7 @@ namespace CSAMS_WebSys.UserControls
             this.ScannedAtendeesData_gunaDataGridView.RowTemplate.Height = 24;
             this.ScannedAtendeesData_gunaDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ScannedAtendeesData_gunaDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ScannedAtendeesData_gunaDataGridView.Size = new System.Drawing.Size(1123, 401);
+            this.ScannedAtendeesData_gunaDataGridView.Size = new System.Drawing.Size(1059, 401);
             this.ScannedAtendeesData_gunaDataGridView.TabIndex = 35;
             this.ScannedAtendeesData_gunaDataGridView.Theme = Guna.UI.WinForms.GunaDataGridViewPresetThemes.Indigo;
             this.ScannedAtendeesData_gunaDataGridView.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
@@ -244,10 +237,10 @@ namespace CSAMS_WebSys.UserControls
             this.tabelLabels_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabelLabels_gunaLabel.Location = new System.Drawing.Point(288, 141);
             this.tabelLabels_gunaLabel.Name = "tabelLabels_gunaLabel";
-            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(1010, 28);
+            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(981, 28);
             this.tabelLabels_gunaLabel.TabIndex = 40;
             this.tabelLabels_gunaLabel.Text = "Student ID         First Name             Last Name              Year            " +
-    "    Status           Date and Time added             Actions";
+    "    Status                    Time In                    Time Out";
             // 
             // SearchMembers_gunaAdvenceButton
             // 
@@ -282,19 +275,60 @@ namespace CSAMS_WebSys.UserControls
             // 
             this.noOfAbsencesText_gunaLabel.AutoSize = true;
             this.noOfAbsencesText_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.noOfAbsencesText_gunaLabel.Location = new System.Drawing.Point(50, 334);
+            this.noOfAbsencesText_gunaLabel.Location = new System.Drawing.Point(50, 347);
             this.noOfAbsencesText_gunaLabel.Name = "noOfAbsencesText_gunaLabel";
             this.noOfAbsencesText_gunaLabel.Size = new System.Drawing.Size(131, 23);
             this.noOfAbsencesText_gunaLabel.TabIndex = 48;
             this.noOfAbsencesText_gunaLabel.Text = "No. of atendees";
             // 
+            // guna2HtmlLabel1
+            // 
+            this.guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.guna2HtmlLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.guna2HtmlLabel1.Location = new System.Drawing.Point(54, 181);
+            this.guna2HtmlLabel1.Name = "guna2HtmlLabel1";
+            this.guna2HtmlLabel1.Size = new System.Drawing.Size(8, 27);
+            this.guna2HtmlLabel1.TabIndex = 49;
+            this.guna2HtmlLabel1.Text = ".";
+            // 
+            // guna2HtmlLabel2
+            // 
+            this.guna2HtmlLabel2.BackColor = System.Drawing.Color.Transparent;
+            this.guna2HtmlLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.guna2HtmlLabel2.Location = new System.Drawing.Point(54, 282);
+            this.guna2HtmlLabel2.Name = "guna2HtmlLabel2";
+            this.guna2HtmlLabel2.Size = new System.Drawing.Size(8, 27);
+            this.guna2HtmlLabel2.TabIndex = 50;
+            this.guna2HtmlLabel2.Text = ".";
+            // 
+            // gunaLabel3
+            // 
+            this.gunaLabel3.AutoSize = true;
+            this.gunaLabel3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gunaLabel3.Location = new System.Drawing.Point(51, 245);
+            this.gunaLabel3.Name = "gunaLabel3";
+            this.gunaLabel3.Size = new System.Drawing.Size(83, 23);
+            this.gunaLabel3.TabIndex = 51;
+            this.gunaLabel3.Text = "Time-Out";
+            // 
+            // guna2HtmlLabel3
+            // 
+            this.guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent;
+            this.guna2HtmlLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.guna2HtmlLabel3.Location = new System.Drawing.Point(55, 385);
+            this.guna2HtmlLabel3.Name = "guna2HtmlLabel3";
+            this.guna2HtmlLabel3.Size = new System.Drawing.Size(8, 27);
+            this.guna2HtmlLabel3.TabIndex = 52;
+            this.guna2HtmlLabel3.Text = ".";
+            // 
             // ScanEventDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gunaLabel2);
-            this.Controls.Add(this.gunaLabel1);
-            this.Controls.Add(this.noOfAttendees_gunaLabel);
+            this.Controls.Add(this.guna2HtmlLabel3);
+            this.Controls.Add(this.gunaLabel3);
+            this.Controls.Add(this.guna2HtmlLabel2);
+            this.Controls.Add(this.guna2HtmlLabel1);
             this.Controls.Add(this.noOfAbsencesText_gunaLabel);
             this.Controls.Add(this.tabelLabels_gunaLabel);
             this.Controls.Add(this.FilterMembers_gunaComboBox);
@@ -302,7 +336,6 @@ namespace CSAMS_WebSys.UserControls
             this.Controls.Add(this.SearchMembers_gunaAdvenceButton);
             this.Controls.Add(this.SearchMembers_gunaTextBox);
             this.Controls.Add(this.ScannedAtendeesData_gunaDataGridView);
-            this.Controls.Add(this.timeAdded_gunaLabel);
             this.Controls.Add(this.DateAdded_gunaLabel);
             this.Controls.Add(this.timeInText_gunaLabel);
             this.Controls.Add(this.scannedAtendeesText_gunaLabel);
@@ -321,7 +354,6 @@ namespace CSAMS_WebSys.UserControls
         private Guna.UI.WinForms.GunaAdvenceButton scanBiometrics_gunaAdvenceButton;
         private Guna.UI.WinForms.GunaLabel scannedAtendeesText_gunaLabel;
         private System.Windows.Forms.Timer timer1;
-        private Guna.UI.WinForms.GunaLabel timeAdded_gunaLabel;
         private Guna.UI.WinForms.GunaLabel DateAdded_gunaLabel;
         private Guna.UI.WinForms.GunaLabel timeInText_gunaLabel;
         private Guna.UI.WinForms.GunaDataGridView ScannedAtendeesData_gunaDataGridView;
@@ -334,5 +366,9 @@ namespace CSAMS_WebSys.UserControls
         private Guna.UI.WinForms.GunaLabel noOfAttendees_gunaLabel;
         private Guna.UI.WinForms.GunaLabel gunaLabel1;
         private Guna.UI.WinForms.GunaLabel gunaLabel2;
+        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel1;
+        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel2;
+        private Guna.UI.WinForms.GunaLabel gunaLabel3;
+        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel3;
     }
 }

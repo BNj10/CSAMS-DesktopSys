@@ -402,6 +402,12 @@
     <Compile Include="Forms\FingerPrintScan.Designer.cs">
       <DependentUpon>FingerPrintScan.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -446,6 +452,12 @@
     <Compile Include="Services\FirebaseAuthServices.cs" />
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\SchoolYearServices.cs" />
+    <Compile Include="UserControls\absencesButtomEventDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\absencesButtomEventDetails.Designer.cs">
+      <DependentUpon>absencesButtomEventDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\AbsencesEventDetails.cs">
       <SubType>UserControl</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -471,6 +483,12 @@
     </Compile>
     <Compile Include="UserControls\PopUpVerify.Designer.cs">
       <DependentUpon>PopUpVerify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\scanButtomEventDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\scanButtomEventDetails.Designer.cs">
+      <DependentUpon>scanButtomEventDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ScanEventDetails.cs">
       <SubType>UserControl</SubType>
@@ -529,6 +547,9 @@
     <EmbeddedResource Include="Forms\FingerPrintScan.resx">
       <DependentUpon>FingerPrintScan.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -548,6 +569,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UserControls\absencesButtomEventDetails.resx">
+      <DependentUpon>absencesButtomEventDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\AbsencesEventDetails.resx">
       <DependentUpon>AbsencesEventDetails.cs</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -561,8 +585,14 @@
     <EmbeddedResource Include="UserControls\PopUpVerify.resx">
       <DependentUpon>PopUpVerify.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\scanButtomEventDetails.resx">
+      <DependentUpon>scanButtomEventDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ScanEventDetails.resx">
       <DependentUpon>ScanEventDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UserControl3.resx">
+      <DependentUpon>UserControl3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UserControl_AddSchoolYear.resx">
       <DependentUpon>UserControl_AddSchoolYear.cs</DependentUpon>

@@ -34,6 +34,7 @@ namespace CSAMS_WebSys
             this.TopPanel_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.TopPanelText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.loginPanel_gunaShadowPanel = new Guna.UI.WinForms.GunaShadowPanel();
+            this.guna2WinProgressIndicator1 = new Guna.UI2.WinForms.Guna2WinProgressIndicator();
             this.Hide = new System.Windows.Forms.Button();
             this.UnHide = new System.Windows.Forms.Button();
             this.Login = new Guna.UI.WinForms.GunaAdvenceButton();
@@ -46,6 +47,8 @@ namespace CSAMS_WebSys
             this.welcomeText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.loginTextPanel_gunaPanel = new Guna.UI.WinForms.GunaPanel();
             this.textTitle_gunaLabel = new Guna.UI.WinForms.GunaLabel();
+            this.guna2HtmlLabel1 = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            this.guna2HtmlLabel2 = new Guna.UI2.WinForms.Guna2HtmlLabel();
             this.TopPanel_gunaPanel.SuspendLayout();
             this.loginPanel_gunaShadowPanel.SuspendLayout();
             this.loginTextPanel_gunaPanel.SuspendLayout();
@@ -75,6 +78,9 @@ namespace CSAMS_WebSys
             // loginPanel_gunaShadowPanel
             // 
             this.loginPanel_gunaShadowPanel.BaseColor = System.Drawing.Color.White;
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.guna2HtmlLabel2);
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.guna2HtmlLabel1);
+            this.loginPanel_gunaShadowPanel.Controls.Add(this.guna2WinProgressIndicator1);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Hide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.UnHide);
             this.loginPanel_gunaShadowPanel.Controls.Add(this.Login);
@@ -91,6 +97,16 @@ namespace CSAMS_WebSys
             this.loginPanel_gunaShadowPanel.ShadowShift = 9;
             this.loginPanel_gunaShadowPanel.Size = new System.Drawing.Size(945, 730);
             this.loginPanel_gunaShadowPanel.TabIndex = 5;
+            // 
+            // guna2WinProgressIndicator1
+            // 
+            this.guna2WinProgressIndicator1.BackColor = System.Drawing.Color.Transparent;
+            this.guna2WinProgressIndicator1.CircleSize = 4F;
+            this.guna2WinProgressIndicator1.Location = new System.Drawing.Point(403, 231);
+            this.guna2WinProgressIndicator1.Name = "guna2WinProgressIndicator1";
+            this.guna2WinProgressIndicator1.Size = new System.Drawing.Size(130, 135);
+            this.guna2WinProgressIndicator1.TabIndex = 25;
+            this.guna2WinProgressIndicator1.UseTransparentBackground = true;
             // 
             // Hide
             // 
@@ -194,6 +210,7 @@ namespace CSAMS_WebSys
             this.Password.Radius = 13;
             this.Password.Size = new System.Drawing.Size(833, 68);
             this.Password.TabIndex = 8;
+            this.Password.TextChanged += new System.EventHandler(this.onTypePassword);
             // 
             // Email
             // 
@@ -211,6 +228,7 @@ namespace CSAMS_WebSys
             this.Email.Radius = 13;
             this.Email.Size = new System.Drawing.Size(833, 68);
             this.Email.TabIndex = 7;
+            this.Email.TextChanged += new System.EventHandler(this.onTypeEmail);
             // 
             // developText_gunaLabel
             // 
@@ -267,6 +285,30 @@ namespace CSAMS_WebSys
             this.textTitle_gunaLabel.TabIndex = 0;
             this.textTitle_gunaLabel.Text = "Welcome to CSAMS";
             // 
+            // guna2HtmlLabel1
+            // 
+            this.guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.guna2HtmlLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
+            this.guna2HtmlLabel1.ForeColor = System.Drawing.Color.Red;
+            this.guna2HtmlLabel1.Location = new System.Drawing.Point(140, 350);
+            this.guna2HtmlLabel1.Name = "guna2HtmlLabel1";
+            this.guna2HtmlLabel1.Size = new System.Drawing.Size(14, 33);
+            this.guna2HtmlLabel1.TabIndex = 26;
+            this.guna2HtmlLabel1.Text = "*";
+            this.guna2HtmlLabel1.Visible = false;
+            // 
+            // guna2HtmlLabel2
+            // 
+            this.guna2HtmlLabel2.BackColor = System.Drawing.Color.Transparent;
+            this.guna2HtmlLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
+            this.guna2HtmlLabel2.ForeColor = System.Drawing.Color.Red;
+            this.guna2HtmlLabel2.Location = new System.Drawing.Point(190, 470);
+            this.guna2HtmlLabel2.Name = "guna2HtmlLabel2";
+            this.guna2HtmlLabel2.Size = new System.Drawing.Size(14, 33);
+            this.guna2HtmlLabel2.TabIndex = 27;
+            this.guna2HtmlLabel2.Text = "*";
+            this.guna2HtmlLabel2.Visible = false;
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -307,6 +349,9 @@ namespace CSAMS_WebSys
         private Guna.UI.WinForms.GunaAdvenceButton Login;
         private System.Windows.Forms.Button UnHide;
         private Button Hide;
+        private Guna.UI2.WinForms.Guna2WinProgressIndicator guna2WinProgressIndicator1;
+        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel1;
+        private Guna.UI2.WinForms.Guna2HtmlLabel guna2HtmlLabel2;
     }
 }
 

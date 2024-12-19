@@ -59,7 +59,7 @@ namespace CSAMS_WebSys.Services.Dashboard
         {
             try
             {
-                CollectionReference colref = db.Collection("School Year");
+                CollectionReference colref = db.Collection("SchoolYear");
                 var snapshot = await colref.OrderBy("SchoolYearID").GetSnapshotAsync();
 
                 List<SchoolYearModel> schoolYearsList = snapshot.Documents.Select(doc => new SchoolYearModel
@@ -83,8 +83,8 @@ namespace CSAMS_WebSys.Services.Dashboard
             try
             {
                 List<SchoolYearModel> YearModel = await GetAllSchoolYearAsync();
-                List<SchoolYearModel> sortedSY = YearModel.OrderBy(x => x.isActive)
-                                                          .ThenBy(x => x.SchoolYearID)        
+                List<SchoolYearModel> sortedSY = YearModel.OrderByDescending(x => x.isActive)
+                                                          .ThenByDescending(x => x.SchoolYearID)        
                                                           .ToList();      
 
                 return sortedSY;
@@ -155,11 +155,9 @@ namespace CSAMS_WebSys.Services.Dashboard
 
                 if (ongoingSnapshot.Count > 0)
                 {
-                    Console.WriteLine("Found ongoing event");
                     return CreateEventModel(ongoingSnapshot.Documents[0], philippineTime);
                 }
 
-                Console.WriteLine("No ongoing event found, searching for recently ended event");
                 Query recentlyEndedQuery = eventRef
                     .WhereEqualTo("isArchived", false)
                     .WhereLessThan("DateEnd", utcNow)
@@ -174,7 +172,6 @@ namespace CSAMS_WebSys.Services.Dashboard
                     return null;
                 }
 
-                Console.WriteLine("Found recently ended event");
                 return CreateEventModel(recentlyEndedSnapshot.Documents[0], philippineTime);
             }
             catch (Exception ex)

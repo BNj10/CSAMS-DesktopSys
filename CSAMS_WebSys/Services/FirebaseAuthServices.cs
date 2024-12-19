@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Net.Http;
@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CSAMS_WebSys.Services;
+using Guna.UI2.WinForms;
+using Newtonsoft.Json.Linq;
 
 namespace YourNamespace
 {
@@ -21,31 +23,55 @@ namespace YourNamespace
 
         public async Task<FirebaseAuthResponse> LoginAsync(string email, string password)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                var requestBody = new
+                using (HttpClient client = new HttpClient())
                 {
-                    email = email,
-                    password = password,
-                    returnSecureToken = true
-                };
+                    var requestBody = new
+                    {
+                        email = email,
+                        password = password,
+                        returnSecureToken = true
+                    };
 
-                var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
+                    var jsonRequestBody = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
+                    HttpResponseMessage response = await client.PostAsync(string.Format(FirebaseAuthUrl, _firebaseApiKey), content);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Firebase login failed: {response.ReasonPhrase}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        var errorDetails = JsonConvert.DeserializeObject<JObject>(errorContent);
+                        string errorMessage = errorDetails?["error"]?["message"]?.ToString();
+
+                        if (errorMessage == "INVALID_LOGIN_CREDENTIALS")
+                        {
+                            throw new Exception("The email or password you entered is incorrect. Please try again.");
+                        }
+                        else
+                        {
+                            throw new LoginException("A network error occurred while attempting to log in. Please check your connection.");
+                        }
+                    }
                 }
-
-                string responseContent = await response.Content.ReadAsStringAsync();
-                var firebaseAuthResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseContent);
-
-                return firebaseAuthResponse;
+            }
+            catch (HttpRequestException)
+            {
+                throw new LoginException("A network error occurred while attempting to log in. Please check your connection.");
             }
         }
+    }
+
+    public class LoginException : Exception
+    {
+        public LoginException(string message, Exception innerException = null) : base(message, innerException) { }
     }
 
     public class FirebaseAuthErrorResponse

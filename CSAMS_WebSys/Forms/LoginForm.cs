@@ -6,6 +6,10 @@ using System.IO;
 using System.Text.RegularExpressions;
 using FireSharp.Response;
 using CSAMS_WebSys.Services;
+using Google.Api.Gax;
+using System.Drawing;
+using Guna.UI2.WinForms;
+using Guna.UI.WinForms;
 
 namespace CSAMS_WebSys
 {
@@ -16,28 +20,36 @@ namespace CSAMS_WebSys
         {
             InitializeComponent();
             con = new ConnectivityService();
+            guna2WinProgressIndicator1.Hide();
         }
-        //CHANGE LOGIN CLICK TO ASYNC
         private async void login_gunaAdvenceButton_Click(object sender, EventArgs e)
         {
   /*          MainForm mainform = new MainForm();
             mainform.Show();
             Visible = false;*/
-            bool isConnected = await con.CheckNetworkAvailability();
-
-            if (isConnected)
+            try
             {
+                bool isConnected = await con.CheckNetworkAvailability();
+
+                guna2WinProgressIndicator1.Show();
+                guna2WinProgressIndicator1.Start();
                 string email = Email.Text;
                 string password = Password.Text;
                 string ErrorMessage = "";
 
                 if (string.IsNullOrEmpty(email))
                 {
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
                     ErrorMessage += "Email is required.";
+                    Email.Focus();
+                    guna2HtmlLabel1.Show();
                     if (string.IsNullOrEmpty(password))
                     {
+                        guna2HtmlLabel2.Show();
                         ErrorMessage = "Please enter both email and password.";
                         MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                         return;
                     }
                     MessageBox.Show(ErrorMessage, "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -46,6 +58,8 @@ namespace CSAMS_WebSys
 
                 if (!IsValidEmail(email))
                 {
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
                     MessageBox.Show("Invalid email format.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     Email.Focus();
                     return;
@@ -53,6 +67,8 @@ namespace CSAMS_WebSys
 
                 if (password.Length < 8)
                 {
+                    guna2WinProgressIndicator1.Stop();
+                    guna2WinProgressIndicator1.Hide();
                     MessageBox.Show("Password must be at least 8 characters long.", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     Password.Focus();
                     return;
@@ -70,23 +86,44 @@ namespace CSAMS_WebSys
                 string credentialsPath = Environment.GetEnvironmentVariable("FIREBASE_API_KEY");
 
                 var firebaseAuthService = new FirebaseAuthService(credentialsPath);
-                try
-                {
-                    var authResponse = await firebaseAuthService.LoginAsync(email, password);
-                    MainForm mainform = new MainForm(authResponse);
-                    mainform.Show();
-                    Visible = false;
-                }
-                catch
-                {
-                    MessageBox.Show($"Wrong email or password. Please try again!", "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                var authResponse = await firebaseAuthService.LoginAsync(email, password);
+
+                MainForm mainform = new MainForm(authResponse);
+                mainform.Show();
+                Visible = false;
             }
-            else
+            catch(LoginException ex)
             {
-                MessageBox.Show("Unable to login. No internet connection detected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Network Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                guna2WinProgressIndicator1.Stop();
+                guna2WinProgressIndicator1.Hide();
+            }
+            
+        }
+
+        private void HighlightField1(GunaTextBox field, GunaTextBox field2, bool highlight)
+        {
+            if (highlight)
+            {
+                field.BorderColor = Color.Red;
+                field2.BorderColor = Color.Red;
+            }
+        }
+
+        private void HighlightField(GunaTextBox field, bool highlight)
+        {
+            if (highlight)
+            {
+                field.BorderColor = Color.Red; 
             }
         }
 
@@ -112,6 +149,16 @@ namespace CSAMS_WebSys
                 Hide.BringToFront();
                 Password.PasswordChar = '*';
             }
+        }
+
+        private void onTypeEmail(object sender, EventArgs e)
+        {
+            guna2HtmlLabel1.Hide();
+        }
+
+        private void onTypePassword(object sender, EventArgs e)
+        {
+            guna2HtmlLabel2.Hide();
         }
     }
 }

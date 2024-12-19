@@ -86,7 +86,6 @@ namespace CSAMS_WebSys.Services
                         if (tempList == null || tempList.Count == 0)
                         {
                             checkedAllMembers = true;
-                            Console.WriteLine("Checked all on firebase");
                             return;
                         }
                     }
@@ -95,7 +94,6 @@ namespace CSAMS_WebSys.Services
 
                     foreach (var member in memberModels)
                     {
-                        Console.WriteLine("First Name: " + member.FirstName);
                         try
                         {
                             DPFP.Template template1 = new DPFP.Template();
@@ -115,7 +113,6 @@ namespace CSAMS_WebSys.Services
                             Verificator.Verify(features, template1, ref result1);
                             Verificator.Verify(features, template2, ref result2);
 
-                            Console.WriteLine("tempList -> Member Count: " + tempList.Count);
                             if (result1.Verified || result2.Verified)
                             {
                                 this.Confirmation?.Invoke(member);

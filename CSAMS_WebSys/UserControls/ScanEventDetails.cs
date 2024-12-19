@@ -29,7 +29,7 @@ namespace CSAMS_WebSys.UserControls
         private AttendanceService attendanceservice;
         private PopUpVerify popUp;
         private static int Count = 0;
-        private HashSet<string> DisplayedMember;
+        private Dictionary<string, (bool TimeInProcessed, bool TimeOutProcessed)> DisplayedMember;
         DataTable table = new DataTable();
         DataView view;
         private BindingSource _bindingSource = new BindingSource();
@@ -40,7 +40,7 @@ namespace CSAMS_WebSys.UserControls
             Console.WriteLine("ScanEventDetails Initialized");
             members = new List<MemberModel>();
             verifier = new FingerprintVerificationService();
-            DisplayedMember = new HashSet<string>();
+            DisplayedMember = new Dictionary<string, (bool, bool)>();
             attendanceservice = new AttendanceService();
             InitializeTable();
 /*          verifier.MemberVerified += LoadData;*/
@@ -55,30 +55,23 @@ namespace CSAMS_WebSys.UserControls
         private void InitializeTable()
         {
             table.Columns.Add("ID", typeof(string));
-            table.Columns.Add("Last Name", typeof(string));
             table.Columns.Add("First Name", typeof(string));
+            table.Columns.Add("Last Name", typeof(string));
             table.Columns.Add("year", typeof(string));
             table.Columns.Add("status", typeof(string));
             table.Columns.Add("date added", typeof(string));
+            table.Columns.Add("Time In", typeof(string));
+            table.Columns.Add("Time Out", typeof(string));
 
             ScannedAtendeesData_gunaDataGridView.DataSource = table;
 
-            DataGridViewButtonColumn dataGridViewButtonColumn_detials = new DataGridViewButtonColumn();
-            dataGridViewButtonColumn_detials.Name = "Detail_button";
-            dataGridViewButtonColumn_detials.HeaderText = "detail";
-
-            dataGridViewButtonColumn_detials.FlatStyle = FlatStyle.Popup;
-
-            dataGridViewButtonColumn_detials.Text = " Details";
-
-            dataGridViewButtonColumn_detials.UseColumnTextForButtonValue = true;
-
-            ScannedAtendeesData_gunaDataGridView.Columns.Add(dataGridViewButtonColumn_detials);
-
-            ScannedAtendeesData_gunaDataGridView.Columns[0].Width = 90;
-            ScannedAtendeesData_gunaDataGridView.Columns[3].Width = 80;
-            ScannedAtendeesData_gunaDataGridView.Columns[4].Width = 80;
-            ScannedAtendeesData_gunaDataGridView.Columns[6].Width = 120;
+            ScannedAtendeesData_gunaDataGridView.RowTemplate.Height = 50;
+            ScannedAtendeesData_gunaDataGridView.Columns[0].Width = 120; 
+            ScannedAtendeesData_gunaDataGridView.Columns[1].Width = 100; 
+            ScannedAtendeesData_gunaDataGridView.Columns[2].Width = 100; 
+            ScannedAtendeesData_gunaDataGridView.Columns[3].Width = 80;  
+            ScannedAtendeesData_gunaDataGridView.Columns[4].Width = 80;  
+            ScannedAtendeesData_gunaDataGridView.Columns[5].Width = 80;  
 
             ScannedAtendeesData_gunaDataGridView.AllowUserToResizeRows = false;
             ScannedAtendeesData_gunaDataGridView.AllowUserToResizeColumns = false;
@@ -174,44 +167,97 @@ namespace CSAMS_WebSys.UserControls
                 return currentTime >= startTime && currentTime <= endTime;
             }
 
-            private async void AddMember(MemberModel member)
-            {
-                DateTime time = GetCurrentTime();
+        private async void AddMember(MemberModel member)
+        {
+            DateTime currentTime = GetCurrentTime();
+
             try
             {
-                if (member != null && DisplayedMember.Add(member.StudentID))
+                if (member == null)
+                    return;
+
+                if (!DisplayedMember.ContainsKey(member.StudentID))
                 {
-                    if (attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue &&
-                        IsWithinTimeRange(time, attendance.TimeInStart.Value, attendance.TimeInEnd.Value))
-                    {
-                        await attendanceservice.StoreMemberPresentTimeIn(member, attendance, time);
-                        table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, time.ToLocalTime().ToString("MMMM dd yyyy"));
-                        Count++;
-                        UpdateAttendees();
-                    }
-                    else if (attendance.TimeOutStart.HasValue && attendance.TimeOutEnd.HasValue &&
-                             IsWithinTimeRange(time, attendance.TimeOutStart.Value, attendance.TimeOutEnd.Value))
-                    {
-                        await attendanceservice.StoreMemberPresentTimeOut(member, attendance, time);
-                        table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, time.ToLocalTime().ToString("MMMM dd yyyy"));
-                        Count++;
-                        UpdateAttendees();
-                    }
+                    DisplayedMember[member.StudentID] = (false, false);
+                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel,
+                                   member.Status, " ", "No data", "No data");
+                }
+
+                var processedState = DisplayedMember[member.StudentID];
+                bool timeInProcessed = processedState.TimeInProcessed;
+                bool timeOutProcessed = processedState.TimeOutProcessed;
+
+                DataRow memberRow = table.Rows
+                    .Cast<DataRow>()
+                    .FirstOrDefault(r => r[0].ToString() == member.StudentID);
+
+                if (!processedState.TimeInProcessed && attendance.TimeInStart.HasValue && attendance.TimeInEnd.HasValue &&
+                    IsWithinTimeRange(currentTime, attendance.TimeInStart.Value, attendance.TimeInEnd.Value))
+                {
+                    await attendanceservice.StoreMemberPresentTimeIn(member, attendance, currentTime);
+                    memberRow["Time In"] = currentTime.ToLocalTime().ToString("hh:mm tt");
+                    timeInProcessed = true;
+                    Count++;
+                }
+                else if (timeInProcessed)
+                {
+                    MessageBox.Show("Member has already been processed for Time In.");
+                }
+
+                if (!processedState.TimeOutProcessed && attendance.TimeOutStart.HasValue && attendance.TimeOutEnd.HasValue &&
+                    IsWithinTimeRange(currentTime, attendance.TimeOutStart.Value, attendance.TimeOutEnd.Value))
+                {
+                    await attendanceservice.StoreMemberPresentTimeOut(member, attendance, currentTime);
+                    memberRow["Time Out"] = currentTime.ToLocalTime().ToString("hh:mm tt");
+                    timeOutProcessed = true;
+                    Count++;
+                }
+                else if (timeOutProcessed)
+                {
+                    MessageBox.Show("Member has already been processed for Time Out.");
+                }
+
+                DisplayedMember[member.StudentID] = (timeInProcessed, timeOutProcessed);
+
+                if (!timeInProcessed && !timeOutProcessed)
+                {
+                    MessageBox.Show("Current time is not within any valid Time In or Time Out range, or the member has already been processed.");
+                }
+
+                if (timeInProcessed || timeOutProcessed)
+                {
+                    UpdateAttendees();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Error adding member: " + ex.Message);
+                MessageBox.Show("An error occurred while adding the member: " + ex.Message);
             }
         }
+
+
 
         private void AddMembers(List<MemberModel> members)
         {
             foreach (var member in members)
             {
-                if (member != null && DisplayedMember.Add(member.StudentID))
+                if (member == null) continue;
+
+                if (!DisplayedMember.ContainsKey(member.StudentID))
                 {
-                    table.Rows.Add(member.StudentID, member.FirstName, member.LastName, member.YearLevel, member.Status, member.TimeIn?.ToString("MMMM dd yyyy"));
+                    DisplayedMember.Add(member.StudentID, (member.TimeIn == null ? false : true , member.TimeOut == null ? false : true));
+
+                    table.Rows.Add(
+                        member.StudentID,
+                        member.FirstName,
+                        member.LastName,
+                        member.YearLevel,
+                        member.Status,
+                        " ",
+                        member.TimeIn?.ToLocalTime().ToString("hh:mm tt") ?? "No data",
+                        member.TimeOut?.ToLocalTime().ToString("hh:mm tt") ?? "No data"
+                    );
                 }
             }
         }
@@ -307,6 +353,16 @@ namespace CSAMS_WebSys.UserControls
                 else if (this.Event.Status.ToString() == "Done")
                 {
                     MessageBox.Show("Event has already ended. Click for the event that is ongoing", "Event done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if(guna2HtmlLabel1.Text == "Not set" && time < attendance.TimeOutStart.Value)
+                {
+                    MessageBox.Show($"Time out will be available exactly at {attendance.TimeOutStart.Value.ToString("hh: mm tt")}" , "Time in ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (guna2HtmlLabel2.Text == "Not set" && time > attendance.TimeInEnd.Value)
+                {
+                    MessageBox.Show($"Time out is not set", "Time out unavailable", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 else if (!IsWithinTimeRange(time, attendance.TimeOutStart.Value, attendance.TimeOutEnd.Value) && attendance.TimeOutEnd.Value < time)

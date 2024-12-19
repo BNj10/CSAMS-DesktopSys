@@ -48,7 +48,6 @@ namespace CSAMS_WebSys.Forms
             try
             {
                 
-                this.Event = GlobalEvent.Event;
                 if (Event == null || Event.EventName == "")
                 {
                     Console.WriteLine("Event is Null");

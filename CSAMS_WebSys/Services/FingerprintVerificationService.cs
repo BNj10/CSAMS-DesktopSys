@@ -113,7 +113,6 @@ namespace CSAMS_WebSys.Services
                             Verificator.Verify(features, template1, ref result1);
                             Verificator.Verify(features, template2, ref result2);
 
-                            Console.WriteLine("tempList -> Member Count: " + tempList.Count);
                             if (result1.Verified || result2.Verified)
                             {
                                 this.Confirmation?.Invoke(member);

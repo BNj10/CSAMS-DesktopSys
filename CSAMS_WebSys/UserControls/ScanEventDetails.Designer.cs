@@ -29,9 +29,9 @@ namespace CSAMS_WebSys.UserControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.scanText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
             this.scanBiometrics_gunaAdvenceButton = new Guna.UI.WinForms.GunaAdvenceButton();
             this.scannedAtendeesText_gunaLabel = new Guna.UI.WinForms.GunaLabel();
@@ -128,31 +128,31 @@ namespace CSAMS_WebSys.UserControls
             // 
             // ScannedAtendeesData_gunaDataGridView
             // 
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
-            this.ScannedAtendeesData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
+            this.ScannedAtendeesData_gunaDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.ScannedAtendeesData_gunaDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.ScannedAtendeesData_gunaDataGridView.BackgroundColor = System.Drawing.Color.Gainsboro;
             this.ScannedAtendeesData_gunaDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ScannedAtendeesData_gunaDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.ScannedAtendeesData_gunaDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ScannedAtendeesData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(81)))), ((int)(((byte)(181)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ScannedAtendeesData_gunaDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.ScannedAtendeesData_gunaDataGridView.ColumnHeadersHeight = 4;
             this.ScannedAtendeesData_gunaDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ScannedAtendeesData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(220)))), ((int)(((byte)(239)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(139)))), ((int)(((byte)(205)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ScannedAtendeesData_gunaDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.ScannedAtendeesData_gunaDataGridView.EnableHeadersVisualStyles = false;
             this.ScannedAtendeesData_gunaDataGridView.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(201)))), ((int)(((byte)(231)))));
             this.ScannedAtendeesData_gunaDataGridView.Location = new System.Drawing.Point(293, 181);
@@ -163,7 +163,7 @@ namespace CSAMS_WebSys.UserControls
             this.ScannedAtendeesData_gunaDataGridView.RowTemplate.Height = 24;
             this.ScannedAtendeesData_gunaDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ScannedAtendeesData_gunaDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ScannedAtendeesData_gunaDataGridView.Size = new System.Drawing.Size(1123, 401);
+            this.ScannedAtendeesData_gunaDataGridView.Size = new System.Drawing.Size(1059, 401);
             this.ScannedAtendeesData_gunaDataGridView.TabIndex = 35;
             this.ScannedAtendeesData_gunaDataGridView.Theme = Guna.UI.WinForms.GunaDataGridViewPresetThemes.Indigo;
             this.ScannedAtendeesData_gunaDataGridView.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(197)))), ((int)(((byte)(203)))), ((int)(((byte)(232)))));
@@ -237,10 +237,10 @@ namespace CSAMS_WebSys.UserControls
             this.tabelLabels_gunaLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabelLabels_gunaLabel.Location = new System.Drawing.Point(288, 141);
             this.tabelLabels_gunaLabel.Name = "tabelLabels_gunaLabel";
-            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(1010, 28);
+            this.tabelLabels_gunaLabel.Size = new System.Drawing.Size(981, 28);
             this.tabelLabels_gunaLabel.TabIndex = 40;
             this.tabelLabels_gunaLabel.Text = "Student ID         First Name             Last Name              Year            " +
-    "    Status           Marked                                 Actions";
+    "    Status                    Time In                    Time Out";
             // 
             // SearchMembers_gunaAdvenceButton
             // 

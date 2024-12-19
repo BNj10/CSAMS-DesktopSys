@@ -147,6 +147,9 @@ namespace CSAMS_WebSys.Forms
             string yearLevel = YearLevel_gunaComboBox.Text;
             string status = Status_gunaComboBox.Text;
             string f1, f2;
+            GetActiveSY();
+
+            Console.WriteLine(SYmodel.SchoolYearID);
 
             if (string.IsNullOrEmpty(studentID) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(yearLevel) || string.IsNullOrEmpty(status))
             {

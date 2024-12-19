@@ -31,6 +31,7 @@ namespace CSAMS_WebSys.UserControls
         private int pageNumber = 10;
         private int numAttendees = 0;
         private static string lastDocumentId = null;
+        private int rowIndex2 = -1;
         private static DocumentSnapshot lastdoc;    
         private static DocumentSnapshot firstdoc;
         private HashSet<string> displayedEvents = new HashSet<string>();
@@ -147,9 +148,18 @@ namespace CSAMS_WebSys.UserControls
 
         private async Task<int> GetAttendees(EventModel Event)
         {
-            attendance = await attendanceService.GetAttendanceForAnEvent(Event);
-            Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
-            return attendance.TotalAttendees;
+            try
+            {
+                attendance = await attendanceService.GetAttendanceForAnEventUsingName(Event);
+                Console.WriteLine("Number of Attendees: ", attendance.TotalAttendees);
+                return attendance.TotalAttendees;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error in GetAttendees: " + ex.Message);
+                return 0;
+            }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -216,6 +226,7 @@ namespace CSAMS_WebSys.UserControls
                         {
                             await EventService.DeleteEvent(Event);
                             table.Rows.RemoveAt(rowIndex3);
+                            displayedEvents.Remove(EventName);
                             MessageBox.Show("Event deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
@@ -228,7 +239,7 @@ namespace CSAMS_WebSys.UserControls
                 {
                     try
                     {
-                        int rowIndex2 = e.RowIndex;
+                        rowIndex2 = e.RowIndex;
                         if (rowIndex2 >= 0)
                         {
                             DataGridViewRow selectedRow = EventsData_gunaDataGridView.Rows[rowIndex2];
@@ -258,19 +269,13 @@ namespace CSAMS_WebSys.UserControls
 
         private void EventChanged(EventModel Event)
         {
-            int rowIndex = -1;
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                if (table.Rows[i]["Name"].ToString() == Event.EventName)
-                {
-                    rowIndex = i;
-                    break;
-                }
-            }
+            int rowIndex = rowIndex2;
 
             if (rowIndex >= 0)
             {
                 DataRow rowToUpdate = table.Rows[rowIndex];
+                rowToUpdate["Name"] = Event.EventName;
+                rowToUpdate["DateTime"] = Event.DateAdded?.ToString("MMMM dd, yyyy");
                 rowToUpdate["Progress"] = Event.Status.ToString();
                 EventsData_gunaDataGridView.Refresh();
             }

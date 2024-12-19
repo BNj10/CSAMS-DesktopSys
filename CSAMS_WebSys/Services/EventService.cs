@@ -68,6 +68,30 @@ namespace CSAMS_WebSys.Services
             }
         }
 
+        public async Task<EventModel> GetEventByName(EventModel Event)
+        {
+            Query query = db.Collection("Event").WhereEqualTo("EventName", Event.EventName);
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+            if (querySnapshot.Documents.Count == 0)
+            {
+                MessageBox.Show("No event found with the specified name.");
+                return null;
+            }
+
+            DocumentSnapshot document = querySnapshot.Documents[0];
+            EventModel eventModel = new EventModel
+            {
+                EventID = document.Id,
+                EventName = document.ContainsField("EventName") ? document.GetValue<string>("EventName") : null,
+                DateStart = document.ContainsField("DateStart") ? document.GetValue<DateTime?>("DateStart") : null,
+                DateEnd = document.ContainsField("DateEnd") ? document.GetValue<DateTime?>("DateEnd") : null,
+                DateAdded = document.ContainsField("DateAdded") ? document.GetValue<DateTime?>("DateAdded") : null,
+                IsArchived = document.ContainsField("isArchived") ? document.GetValue<bool>("isArchived") : false
+            };
+            return eventModel;
+        }
+
         private async Task<List<EventModel>> GetAllEventsAsync()
         {
             var eventsCollection = db.Collection("Event");
@@ -319,23 +343,34 @@ namespace CSAMS_WebSys.Services
         {
             try
             {
-                QuerySnapshot querySnapshot = await db.Collection("Event").WhereEqualTo("EventName", Event.EventName)
-                                                   .WhereEqualTo("isArchived", false).GetSnapshotAsync();
+                DocumentReference docRef = db.Collection("Event").Document(Event.EventID);
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
-                if (querySnapshot == null)
+                if (!snapshot.Exists)
                 {
                     Console.WriteLine("No event found!");
                     return;
                 }
 
-                DocumentReference docRef = querySnapshot.Documents[0].Reference;
-                await docRef.SetAsync(Event, SetOptions.MergeAll);
+                var fieldsToUpdate = new[] { "EventName", "DateStart", "DateEnd"};
+
+                var updatedFields = new Dictionary<string, object>
+                {
+                    { "EventName", Event.EventName },
+                    { "DateStart", Event.DateStart },
+                    { "DateEnd", Event.DateEnd }
+                };
+
+                await docRef.SetAsync(updatedFields, SetOptions.MergeFields(fieldsToUpdate));
+
+                Console.WriteLine("Event updated successfully!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error updating event: {ex.Message}");
             }
         }
+
 
         public async Task DeleteEvent(EventModel Event)
         {
@@ -355,15 +390,12 @@ namespace CSAMS_WebSys.Services
                 DocumentSnapshot document = snapshot.Documents[0];
                 await document.Reference.DeleteAsync();
 
-                string id = document.Id;
-
-                Query query1 = db.Collection("Attendance").WhereEqualTo(FieldPath.DocumentId, id);
+                Query query1 = db.Collection("Attendance").WhereEqualTo("EventName", Event.EventName);
                 QuerySnapshot snapshot1 = await query1.GetSnapshotAsync();
                 foreach (DocumentSnapshot doc in snapshot1.Documents)
                 {
                     await doc.Reference.DeleteAsync();
                 }
-                MessageBox.Show("Event and its associated attendance deleted successfully!");
             }
             catch (Exception ex)
             {

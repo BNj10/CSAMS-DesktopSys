@@ -450,7 +450,6 @@
     <Compile Include="Services\FingerprintVerificationService.cs" />
     <Compile Include="Services\FirebaseConnectionService.cs" />
     <Compile Include="Services\FirebaseAuthServices.cs" />
-    <Compile Include="Services\GlobalEvent.cs" />
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\SchoolYearServices.cs" />
     <Compile Include="UserControls\absencesButtomEventDetails.cs">
@@ -591,6 +590,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ScanEventDetails.resx">
       <DependentUpon>ScanEventDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UserControl3.resx">
+      <DependentUpon>UserControl3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UserControl_AddSchoolYear.resx">
       <DependentUpon>UserControl_AddSchoolYear.cs</DependentUpon>

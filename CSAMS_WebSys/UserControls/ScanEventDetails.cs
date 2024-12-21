@@ -43,13 +43,8 @@ namespace CSAMS_WebSys.UserControls
             DisplayedMember = new Dictionary<string, (bool, bool)>();
             attendanceservice = new AttendanceService();
             InitializeTable();
-/*          verifier.MemberVerified += LoadData;*/
             verifier.UpdateAttendees += UpdateAttendees;
             verifier.Confirmation += ShowPopUp;
-/*            timer1.Interval = 2000;
-            timer1.Start();
-            timer1.Tick += timer1_Tick;
-            timer1.Tick -= timer1_Tick;*/
         }
 
         private void InitializeTable()
